@@ -25,6 +25,9 @@
  */
 package org.lanternpowered.server.data;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import com.google.common.collect.ImmutableSet;
 import org.spongepowered.api.data.DataContainer;
 import org.spongepowered.api.data.DataHolder;
 import org.spongepowered.api.data.DataTransactionResult;
@@ -38,11 +41,15 @@ import org.spongepowered.api.data.value.immutable.ImmutableValue;
 import org.spongepowered.api.event.cause.Cause;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 public class LanternDataHolder implements DataHolder {
+
+    private final Map<Key<?>, Object> valuesByKey = new ConcurrentHashMap<>();
 
     @Override
     public int getContentVersion() {
@@ -173,27 +180,29 @@ public class LanternDataHolder implements DataHolder {
         return Optional.empty();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public <E> E getOrNull(Key<? extends BaseValue<E>> key) {
-        // TODO Auto-generated method stub
-        return null;
+        return (E) this.valuesByKey.get(checkNotNull(key, "key"));
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public <E> E getOrElse(Key<? extends BaseValue<E>> key, E defaultValue) {
-        // TODO Auto-generated method stub
-        return null;
+        checkNotNull(defaultValue, "defaultValue");
+        E value = (E) this.valuesByKey.get(checkNotNull(key, "key"));
+        return value == null ? defaultValue : value;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public <E, V extends BaseValue<E>> Optional<V> getValue(Key<V> key) {
-        // TODO Auto-generated method stub
+        E value = (E) this.valuesByKey.get(checkNotNull(key, "key"));
         return null;
     }
 
     @Override
     public boolean supports(Key<?> key) {
-        // TODO Auto-generated method stub
         return false;
     }
 
@@ -211,8 +220,7 @@ public class LanternDataHolder implements DataHolder {
 
     @Override
     public Set<Key<?>> getKeys() {
-        // TODO Auto-generated method stub
-        return null;
+        return ImmutableSet.copyOf(this.valuesByKey.keySet());
     }
 
     @Override
