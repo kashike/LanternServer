@@ -449,7 +449,6 @@ public class LanternGameRegistry implements GameRegistry {
                 .registerBuilderSupplier(FallingBlockDamageSource.Builder.class, LanternFallingBlockDamageSourceBuilder::new)
                 .registerBuilderSupplier(IndirectEntityDamageSource.Builder.class, LanternIndirectEntityDamageSourceBuilder::new)
                 .registerBuilderSupplier(RespawnLocation.Builder.class, RespawnLocation.Builder::new)
-                .registerBuilderSupplier(PotionEffect.Builder.class, LanternPotionEffectBuilder::new)
                 ;
         this.registerFactories();
     }

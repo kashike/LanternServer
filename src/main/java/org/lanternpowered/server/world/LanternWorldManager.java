@@ -918,24 +918,6 @@ public final class LanternWorldManager {
                     } else {
                         idToLevelData.put(dimensionId, tuple);
                     }
-                    
-                    WorldProperties worldProperties;
-                    try {
-                        WorldConfigResult result = this.getOrCreateWorldConfig(levelData.worldName);
-                        worldProperties = LanternWorldPropertiesIO.convert(levelData, result.config, result.newCreated);
-                        if (result.newCreated) {
-                            result.config.save();
-                        }
-                    } catch (IOException e) {
-                        this.game.getLogger().error("Unable to read/write the world config, please fix this issue before loading the world.", e);
-                        throw e;
-                    }
-                    // Store the world properties
-                    this.addUpdatedWorldProperties(rootWorldProperties, path, levelData.dimensionId);
-                    // Check if it should be loaded on startup
-                    if (worldProperties.loadOnStartup()) {
-                        loadQueue.add(this.worldByProperties.get(worldProperties));
-                    }
                 } catch (Exception e) {
                     Lantern.getLogger().info("Unable to load the world in the directory {}",
                             path.getFileName().toString());
