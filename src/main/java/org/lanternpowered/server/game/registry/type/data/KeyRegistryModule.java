@@ -57,6 +57,7 @@ import org.spongepowered.api.data.type.DoublePlantType;
 import org.spongepowered.api.data.type.DyeColor;
 import org.spongepowered.api.data.type.Fish;
 import org.spongepowered.api.data.type.GoldenApple;
+import org.spongepowered.api.data.type.HandType;
 import org.spongepowered.api.data.type.Hinge;
 import org.spongepowered.api.data.type.HorseColor;
 import org.spongepowered.api.data.type.HorseStyle;
@@ -64,6 +65,7 @@ import org.spongepowered.api.data.type.HorseVariant;
 import org.spongepowered.api.data.type.LogAxis;
 import org.spongepowered.api.data.type.NotePitch;
 import org.spongepowered.api.data.type.OcelotType;
+import org.spongepowered.api.data.type.PickupRule;
 import org.spongepowered.api.data.type.PistonType;
 import org.spongepowered.api.data.type.PlantType;
 import org.spongepowered.api.data.type.PortionType;
@@ -175,6 +177,7 @@ public final class KeyRegistryModule implements RegistryModule, CatalogMappingDa
                 .put("disarmed", makeSingleKey(Boolean.class, Value.class, of("Disarmed")))
                 .put("disguised_block_type", makeSingleKey(DisguisedBlockType.class, Value.class, of("DisguisedBlockType")))
                 .put("display_name", makeSingleKey(Text.class, Value.class, of("DisplayName")))
+                .put("dominant_hand", makeSingleKey(HandType.class, Value.class, of("DominantHand")))
                 .put("double_plant_type", makeSingleKey(DoublePlantType.class, Value.class, of("DoublePlantType")))
                 .put("dye_color", makeSingleKey(DyeColor.class, Value.class, of("DyeColor")))
                 .put("elder_guardian", makeSingleKey(Boolean.class, Value.class, of("ElderGuardian")))
@@ -232,6 +235,7 @@ public final class KeyRegistryModule implements RegistryModule, CatalogMappingDa
                 .put("is_playing", makeSingleKey(Boolean.class, Value.class, of("IsPlaying")))
                 .put("is_screaming", makeSingleKey(Boolean.class, Value.class, of("IsScreaming")))
                 .put("is_sheared", makeSingleKey(Boolean.class, Value.class, of("IsSheared")))
+                .put("is_silent", makeSingleKey(Boolean.class, Value.class, of("IsSilent")))
                 .put("is_sitting", makeSingleKey(Boolean.class, Value.class, of("IsSitting")))
                 .put("is_sleeping", makeSingleKey(Boolean.class, Value.class, of("IsSleeping")))
                 .put("is_sneaking", makeSingleKey(Boolean.class, Value.class, of("IsSneaking")))
@@ -267,6 +271,7 @@ public final class KeyRegistryModule implements RegistryModule, CatalogMappingDa
                 .put("passed_cook_time", makeSingleKey(Integer.class, MutableBoundedValue.class, of("PassedCookTime")))
                 .put("passengers", makeListKey(EntitySnapshot.class, of("Passengers")))
                 .put("persists", makeSingleKey(Boolean.class, Value.class, of("Persists")))
+                .put("pickup_rule", makeSingleKey(PickupRule.class, Value.class, of("PickupRule")))
                 .put("pig_saddle", makeSingleKey(Boolean.class, Value.class, of("PigSaddle")))
                 .put("piston_type", makeSingleKey(PistonType.class, Value.class, of("PistonType")))
                 .put("placeable_blocks", makeSetKey(BlockType.class, of("PlaceableBlocks")))
@@ -322,12 +327,15 @@ public final class KeyRegistryModule implements RegistryModule, CatalogMappingDa
                 .put("suspended", makeSingleKey(Boolean.class, Value.class, of("Suspended")))
                 .put("tamed_owner", makeOptionalKey(UUID.class, of("TamedOwner")))
                 .put("targeted_location", makeSingleKey(Vector3d.class, Value.class, of("TargetedLocation")))
-                .put("total_experience", makeSingleKey(Integer.class, MutableBoundedValue.class, of("TotalExperience")))
                 .put("ticks_remaining", makeSingleKey(Integer.class, Value.class, of("TicksRemaining")))
+                .put("total_experience", makeSingleKey(Integer.class, MutableBoundedValue.class, of("TotalExperience")))
                 .put("tracks_output", makeSingleKey(Boolean.class, Value.class, of("TracksOutput")))
                 .put("trade_offers", makeListKey(TradeOffer.class, of("TradeOffers")))
                 .put("tree_type", makeSingleKey(TreeType.class, Value.class, of("TreeType")))
                 .put("unbreakable", makeSingleKey(Boolean.class, Value.class, of("Unbreakable")))
+                .put("vanish", makeSingleKey(Boolean.class, Value.class, of("Vanish")))
+                .put("vanish_ignores_collision", makeSingleKey(Boolean.class, Value.class, of("VanishIgnoresCollision")))
+                .put("vanish_prevents_targeting", makeSingleKey(Boolean.class, Value.class, of("VanishPreventsTargeting")))
                 .put("vehicle", makeSingleKey(EntitySnapshot.class, Value.class, of("Vehicle")))
                 .put("velocity", makeSingleKey(Vector3d.class, Value.class, of("Velocity")))
                 .put("villager_zombie_profession", makeSingleKey(Profession.class, Value.class, of("VillagerZombieProfession")))
