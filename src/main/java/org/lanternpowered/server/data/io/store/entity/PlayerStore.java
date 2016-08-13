@@ -176,8 +176,8 @@ public class PlayerStore extends LivingStore<LanternPlayer> {
         }));
         valueContainer.set(Keys.RESPAWN_LOCATIONS, respawnLocations);
         dataContainer.getInt(SCORE).ifPresent(v -> valueContainer.set(LanternKeys.SCORE, v));
-        GameMode gameMode = dataContainer.getInt(GAME_MODE).flatMap(v -> Lantern.getRegistry().getRegistryModule(GameModeRegistryModule.class)
-                .get().getByInternalId(v)).orElse(GameModes.NOT_SET);
+        GameMode gameMode = dataContainer.getInt(GAME_MODE)
+                .flatMap(v -> GameModeRegistryModule.getInstance().getByInternalId(v)).orElse(GameModes.NOT_SET);
         valueContainer.set(Keys.GAME_MODE, gameMode);
         super.deserializeValues(player, valueContainer, dataContainer);
     }
