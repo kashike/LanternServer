@@ -23,35 +23,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lanternpowered.server.network.objects;
+package org.lanternpowered.server.network.entity;
 
-import org.lanternpowered.server.network.entity.ParameterValueType;
+public interface ParameterList {
 
-/**
- * This is a parameter that will be used for the entity
- * metadata that is send to the client.
- */
-public final class Parameter<T> {
+    <T> void add(ParameterType<T> type, T value);
 
-    private final ParameterValueType<T> parameterType;
-    private final T object;
-    private final int index;
-
-    public Parameter(ParameterValueType<T> parameterType, int index, T object) {
-        this.parameterType = parameterType;
-        this.object = object;
-        this.index = index;
+    default void add(ParameterType<Byte> type, byte value) {
+        this.add(type, (Byte) value);
     }
 
-    public int getIndex() {
-        return this.index;
+    default void add(ParameterType<Integer> type, int value) {
+        this.add(type, (Integer) value);
     }
 
-    public T getObject() {
-        return this.object;
+    default void add(ParameterType<Float> type, float value) {
+        this.add(type, (Float) value);
     }
 
-    public ParameterValueType<T> getParameterType() {
-        return this.parameterType;
+    default void add(ParameterType<Boolean> type, boolean value) {
+        this.add(type, (Boolean) value);
     }
 }

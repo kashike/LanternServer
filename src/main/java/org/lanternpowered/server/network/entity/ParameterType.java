@@ -23,35 +23,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lanternpowered.server.network.objects;
+package org.lanternpowered.server.network.entity;
 
-import org.lanternpowered.server.network.entity.ParameterValueType;
+public final class ParameterType<T> {
 
-/**
- * This is a parameter that will be used for the entity
- * metadata that is send to the client.
- */
-public final class Parameter<T> {
+    private final ParameterValueType<T> valueType;
+    final byte index;
 
-    private final ParameterValueType<T> parameterType;
-    private final T object;
-    private final int index;
+    ParameterType(ParameterValueType<T> valueType, int index) {
+        this.valueType = valueType;
+        this.index = (byte) index;
+    }
 
-    public Parameter(ParameterValueType<T> parameterType, int index, T object) {
-        this.parameterType = parameterType;
-        this.object = object;
-        this.index = index;
+    public ParameterValueType<T> getValueType() {
+        return this.valueType;
     }
 
     public int getIndex() {
         return this.index;
-    }
-
-    public T getObject() {
-        return this.object;
-    }
-
-    public ParameterValueType<T> getParameterType() {
-        return this.parameterType;
     }
 }

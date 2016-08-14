@@ -23,19 +23,42 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lanternpowered.server.network.objects;
+package org.lanternpowered.server.network.entity;
 
-import com.google.common.reflect.TypeToken;
+import static com.google.common.base.Preconditions.checkNotNull;
 
-public final class ParameterType<T> {
+import org.spongepowered.api.entity.Entity;
 
-    private final TypeToken<T> type;
+public abstract class EntityProtocol<E extends Entity> {
 
-    public ParameterType(TypeToken<T> type) {
-        this.type = type;
+    private int parameterIndex;
+
+    /**
+     * Initializes the {@link EntityProtocol}.
+     */
+    protected void initialize() {
     }
 
-    public TypeToken getType() {
-        return this.type;
+    /**
+     * Creates a new {@link ParameterType}.
+     *
+     * @param valueType The parameter value type
+     * @param <T> The value type
+     * @return The parameter type
+     */
+    protected final <T> ParameterType<T> newParameterType(ParameterValueType<T> valueType) {
+        return new ParameterType<>(checkNotNull(valueType, "valueType"), this.parameterIndex++);
+    }
+
+    /**
+     * Fills the {@link ParameterList} with parameters to update the {@link Entity} on
+     * the client. If {@code initial} is {@code true} then is being initially spawned
+     * on the client.
+     *
+     * @param entity The entity
+     * @param parameterList The parameter list to fill
+     * @param initial Whether the entity is being spawned
+     */
+    public void fill(E entity, ParameterList parameterList, boolean initial) {
     }
 }

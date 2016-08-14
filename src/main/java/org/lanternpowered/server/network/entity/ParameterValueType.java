@@ -23,35 +23,32 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lanternpowered.server.network.objects;
+package org.lanternpowered.server.network.entity;
 
-import org.lanternpowered.server.network.entity.ParameterValueType;
+import org.lanternpowered.server.network.buffer.ByteBuffer;
 
-/**
- * This is a parameter that will be used for the entity
- * metadata that is send to the client.
- */
-public final class Parameter<T> {
+public abstract class ParameterValueType<T> {
 
-    private final ParameterValueType<T> parameterType;
-    private final T object;
-    private final int index;
+    private final byte internalId;
 
-    public Parameter(ParameterValueType<T> parameterType, int index, T object) {
-        this.parameterType = parameterType;
-        this.object = object;
-        this.index = index;
+    ParameterValueType(int internalId) {
+        this.internalId = (byte) internalId;
     }
 
-    public int getIndex() {
-        return this.index;
+    /**
+     * Gets the internal id of the value type.
+     *
+     * @return The internal id
+     */
+    byte getInternalId() {
+        return internalId;
     }
 
-    public T getObject() {
-        return this.object;
-    }
-
-    public ParameterValueType<T> getParameterType() {
-        return this.parameterType;
-    }
+    /**
+     * Serializes the value to the {@link ByteBuffer}.
+     *
+     * @param buf The target byte buffer
+     * @param value The value
+     */
+    abstract void serialize(ByteBuffer buf, T value);
 }

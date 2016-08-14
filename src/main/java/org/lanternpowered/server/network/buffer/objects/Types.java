@@ -42,8 +42,8 @@ import org.lanternpowered.server.inventory.LanternItemStack;
 import org.lanternpowered.server.network.buffer.ByteBuffer;
 import org.lanternpowered.server.network.objects.LocalizedText;
 import org.lanternpowered.server.network.objects.Parameter;
-import org.lanternpowered.server.network.objects.ParameterType;
-import org.lanternpowered.server.network.objects.ParameterTypes;
+import org.lanternpowered.server.network.entity.ParameterValueType;
+import org.lanternpowered.server.network.entity.ParameterValueTypes;
 import org.lanternpowered.server.network.objects.RawItemStack;
 import org.lanternpowered.server.text.gson.JsonTextSerializer;
 import org.lanternpowered.server.text.gson.JsonTextTranslatableSerializer;
@@ -209,22 +209,22 @@ public final class Types {
                 private final static int OPTIONAL_UUID = 11;
                 private final static int BLOCK_STATE = 12;
 
-                private final Object2IntMap<ParameterType<?>> idByParameterType = new Object2IntOpenHashMap<>();
+                private final Object2IntMap<ParameterValueType<?>> idByParameterType = new Object2IntOpenHashMap<>();
 
                 {
-                    this.idByParameterType.put(ParameterTypes.BYTE, BYTE);
-                    this.idByParameterType.put(ParameterTypes.INTEGER, INTEGER);
-                    this.idByParameterType.put(ParameterTypes.FLOAT, FLOAT);
-                    this.idByParameterType.put(ParameterTypes.STRING, STRING);
-                    this.idByParameterType.put(ParameterTypes.TEXT, TEXT);
-                    this.idByParameterType.put(ParameterTypes.ITEM_STACK, ITEM_STACK);
-                    this.idByParameterType.put(ParameterTypes.BOOLEAN, BOOLEAN);
-                    this.idByParameterType.put(ParameterTypes.VECTOR_F, VECTOR_F);
-                    this.idByParameterType.put(ParameterTypes.VECTOR_I, VECTOR_3_I);
-                    this.idByParameterType.put(ParameterTypes.OPTIONAL_VECTOR_I, OPTIONAL_VECTOR_I);
-                    this.idByParameterType.put(ParameterTypes.DIRECTION, DIRECTION);
-                    this.idByParameterType.put(ParameterTypes.OPTIONAL_UUID, OPTIONAL_UUID);
-                    this.idByParameterType.put(ParameterTypes.BLOCK_STATE, BLOCK_STATE);
+                    this.idByParameterType.put(ParameterValueTypes.BYTE, BYTE);
+                    this.idByParameterType.put(ParameterValueTypes.INTEGER, INTEGER);
+                    this.idByParameterType.put(ParameterValueTypes.FLOAT, FLOAT);
+                    this.idByParameterType.put(ParameterValueTypes.STRING, STRING);
+                    this.idByParameterType.put(ParameterValueTypes.TEXT, TEXT);
+                    this.idByParameterType.put(ParameterValueTypes.ITEM_STACK, ITEM_STACK);
+                    this.idByParameterType.put(ParameterValueTypes.BOOLEAN, BOOLEAN);
+                    this.idByParameterType.put(ParameterValueTypes.VECTOR_F, VECTOR_F);
+                    this.idByParameterType.put(ParameterValueTypes.VECTOR_I, VECTOR_3_I);
+                    this.idByParameterType.put(ParameterValueTypes.OPTIONAL_VECTOR_I, OPTIONAL_VECTOR_I);
+                    this.idByParameterType.put(ParameterValueTypes.DIRECTION, DIRECTION);
+                    this.idByParameterType.put(ParameterValueTypes.OPTIONAL_UUID, OPTIONAL_UUID);
+                    this.idByParameterType.put(ParameterValueTypes.OPTIONAL_BLOCK_STATE, BLOCK_STATE);
                 }
 
                 @Override
@@ -276,7 +276,6 @@ public final class Types {
                                 buf.writeBoolean(uuid != null);
                                 if (uuid != null) {
                                     buf.writeUniqueId(uuid);
-                                    buf.write(Types.VECTOR_3_I, (Vector3i) parameter.getObject());
                                 }
                                 break;
                             case BLOCK_STATE:
