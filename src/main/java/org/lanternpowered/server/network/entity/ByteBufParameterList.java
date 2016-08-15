@@ -26,26 +26,34 @@
 package org.lanternpowered.server.network.entity;
 
 import org.lanternpowered.server.network.buffer.ByteBuffer;
+import org.lanternpowered.server.network.buffer.ByteBufferAllocator;
 
 /**
  * A {@link ParameterList} which writes the content directly to
  * a {@link ByteBuffer}. The value of a specific {@link ParameterType}
  * cannot be overwritten by calling the method again, this will
  * result in an {@link IllegalStateException}.
- * The {@link #finish()} method should be called once all the entries
- * are written.
  */
-public class ByteBufParameterList implements ParameterList {
+public class ByteBufParameterList extends AbstractParameterList {
 
-    private final ByteBuffer buf;
+    private final ByteBufferAllocator byteBufAllocator;
+    private ByteBuffer buf;
 
-    public ByteBufParameterList(ByteBuffer buf) {
-        this.buf = buf;
+    public ByteBufParameterList(ByteBufferAllocator byteBufAllocator) {
+        this.byteBufAllocator = byteBufAllocator;
     }
 
     private <T> void writeValueHeader(ParameterType<T> type) {
+        if (this.buf == null) {
+            this.buf = this.byteBufAllocator.buffer();
+        }
         this.buf.writeByte(type.getValueType().getInternalId());
         this.buf.writeByte(type.index);
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return this.buf == null;
     }
 
     @Override
@@ -78,11 +86,11 @@ public class ByteBufParameterList implements ParameterList {
         this.buf.writeBoolean(value);
     }
 
-    /**
-     * Finishes this {@link ParameterList}, this writes the end
-     * tag of the list.
-     */
-    public void finish() {
-        this.buf.writeByte((byte) 0xff);
+    @Override
+    public void write(ByteBuffer byteBuffer) {
+        if (this.buf != null) {
+            byteBuffer.writeBytes(this.buf);
+        }
+        byteBuffer.writeByte((byte) 0xff);
     }
 }

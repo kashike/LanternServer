@@ -27,6 +27,8 @@ package org.lanternpowered.server.network.entity;
 
 public interface ParameterList {
 
+    boolean isEmpty();
+
     <T> void add(ParameterType<T> type, T value);
 
     default void add(ParameterType<Byte> type, byte value) {
