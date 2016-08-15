@@ -42,6 +42,7 @@ import org.spongepowered.api.data.value.BaseValue;
 import org.spongepowered.api.data.value.ValueContainer;
 import org.spongepowered.api.data.value.immutable.ImmutableValue;
 import org.spongepowered.api.data.value.mutable.CompositeValueStore;
+import org.spongepowered.api.event.cause.Cause;
 
 import java.util.List;
 import java.util.function.BiFunction;
@@ -52,6 +53,11 @@ public interface AbstractCompositeValueStore<S extends CompositeValueStore<S, H>
     @SuppressWarnings("unchecked")
     default <E> DataTransactionResult offerWith(Key<? extends BaseValue<E>> key, E element, ValueProcessor<BaseValue<E>, E> processor) {
         return (DataTransactionResult) ((TriFunction) processor.getOfferHandler()).apply(key, this, element);
+    }
+
+    @Override
+    default <E> DataTransactionResult offer(Key<? extends BaseValue<E>> key, E value, Cause cause) {
+        return this.offer(key, value);
     }
 
     @SuppressWarnings("unchecked")
@@ -206,7 +212,7 @@ public interface AbstractCompositeValueStore<S extends CompositeValueStore<S, H>
             return this.removeWith(key, ValueProcessor.getDefaultAttachedValueProcessor());
         }
 
-        // Custom data container don't support their data to be removed
+        // Custom data container doesn't support their data to be removed
 
         return DataTransactionResult.failNoData();
     }

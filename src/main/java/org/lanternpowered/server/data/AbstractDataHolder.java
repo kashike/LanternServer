@@ -27,9 +27,56 @@ package org.lanternpowered.server.data;
 
 import org.lanternpowered.server.data.property.AbstractPropertyHolder;
 import org.lanternpowered.server.data.value.mutable.AbstractCompositeValueStore;
+import org.spongepowered.api.data.DataContainer;
 import org.spongepowered.api.data.DataHolder;
+import org.spongepowered.api.data.DataTransactionResult;
+import org.spongepowered.api.data.MemoryDataContainer;
 import org.spongepowered.api.data.manipulator.DataManipulator;
+import org.spongepowered.api.data.merge.MergeFunction;
+import org.spongepowered.api.event.cause.Cause;
+
+import java.util.Collection;
+import java.util.Optional;
 
 public interface AbstractDataHolder extends AbstractCompositeValueStore<DataHolder, DataManipulator<?,?>>, DataHolder, AbstractPropertyHolder {
 
+    @Override
+    default <T extends DataManipulator<?, ?>> Optional<T> get(Class<T> containerClass) {
+        return null;
+    }
+
+    @Override
+    default <T extends DataManipulator<?, ?>> Optional<T> getOrCreate(Class<T> containerClass) {
+        return null;
+    }
+
+    @Override
+    default boolean supports(Class<? extends DataManipulator<?, ?>> holderClass) {
+        return false;
+    }
+
+    @Override
+    default DataTransactionResult offer(DataManipulator<?, ?> valueContainer, MergeFunction function, Cause cause) {
+        return null;
+    }
+
+    @Override
+    default DataTransactionResult remove(Class<? extends DataManipulator<?, ?>> containerClass) {
+        return null;
+    }
+
+    @Override
+    default DataTransactionResult copyFrom(DataHolder that, MergeFunction function) {
+        return null;
+    }
+
+    @Override
+    default Collection<DataManipulator<?, ?>> getContainers() {
+        return null;
+    }
+
+    @Override
+    default DataContainer toContainer() {
+        return new MemoryDataContainer();
+    }
 }

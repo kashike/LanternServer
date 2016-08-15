@@ -349,5 +349,4 @@ public interface AbstractValueContainer<C extends ValueContainer<C>> extends IVa
         map.put(key, holder);
         return holder;
     }
-
 }

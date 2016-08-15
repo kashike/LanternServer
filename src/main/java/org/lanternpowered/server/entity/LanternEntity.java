@@ -448,44 +448,4 @@ public class LanternEntity extends BaseComponentHolder implements Entity, Abstra
     public DataHolder copy() {
         return null;
     }
-
-    @Override
-    public <T extends DataManipulator<?, ?>> Optional<T> get(Class<T> containerClass) {
-        return null;
-    }
-
-    @Override
-    public <T extends DataManipulator<?, ?>> Optional<T> getOrCreate(Class<T> containerClass) {
-        return null;
-    }
-
-    @Override
-    public boolean supports(Class<? extends DataManipulator<?, ?>> holderClass) {
-        return false;
-    }
-
-    @Override
-    public <E> DataTransactionResult offer(Key<? extends BaseValue<E>> key, E value, Cause cause) {
-        return null;
-    }
-
-    @Override
-    public DataTransactionResult offer(DataManipulator<?, ?> valueContainer, MergeFunction function, Cause cause) {
-        return null;
-    }
-
-    @Override
-    public DataTransactionResult remove(Class<? extends DataManipulator<?, ?>> containerClass) {
-        return null;
-    }
-
-    @Override
-    public DataTransactionResult copyFrom(DataHolder that, MergeFunction function) {
-        return null;
-    }
-
-    @Override
-    public Collection<DataManipulator<?, ?>> getContainers() {
-        return null;
-    }
 }

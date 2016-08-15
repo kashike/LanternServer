@@ -48,7 +48,6 @@ import org.lanternpowered.server.data.value.mutable.LanternPatternListValue;
 import org.lanternpowered.server.data.value.mutable.LanternSetValue;
 import org.lanternpowered.server.data.value.mutable.LanternValue;
 import org.lanternpowered.server.data.value.mutable.LanternWeightedCollectionValue;
-import org.lanternpowered.server.data.value.processor.ValueProcessor;
 import org.spongepowered.api.data.key.Key;
 import org.spongepowered.api.data.meta.PatternLayer;
 import org.spongepowered.api.data.value.BaseValue;
@@ -80,7 +79,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Predicate;
 
 import javax.annotation.Nullable;
 

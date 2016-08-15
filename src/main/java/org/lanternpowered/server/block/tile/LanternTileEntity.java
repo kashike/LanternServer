@@ -34,21 +34,17 @@ import org.spongepowered.api.block.tileentity.TileEntity;
 import org.spongepowered.api.block.tileentity.TileEntityType;
 import org.spongepowered.api.data.DataContainer;
 import org.spongepowered.api.data.DataHolder;
-import org.spongepowered.api.data.DataTransactionResult;
 import org.spongepowered.api.data.key.Key;
-import org.spongepowered.api.data.manipulator.DataManipulator;
-import org.spongepowered.api.data.merge.MergeFunction;
 import org.spongepowered.api.data.persistence.InvalidDataException;
-import org.spongepowered.api.data.value.BaseValue;
-import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 public class LanternTileEntity extends BaseComponentHolder implements TileEntity, AbstractDataHolder, AbstractPropertyHolder {
+
+    private final Map<Key<?>, KeyRegistration> rawValueMap = new HashMap<>();
 
     @Override
     public boolean validateRawData(DataContainer container) {
@@ -57,12 +53,11 @@ public class LanternTileEntity extends BaseComponentHolder implements TileEntity
 
     @Override
     public void setRawData(DataContainer container) throws InvalidDataException {
-        
     }
 
     @Override
     public Map<Key<?>, KeyRegistration> getRawValueMap() {
-        return null;
+        return this.rawValueMap;
     }
 
     @Override
@@ -92,52 +87,14 @@ public class LanternTileEntity extends BaseComponentHolder implements TileEntity
 
     @Override
     public int getContentVersion() {
-        return 0;
+        return 1;
     }
 
     @Override
     public DataContainer toContainer() {
-        return null;
-    }
-
-    @Override
-    public <T extends DataManipulator<?, ?>> Optional<T> get(Class<T> containerClass) {
-        return null;
-    }
-
-    @Override
-    public <T extends DataManipulator<?, ?>> Optional<T> getOrCreate(Class<T> containerClass) {
-        return null;
-    }
-
-    @Override
-    public boolean supports(Class<? extends DataManipulator<?, ?>> holderClass) {
-        return false;
-    }
-
-    @Override
-    public <E> DataTransactionResult offer(Key<? extends BaseValue<E>> key, E value, Cause cause) {
-        return null;
-    }
-
-    @Override
-    public DataTransactionResult offer(DataManipulator<?, ?> valueContainer, MergeFunction function, Cause cause) {
-        return null;
-    }
-
-    @Override
-    public DataTransactionResult remove(Class<? extends DataManipulator<?, ?>> containerClass) {
-        return null;
-    }
-
-    @Override
-    public DataTransactionResult copyFrom(DataHolder that, MergeFunction function) {
-        return null;
-    }
-
-    @Override
-    public Collection<DataManipulator<?, ?>> getContainers() {
-        return null;
+        final DataContainer dataContainer = AbstractDataHolder.super.toContainer();
+        // TODO: Add block position, tile type, etc.
+        return dataContainer;
     }
 
     @Override
