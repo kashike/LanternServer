@@ -25,30 +25,9 @@
  */
 package org.lanternpowered.server.network.entity;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import org.spongepowered.api.entity.Entity;
 
 public abstract class EntityProtocol<E extends Entity> {
-
-    private int parameterIndex;
-
-    /**
-     * Initializes the {@link EntityProtocol}.
-     */
-    protected void initialize() {
-    }
-
-    /**
-     * Creates a new {@link ParameterType}.
-     *
-     * @param valueType The parameter value type
-     * @param <T> The value type
-     * @return The parameter type
-     */
-    protected final <T> ParameterType<T> newParameterType(ParameterValueType<T> valueType) {
-        return new ParameterType<>(checkNotNull(valueType, "valueType"), this.parameterIndex++);
-    }
 
     /**
      * Fills the {@link ParameterList} with parameters to update the {@link Entity} on

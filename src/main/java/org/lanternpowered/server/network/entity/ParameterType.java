@@ -30,7 +30,7 @@ public final class ParameterType<T> {
     private final ParameterValueType<T> valueType;
     final byte index;
 
-    ParameterType(ParameterValueType<T> valueType, int index) {
+    ParameterType(int index, ParameterValueType<T> valueType) {
         this.valueType = valueType;
         this.index = (byte) index;
     }
