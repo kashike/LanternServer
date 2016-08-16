@@ -30,6 +30,10 @@ import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayOu
 
 public class LightningProtocol extends EntityProtocol<LanternLightning> {
 
+    public LightningProtocol(LanternLightning entity) {
+        super(entity);
+    }
+
     @Override
     public void spawn(EntityUpdateContext context) {
         context.sendToAllExceptSelf(new MessagePlayOutSpawnThunderbolt(this.entity.getEntityId(), this.entity.getPosition()));
