@@ -128,7 +128,7 @@ public abstract class AbstractEntityProtocol<E extends LanternEntity> {
         }
 
         for (LanternPlayer tracker : players) {
-            if (!this.isVisible(pos, tracker)) {
+            if (this.isVisible(pos, tracker)) {
                 added.add(tracker);
             }
         }
