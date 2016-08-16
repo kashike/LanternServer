@@ -119,9 +119,7 @@ public abstract class AbstractEntityProtocol<E extends LanternEntity> {
         final Iterator<LanternPlayer> trackerIt = this.trackers.iterator();
         while (trackerIt.hasNext()) {
             final LanternPlayer tracker = trackerIt.next();
-            if (!players.remove(tracker)) {
-                removed.add(tracker);
-            } else if (!this.isVisible(pos, tracker)) {
+            if (!players.remove(tracker) || !this.isVisible(pos, tracker)) {
                 trackerIt.remove();
                 removed.add(tracker);
             }
