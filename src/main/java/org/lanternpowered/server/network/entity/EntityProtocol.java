@@ -32,7 +32,7 @@ import org.lanternpowered.server.entity.LanternEntity;
 import org.lanternpowered.server.entity.living.player.LanternPlayer;
 import org.lanternpowered.server.network.buffer.ByteBuffer;
 import org.lanternpowered.server.network.buffer.ByteBufferAllocator;
-import org.lanternpowered.server.network.message.Message;
+import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayOutDestroyEntities;
 import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayOutEntityHeadLook;
 import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayOutEntityLook;
 import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayOutEntityLookAndRelativeMove;
@@ -43,14 +43,7 @@ import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayOu
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.living.Living;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.annotation.Nullable;
-
-public abstract class EntityProtocol<E extends LanternEntity> {
+public abstract class EntityProtocol<E extends LanternEntity> extends AbstractEntityProtocol<E> {
 
     public static final EntityProtocolType TYPE = new EntityProtocolType();
 
@@ -91,13 +84,6 @@ public abstract class EntityProtocol<E extends LanternEntity> {
      */
     public static final ParameterType<Boolean> NO_GRAVITY = TYPE.newParameterType(ParameterValueTypes.BOOLEAN);
 
-    /**
-     * All the players tracking this entity.
-     */
-    private final Set<LanternPlayer> trackers = new HashSet<>();
-
-    protected E entity;
-
     private double lastX;
     private double lastY;
     private double lastZ;
@@ -111,18 +97,23 @@ public abstract class EntityProtocol<E extends LanternEntity> {
     private double lastVelY;
     private double lastVelZ;
 
-    /**
-     * Adds the {@link LanternPlayer} to track this entity.
-     *
-     * @param player The player
-     */
-    public void track(LanternPlayer player) {
+    public EntityProtocol(E entity) {
+        super(entity);
     }
 
-    /**
-     * Stream the update of the entity to the client.
-     */
-    public void update() {
+    @Override
+    protected boolean isVisible(Vector3d entityPos, LanternPlayer player) {
+        // TODO: Make the distance configurable
+        return entityPos.distanceSquared(player.getPosition()) < 32 * 32;
+    }
+
+    @Override
+    protected void destroy(EntityUpdateContext context) {
+        context.sendToAll(new MessagePlayOutDestroyEntities(new int[] { this.entity.getEntityId() }));
+    }
+
+    @Override
+    public void update(EntityUpdateContext context) {
         final Vector3d rot = this.entity.getRotation();
         final Vector3d headRot = this.entity instanceof Living ? ((Living) this.entity).getHeadRotation() : null;
         final Vector3d pos = this.entity.getPosition();
@@ -135,8 +126,6 @@ public abstract class EntityProtocol<E extends LanternEntity> {
         // All living entities have a head rotation and changing the pitch
         // would only affect the head pitch.
         double pitch = (headRot != null ? headRot : rot).getX();
-
-        final List<Message> messages = new ArrayList<>();
 
         boolean dirtyPos = x != this.lastX || y != this.lastY || z != this.lastZ;
         boolean dirtyRot = yaw != this.lastYaw || z != this.lastPitch;
@@ -160,16 +149,16 @@ public abstract class EntityProtocol<E extends LanternEntity> {
                 int dzu = (int) (dz * 4096);
 
                 if (dirtyRot) {
-                    messages.add(new MessagePlayOutEntityLookAndRelativeMove(entityId,
+                    context.sendToAllExceptSelf(new MessagePlayOutEntityLookAndRelativeMove(entityId,
                             dxu, dyu, dzu, wrapAngle(yaw), wrapAngle(pitch), false));
                     // The rotation is already send
                     dirtyRot = false;
                 } else {
-                    messages.add(new MessagePlayOutEntityRelativeMove(entityId,
+                    context.sendToAllExceptSelf(new MessagePlayOutEntityRelativeMove(entityId,
                             dxu, dyu, dzu, false));
                 }
             } else {
-                messages.add(new MessagePlayOutEntityTeleport(entityId,
+                context.sendToAllExceptSelf(new MessagePlayOutEntityTeleport(entityId,
                         x, y, z, wrapAngle(yaw), wrapAngle(pitch), false));
                 // The rotation is already send
                 dirtyRot = false;
@@ -179,12 +168,12 @@ public abstract class EntityProtocol<E extends LanternEntity> {
             this.lastZ = z;
         }
         if (dirtyRot) {
-            messages.add(new MessagePlayOutEntityLook(entityId, wrapAngle(yaw), wrapAngle(pitch), false));
+            context.sendToAllExceptSelf(new MessagePlayOutEntityLook(entityId, wrapAngle(yaw), wrapAngle(pitch), false));
         }
         if (headRot != null) {
             double headYaw = headRot.getY();
             if (headYaw != this.lastHeadYaw) {
-                messages.add(new MessagePlayOutEntityHeadLook(entityId, wrapAngle(headYaw)));
+                context.sendToAllExceptSelf(new MessagePlayOutEntityHeadLook(entityId, wrapAngle(headYaw)));
             }
             this.lastHeadYaw = yaw;
         }
@@ -193,21 +182,18 @@ public abstract class EntityProtocol<E extends LanternEntity> {
         y = velocity.getY();
         z = velocity.getZ();
         if (x != this.lastVelX || y != this.lastVelY || z != this.lastVelZ) {
-            messages.add(new MessagePlayOutEntityVelocity(entityId, x, y, z));
+            context.sendToAll(new MessagePlayOutEntityVelocity(entityId, x, y, z));
+            this.lastVelX = x;
+            this.lastVelY = y;
+            this.lastVelZ = z;
         }
         final ParameterList parameterList = this.fillParameters(false);
         // There were parameters applied
         if (!parameterList.isEmpty()) {
-            messages.add(new MessagePlayOutEntityMetadata(entityId, parameterList));
+            context.sendToAll(new MessagePlayOutEntityMetadata(entityId, parameterList));
         }
+        // TODO: Update attributes
     }
-
-    /**
-     * Creates a new spawn message for the entity.
-     *
-     * @return The spawn message
-     */
-    public abstract Message newSpawnMessage();
 
     /**
      * Fills a {@link ByteBuffer} with parameters to spawn or update the {@link Entity}.

@@ -25,17 +25,47 @@
  */
 package org.lanternpowered.server.network.entity;
 
-import org.lanternpowered.server.entity.LanternLightning;
-import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayOutSpawnThunderbolt;
+import org.lanternpowered.server.network.message.Message;
+import org.spongepowered.api.entity.living.player.Player;
 
-public class LightningProtocol extends EntityProtocol<LanternLightning> {
+import java.util.function.Supplier;
 
-    @Override
-    public void spawn(EntityUpdateContext context) {
-        context.sendToAllExceptSelf(new MessagePlayOutSpawnThunderbolt(this.entity.getEntityId(), this.entity.getPosition()));
-    }
+public interface EntityUpdateContext {
 
-    @Override
-    public void fill(ParameterList parameterList, boolean initial) {
-    }
+    /**
+     * Sends the {@link Message} to the owner, will only do something
+     * if the owner is a {@link Player}.
+     *
+     * @param message The message
+     */
+    void sendToSelf(Message message);
+
+    /**
+     * Sends the {@link Message} to the owner, will only do something
+     * if the owner is a {@link Player}.
+     *
+     * @param messageSupplier The message supplier
+     */
+    void sendToSelf(Supplier<Message> messageSupplier);
+
+    /**
+     * Sends the {@link Message} to all the trackers.
+     *
+     * @param message The message
+     */
+    void sendToAll(Message message);
+
+    /**
+     * Sends the {@link Message} to all the trackers except the owner.
+     *
+     * @param message The message
+     */
+    void sendToAllExceptSelf(Message message);
+
+    /**
+     * Sends the {@link Message} to all the trackers except the owner.
+     *
+     * @param messageSupplier The message supplier
+     */
+    void sendToAllExceptSelf(Supplier<Message> messageSupplier);
 }

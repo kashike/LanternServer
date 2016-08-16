@@ -23,34 +23,41 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lanternpowered.server.network.vanilla.message.codec.play;
+package org.lanternpowered.server.network.entity;
+
+import static org.lanternpowered.server.network.vanilla.message.codec.play.CodecUtils.wrapAngle;
 
 import com.flowpowered.math.vector.Vector3d;
-import io.netty.handler.codec.CodecException;
-import org.lanternpowered.server.network.buffer.ByteBuffer;
-import org.lanternpowered.server.network.message.codec.Codec;
-import org.lanternpowered.server.network.message.codec.CodecContext;
+import org.lanternpowered.server.entity.LanternEntity;
+import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayOutEntityMetadata;
 import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayOutSpawnObject;
 
-public final class CodecPlayOutSpawnObject implements Codec<MessagePlayOutSpawnObject> {
+public abstract class ObjectEntityProtocol<E extends LanternEntity> extends EntityProtocol<E> {
+
+    public ObjectEntityProtocol(E entity) {
+        super(entity);
+    }
+
+    protected abstract int getObjectType();
+
+    protected abstract int getObjectData();
 
     @Override
-    public ByteBuffer encode(CodecContext context, MessagePlayOutSpawnObject message) throws CodecException {
-        ByteBuffer buf = context.byteBufAlloc().buffer();
-        buf.writeVarInt(message.getEntityId());
-        buf.writeUniqueId(message.getUniqueId());
-        buf.writeByte((byte) message.getObjectType());
-        Vector3d vector = message.getPosition();
-        buf.writeDouble(vector.getX());
-        buf.writeDouble(vector.getY());
-        buf.writeDouble(vector.getZ());
-        buf.writeByte((byte) message.getPitch());
-        buf.writeByte((byte) message.getYaw());
-        buf.writeInteger(message.getObjectData());
-        vector = message.getVelocity();
-        buf.writeShort((short) Math.min(vector.getX() * 8000.0, Short.MAX_VALUE));
-        buf.writeShort((short) Math.min(vector.getY() * 8000.0, Short.MAX_VALUE));
-        buf.writeShort((short) Math.min(vector.getZ() * 8000.0, Short.MAX_VALUE));
-        return buf;
+    public void spawn(EntityUpdateContext context) {
+        final int entityId = this.entity.getEntityId();
+
+        final Vector3d rot = this.entity.getRotation();
+        final Vector3d pos = this.entity.getPosition();
+        final Vector3d vel = this.entity.getVelocity();
+
+        double yaw = rot.getY();
+        double pitch = rot.getX();
+
+        context.sendToAllExceptSelf(() -> new MessagePlayOutSpawnObject(entityId, this.entity.getUniqueId(),
+                this.getObjectType(), this.getObjectData(), pos, wrapAngle(yaw), wrapAngle(pitch), vel));
+        final ParameterList parameterList = this.fillParameters(true);
+        if (!parameterList.isEmpty()) {
+            context.sendToAll(new MessagePlayOutEntityMetadata(entityId, parameterList));
+        }
     }
 }
