@@ -23,15 +23,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lanternpowered.server.network.entity;
+package org.lanternpowered.server.network.entity.vanilla;
 
 import static org.lanternpowered.server.network.vanilla.message.codec.play.CodecUtils.wrapAngle;
 
 import com.flowpowered.math.vector.Vector3d;
 import org.lanternpowered.server.entity.LanternEntity;
-import org.lanternpowered.server.entity.living.player.LanternPlayer;
 import org.lanternpowered.server.network.buffer.ByteBuffer;
 import org.lanternpowered.server.network.buffer.ByteBufferAllocator;
+import org.lanternpowered.server.network.entity.AbstractEntityProtocol;
+import org.lanternpowered.server.network.entity.ByteBufParameterList;
+import org.lanternpowered.server.network.entity.EntityUpdateContext;
+import org.lanternpowered.server.network.entity.ParameterList;
+import org.lanternpowered.server.network.entity.ParameterType;
+import org.lanternpowered.server.network.entity.ParameterTypeCollection;
+import org.lanternpowered.server.network.entity.ParameterValueTypes;
 import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayOutDestroyEntities;
 import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayOutEntityHeadLook;
 import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayOutEntityLook;
@@ -45,7 +51,7 @@ import org.spongepowered.api.entity.living.Living;
 
 public abstract class EntityProtocol<E extends LanternEntity> extends AbstractEntityProtocol<E> {
 
-    public static final EntityProtocolType TYPE = new EntityProtocolType();
+    public static final ParameterTypeCollection TYPE = new ParameterTypeCollection();
 
     /**
      * Bit mask Meaning
@@ -99,12 +105,6 @@ public abstract class EntityProtocol<E extends LanternEntity> extends AbstractEn
 
     public EntityProtocol(E entity) {
         super(entity);
-    }
-
-    @Override
-    protected boolean isVisible(Vector3d entityPos, LanternPlayer player) {
-        // TODO: Make the distance configurable
-        return entityPos.distanceSquared(player.getPosition()) < 32 * 32;
     }
 
     @Override

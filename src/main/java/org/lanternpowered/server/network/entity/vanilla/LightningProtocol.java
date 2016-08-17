@@ -23,41 +23,26 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lanternpowered.server.network.entity;
+package org.lanternpowered.server.network.entity.vanilla;
 
-import static org.lanternpowered.server.network.vanilla.message.codec.play.CodecUtils.wrapAngle;
+import org.lanternpowered.server.entity.LanternLightning;
+import org.lanternpowered.server.entity.living.player.LanternPlayer;
+import org.lanternpowered.server.network.entity.EntityUpdateContext;
+import org.lanternpowered.server.network.entity.ParameterList;
+import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayOutSpawnThunderbolt;
 
-import com.flowpowered.math.vector.Vector3d;
-import org.lanternpowered.server.entity.LanternEntity;
-import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayOutEntityMetadata;
-import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayOutSpawnObject;
+public class LightningProtocol extends EntityProtocol<LanternLightning> {
 
-public abstract class ObjectEntityProtocol<E extends LanternEntity> extends EntityProtocol<E> {
-
-    public ObjectEntityProtocol(E entity) {
+    public LightningProtocol(LanternLightning entity) {
         super(entity);
     }
 
-    protected abstract int getObjectType();
-
-    protected abstract int getObjectData();
-
     @Override
     public void spawn(EntityUpdateContext context) {
-        final int entityId = this.entity.getEntityId();
+        context.sendToAllExceptSelf(new MessagePlayOutSpawnThunderbolt(this.entity.getEntityId(), this.entity.getPosition()));
+    }
 
-        final Vector3d rot = this.entity.getRotation();
-        final Vector3d pos = this.entity.getPosition();
-        final Vector3d vel = this.entity.getVelocity();
-
-        double yaw = rot.getY();
-        double pitch = rot.getX();
-
-        context.sendToAllExceptSelf(() -> new MessagePlayOutSpawnObject(entityId, this.entity.getUniqueId(),
-                this.getObjectType(), this.getObjectData(), pos, wrapAngle(yaw), wrapAngle(pitch), vel));
-        final ParameterList parameterList = this.fillParameters(true);
-        if (!parameterList.isEmpty()) {
-            context.sendToAll(new MessagePlayOutEntityMetadata(entityId, parameterList));
-        }
+    @Override
+    public void fill(ParameterList parameterList, boolean initial) {
     }
 }

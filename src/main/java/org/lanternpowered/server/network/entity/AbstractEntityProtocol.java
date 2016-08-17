@@ -41,12 +41,24 @@ public abstract class AbstractEntityProtocol<E extends LanternEntity> {
     /**
      * All the players tracking this entity.
      */
-    private Set<LanternPlayer> trackers = new HashSet<>();
+    private final Set<LanternPlayer> trackers = new HashSet<>();
 
     /**
      * The entity that is being tracked.
      */
     protected final E entity;
+
+    /**
+     * The amount of ticks between every update.
+     */
+    private int tickRate = 4;
+
+    /**
+     * The tracking range of the entity.
+     */
+    private double trackingRange = 64;
+
+    int tickCounter = 0;
 
     public AbstractEntityProtocol(E entity) {
         this.entity = entity;
@@ -90,6 +102,42 @@ public abstract class AbstractEntityProtocol<E extends LanternEntity> {
     }
 
     /**
+     * Sets the tick rate of this entity protocol.
+     *
+     * @param tickRate The tick rate
+     */
+    public void setTickRate(int tickRate) {
+        this.tickRate = tickRate;
+    }
+
+    /**
+     * Gets the tick rate of this entity protocol.
+     *
+     * @return The tick rate
+     */
+    public int getTickRate() {
+        return this.tickRate;
+    }
+
+    /**
+     * Gets the tracking range of the entity.
+     *
+     * @return The tracking range
+     */
+    public double getTrackingRange() {
+        return this.trackingRange;
+    }
+
+    /**
+     * Sets the tracking range of the entity.
+     *
+     * @param trackingRange The tracking range
+     */
+    public void setTrackingRange(double trackingRange) {
+        this.trackingRange = trackingRange;
+    }
+
+    /**
      * Destroys the entity. This removes all the trackers and sends a destroy
      * message to the client.
      */
@@ -103,6 +151,17 @@ public abstract class AbstractEntityProtocol<E extends LanternEntity> {
     }
 
     /**
+     * Post updates the trackers of the entity.
+     */
+    void postUpdateTrackers() {
+        if (!this.trackers.isEmpty()) {
+            final SimpleEntityProtocolContext ctx = new SimpleEntityProtocolContext();
+            ctx.trackers = this.trackers;
+            this.destroy(ctx);
+        }
+    }
+
+    /**
      * Updates the trackers of the entity. The players list contains all the players that
      * are in the same world of the entities.
      *
@@ -110,7 +169,12 @@ public abstract class AbstractEntityProtocol<E extends LanternEntity> {
      *
      * @param players The players
      */
-    public void updateTrackers(Set<LanternPlayer> players) {
+    void updateTrackers(Set<LanternPlayer> players) {
+        players = new HashSet<>(players);
+        if (this.entity instanceof LanternPlayer) {
+            players.remove(this.entity);
+        }
+
         final Set<LanternPlayer> removed = new HashSet<>();
         final Set<LanternPlayer> added = new HashSet<>();
 
@@ -159,14 +223,19 @@ public abstract class AbstractEntityProtocol<E extends LanternEntity> {
         }
     }
 
+    private boolean isVisible(Vector3d pos, LanternPlayer tracker) {
+        return pos.distanceSquared(tracker.getPosition()) < this.trackingRange * this.trackingRange && this.isVisible(tracker);
+    }
+
     /**
      * Gets whether the tracked entity is visible for the tracker.
      *
-     * @param entityPosition The position of the entity
      * @param tracker The tracker
      * @return Whether the tracker can see the entity
      */
-    protected abstract boolean isVisible(Vector3d entityPosition, LanternPlayer tracker);
+    protected boolean isVisible(LanternPlayer tracker) {
+        return true;
+    }
 
     /**
      * Spawns the tracked entity.
@@ -188,4 +257,13 @@ public abstract class AbstractEntityProtocol<E extends LanternEntity> {
      * @param context The entity update context
      */
     protected abstract void update(EntityUpdateContext context);
+
+    /**
+     * Post updates the tracked entity. This method will be called after
+     * all the entities that were pending for updates/spawns are processed.
+     *
+     * @param context The entity update context
+     */
+    protected void postUpdate(EntityUpdateContext context) {
+    }
 }

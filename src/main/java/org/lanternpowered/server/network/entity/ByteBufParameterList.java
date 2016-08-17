@@ -28,6 +28,8 @@ package org.lanternpowered.server.network.entity;
 import org.lanternpowered.server.network.buffer.ByteBuffer;
 import org.lanternpowered.server.network.buffer.ByteBufferAllocator;
 
+import javax.annotation.Nullable;
+
 /**
  * A {@link ParameterList} which writes the content directly to
  * a {@link ByteBuffer}. The value of a specific {@link ParameterType}
@@ -37,7 +39,7 @@ import org.lanternpowered.server.network.buffer.ByteBufferAllocator;
 public class ByteBufParameterList extends AbstractParameterList {
 
     private final ByteBufferAllocator byteBufAllocator;
-    private ByteBuffer buf;
+    @Nullable private ByteBuffer buf;
 
     public ByteBufParameterList(ByteBufferAllocator byteBufAllocator) {
         this.byteBufAllocator = byteBufAllocator;

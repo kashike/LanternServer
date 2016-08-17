@@ -23,23 +23,5 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+@org.spongepowered.api.util.annotation.NonnullByDefault
 package org.lanternpowered.server.network.entity;
-
-import org.lanternpowered.server.entity.LanternLightning;
-import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayOutSpawnThunderbolt;
-
-public class LightningProtocol extends EntityProtocol<LanternLightning> {
-
-    public LightningProtocol(LanternLightning entity) {
-        super(entity);
-    }
-
-    @Override
-    public void spawn(EntityUpdateContext context) {
-        context.sendToAllExceptSelf(new MessagePlayOutSpawnThunderbolt(this.entity.getEntityId(), this.entity.getPosition()));
-    }
-
-    @Override
-    public void fill(ParameterList parameterList, boolean initial) {
-    }
-}

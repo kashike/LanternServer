@@ -23,17 +23,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lanternpowered.server.network.entity;
+package org.lanternpowered.server.network.entity.vanilla;
 
 import static org.lanternpowered.server.network.vanilla.message.codec.play.CodecUtils.wrapAngle;
 
 import com.flowpowered.math.vector.Vector3d;
 import org.lanternpowered.server.entity.LanternEntityLiving;
+import org.lanternpowered.server.network.entity.ParameterTypeCollection;
+import org.lanternpowered.server.network.entity.EntityUpdateContext;
+import org.lanternpowered.server.network.entity.ParameterType;
+import org.lanternpowered.server.network.entity.ParameterValueTypes;
 import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayOutSpawnMob;
 
 public abstract class LivingEntityProtocol<E extends LanternEntityLiving> extends EntityProtocol<E> {
 
-    public static final EntityProtocolType TYPE = EntityProtocol.TYPE.copy();
+    public static final ParameterTypeCollection TYPE = EntityProtocol.TYPE.copy();
 
     /**
      * Bit mask Meaning
