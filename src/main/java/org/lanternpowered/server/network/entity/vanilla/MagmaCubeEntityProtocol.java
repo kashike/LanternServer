@@ -26,13 +26,15 @@
 package org.lanternpowered.server.network.entity.vanilla;
 
 import org.lanternpowered.server.entity.LanternEntityLiving;
-import org.lanternpowered.server.network.entity.parameter.ParameterType;
-import org.lanternpowered.server.network.entity.parameter.ParameterTypeCollection;
-import org.lanternpowered.server.network.entity.parameter.ParameterValueTypes;
 
-public abstract class LivingEntityProtocol<E extends LanternEntityLiving> extends EntityProtocol<E> {
+public class MagmaCubeEntityProtocol<E extends LanternEntityLiving> extends SlimeEntityProtocol<E> {
 
-    public LivingEntityProtocol(E entity) {
+    public MagmaCubeEntityProtocol(E entity) {
         super(entity);
+    }
+
+    @Override
+    protected int getMobType() {
+        return 62;
     }
 }

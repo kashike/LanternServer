@@ -42,6 +42,6 @@ public class LightningProtocol<E extends LanternEntity> extends EntityProtocol<E
     }
 
     @Override
-    public void fill(ParameterList parameterList, boolean initial) {
+    public void spawn(ParameterList parameterList) {
     }
 }

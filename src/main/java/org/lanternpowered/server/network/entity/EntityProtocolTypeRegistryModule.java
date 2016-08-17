@@ -23,16 +23,25 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lanternpowered.server.network.entity.vanilla;
+package org.lanternpowered.server.network.entity;
 
+import org.lanternpowered.server.entity.LanternEntity;
 import org.lanternpowered.server.entity.LanternEntityLiving;
-import org.lanternpowered.server.network.entity.parameter.ParameterType;
-import org.lanternpowered.server.network.entity.parameter.ParameterTypeCollection;
-import org.lanternpowered.server.network.entity.parameter.ParameterValueTypes;
+import org.lanternpowered.server.game.registry.PluginCatalogRegistryModule;
+import org.lanternpowered.server.network.entity.vanilla.LightningProtocol;
+import org.lanternpowered.server.network.entity.vanilla.MagmaCubeEntityProtocol;
+import org.lanternpowered.server.network.entity.vanilla.SlimeEntityProtocol;
 
-public abstract class LivingEntityProtocol<E extends LanternEntityLiving> extends EntityProtocol<E> {
+public class EntityProtocolTypeRegistryModule extends PluginCatalogRegistryModule<EntityProtocolType> {
 
-    public LivingEntityProtocol(E entity) {
-        super(entity);
+    public EntityProtocolTypeRegistryModule() {
+        super(null);
+    }
+
+    @Override
+    public void registerDefaults() {
+        this.register(new EntityProtocolType<>("minecraft", "lightning", LanternEntity.class, LightningProtocol::new));
+        this.register(new EntityProtocolType<>("minecraft", "slime", LanternEntityLiving.class, SlimeEntityProtocol::new));
+        this.register(new EntityProtocolType<>("minecraft", "magma_cube", LanternEntityLiving.class, MagmaCubeEntityProtocol::new));
     }
 }

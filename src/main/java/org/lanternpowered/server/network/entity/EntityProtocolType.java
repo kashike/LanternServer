@@ -27,29 +27,23 @@ package org.lanternpowered.server.network.entity;
 
 import org.lanternpowered.server.catalog.PluginCatalogType;
 import org.lanternpowered.server.entity.LanternEntity;
+import org.spongepowered.api.util.annotation.CatalogedBy;
 
 import java.util.function.Function;
 
 public final class EntityProtocolType<E extends LanternEntity, P extends AbstractEntityProtocol<E>> extends PluginCatalogType.Base {
 
     private final Class<E> entityType;
-    private final Class<P> entityProtocolType;
     private final Function<E, P> entityProtocolSupplier;
 
-    public EntityProtocolType(String pluginId, String name, Class<E> entityType,
-            Class<P> entityProtocolType, Function<E, P> entityProtocolSupplier) {
+    public EntityProtocolType(String pluginId, String name, Class<E> entityType, Function<E, P> entityProtocolSupplier) {
         super(pluginId, name);
         this.entityType = entityType;
-        this.entityProtocolType = entityProtocolType;
         this.entityProtocolSupplier = entityProtocolSupplier;
     }
 
     public Class<E> getEntityType() {
         return this.entityType;
-    }
-
-    public Class<P> getEntityProtocolType() {
-        return this.entityProtocolType;
     }
 
     public Function<E, P> getEntityProtocolSupplier() {
