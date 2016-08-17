@@ -23,18 +23,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lanternpowered.server.entity;
+package org.lanternpowered.server.network.entity.parameter;
 
-import org.spongepowered.api.entity.weather.Lightning;
+public final class ParameterType<T> {
 
-public class LanternLightning extends LanternEntity implements Lightning {
+    private final ParameterValueType<T> valueType;
+    final byte index;
 
-    @Override
-    public boolean isEffect() {
-        return false;
+    ParameterType(int index, ParameterValueType<T> valueType) {
+        this.valueType = valueType;
+        this.index = (byte) index;
     }
 
-    @Override
-    public void setEffect(boolean effect) {
+    public ParameterValueType<T> getValueType() {
+        return this.valueType;
+    }
+
+    public int getIndex() {
+        return this.index;
     }
 }

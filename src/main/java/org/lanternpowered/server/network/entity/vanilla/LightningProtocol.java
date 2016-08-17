@@ -25,15 +25,14 @@
  */
 package org.lanternpowered.server.network.entity.vanilla;
 
-import org.lanternpowered.server.entity.LanternLightning;
-import org.lanternpowered.server.entity.living.player.LanternPlayer;
+import org.lanternpowered.server.entity.LanternEntity;
 import org.lanternpowered.server.network.entity.EntityUpdateContext;
-import org.lanternpowered.server.network.entity.ParameterList;
+import org.lanternpowered.server.network.entity.parameter.ParameterList;
 import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayOutSpawnThunderbolt;
 
-public class LightningProtocol extends EntityProtocol<LanternLightning> {
+public class LightningProtocol<E extends LanternEntity> extends EntityProtocol<E> {
 
-    public LightningProtocol(LanternLightning entity) {
+    public LightningProtocol(E entity) {
         super(entity);
     }
 

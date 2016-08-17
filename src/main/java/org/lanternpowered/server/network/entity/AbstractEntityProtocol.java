@@ -89,6 +89,13 @@ public abstract class AbstractEntityProtocol<E extends LanternEntity> {
         }
 
         @Override
+        public void sendToAll(Supplier<Message> message) {
+            if (entity instanceof Player || !this.trackers.isEmpty()) {
+                this.sendToAll(message.get());
+            }
+        }
+
+        @Override
         public void sendToAllExceptSelf(Message message) {
             this.trackers.forEach(tracker -> tracker.getConnection().send(message));
         }
@@ -203,7 +210,11 @@ public abstract class AbstractEntityProtocol<E extends LanternEntity> {
             final SimpleEntityProtocolContext ctx = new SimpleEntityProtocolContext();
 
             // Stream updates to players that are already tracking
-            if (flag0) {
+            // The entity tracker should also be updated when the
+            // a entity is being spawned, because all the fields to
+            // check the changes should be updated, even if there is
+            // not a player to track them yet
+            if (flag0 || flag1) {
                 ctx.trackers = this.trackers;
                 this.update(ctx);
             }

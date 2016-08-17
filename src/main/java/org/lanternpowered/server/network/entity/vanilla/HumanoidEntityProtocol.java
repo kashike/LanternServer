@@ -55,9 +55,9 @@ public class HumanoidEntityProtocol<E extends LanternEntityHumanoid> extends Liv
 
         context.sendToAllExceptSelf(() -> new MessagePlayOutSpawnPlayer(this.entity.getEntityId(), this.entity.getUniqueId(),
                 pos, wrapAngle(yaw), wrapAngle(headPitch), this.fillParameters(true)));
-        context.sendToAllExceptSelf(new MessagePlayOutEntityHeadLook(entityId, wrapAngle(headYaw)));
+        context.sendToAllExceptSelf(() -> new MessagePlayOutEntityHeadLook(entityId, wrapAngle(headYaw)));
         if (!vel.equals(Vector3d.ZERO)) {
-            context.sendToAllExceptSelf(new MessagePlayOutEntityVelocity(entityId, vel.getX(), vel.getY(), vel.getZ()));
+            context.sendToAllExceptSelf(() -> new MessagePlayOutEntityVelocity(entityId, vel.getX(), vel.getY(), vel.getZ()));
         }
     }
 }

@@ -23,26 +23,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lanternpowered.server.network.vanilla.message.type.play;
+package org.lanternpowered.server.entity.weather;
 
-import org.lanternpowered.server.network.entity.parameter.ParameterList;
-import org.lanternpowered.server.network.message.Message;
+import org.lanternpowered.server.entity.LanternEntity;
 
-public final class MessagePlayOutEntityMetadata implements Message {
+public class LanternLightning extends LanternEntity implements AbstractLightning {
 
-    private final int entityId;
-    private final ParameterList parameterList;
-
-    public MessagePlayOutEntityMetadata(int entityId, ParameterList parameterList) {
-        this.parameterList = parameterList;
-        this.entityId = entityId;
-    }
-
-    public int getEntityId() {
-        return this.entityId;
-    }
-
-    public ParameterList getParameterList() {
-        return this.parameterList;
-    }
 }

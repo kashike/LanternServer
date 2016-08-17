@@ -23,7 +23,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lanternpowered.server.network.entity;
+package org.lanternpowered.server.network.entity.parameter;
 
 import org.lanternpowered.server.network.buffer.ByteBuffer;
 

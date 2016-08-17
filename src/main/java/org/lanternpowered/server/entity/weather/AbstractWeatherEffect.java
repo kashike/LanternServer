@@ -23,27 +23,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lanternpowered.server.network.entity;
+package org.lanternpowered.server.entity.weather;
 
-public interface ParameterList {
+import org.lanternpowered.server.data.key.LanternKeys;
+import org.spongepowered.api.entity.weather.WeatherEffect;
 
-    boolean isEmpty();
+public interface AbstractWeatherEffect extends WeatherEffect {
 
-    <T> void add(ParameterType<T> type, T value);
-
-    default void add(ParameterType<Byte> type, byte value) {
-        this.add(type, (Byte) value);
+    @Override
+    default boolean isEffect() {
+        return get(LanternKeys.IS_EFFECT).get();
     }
 
-    default void add(ParameterType<Integer> type, int value) {
-        this.add(type, (Integer) value);
-    }
-
-    default void add(ParameterType<Float> type, float value) {
-        this.add(type, (Float) value);
-    }
-
-    default void add(ParameterType<Boolean> type, boolean value) {
-        this.add(type, (Boolean) value);
+    @Override
+    default void setEffect(boolean effect) {
+        offer(LanternKeys.IS_EFFECT, effect);
     }
 }

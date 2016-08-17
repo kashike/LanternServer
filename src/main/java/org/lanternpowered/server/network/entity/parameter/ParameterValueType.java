@@ -23,16 +23,20 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lanternpowered.server.network.entity;
+package org.lanternpowered.server.network.entity.parameter;
 
 import org.lanternpowered.server.network.buffer.ByteBuffer;
 
-public abstract class ParameterValueType<T> {
+import java.util.function.BiConsumer;
+
+public final class ParameterValueType<T> {
 
     private final byte internalId;
+    private final BiConsumer<ByteBuffer, T> serializer;
 
-    ParameterValueType(int internalId) {
+    ParameterValueType(int internalId, BiConsumer<ByteBuffer, T> serializer) {
         this.internalId = (byte) internalId;
+        this.serializer = serializer;
     }
 
     /**
@@ -50,5 +54,8 @@ public abstract class ParameterValueType<T> {
      * @param buf The target byte buffer
      * @param value The value
      */
-    abstract void serialize(ByteBuffer buf, T value);
+    void serialize(ByteBuffer buf, T value) {
+        this.serializer.accept(buf, value);
+    }
+
 }

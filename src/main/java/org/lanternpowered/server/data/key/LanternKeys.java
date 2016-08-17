@@ -45,4 +45,6 @@ public class LanternKeys {
             makeMutableBoundedValueKey(Double.class, DataQuery.of("AbsorptionAmount"), "lantern:absorption_amount");
     public static final Key<Value<Boolean>> CAN_PICK_UP_LOOT =
             makeValueKey(Boolean.class, DataQuery.of("CanPickupLoot"), "lantern:can_pickup_loot");
+    public static final Key<Value<Boolean>> IS_EFFECT =
+            makeValueKey(Boolean.class, DataQuery.of("IsEffect"), "lantern:is_effect");
 }

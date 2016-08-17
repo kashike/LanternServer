@@ -23,43 +23,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lanternpowered.server.network.entity;
+package org.lanternpowered.server.entity.weather;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import org.spongepowered.api.entity.weather.Lightning;
 
-import java.util.ArrayList;
-import java.util.List;
+public interface AbstractLightning extends AbstractWeatherEffect, Lightning {
 
-public final class ParameterTypeCollection {
-
-    private final List<ParameterType<?>> parameterTypes;
-
-    public ParameterTypeCollection() {
-        this(new ArrayList<>());
-    }
-
-    private ParameterTypeCollection(List<ParameterType<?>> parameterTypes) {
-        this.parameterTypes = parameterTypes;
-    }
-
-    /**
-     * Copies this {@link ParameterTypeCollection}.
-     */
-    public ParameterTypeCollection copy() {
-        return new ParameterTypeCollection(new ArrayList<>(this.parameterTypes));
-    }
-
-    /**
-     * Creates a new {@link ParameterType}.
-     *
-     * @param valueType The parameter value type
-     * @param <T> The value type
-     * @return The parameter type
-     */
-    public <T> ParameterType<T> newParameterType(ParameterValueType<T> valueType) {
-        final ParameterType<T> parameterType = new ParameterType<>(
-                this.parameterTypes.size(), checkNotNull(valueType, "valueType"));
-        this.parameterTypes.add(parameterType);
-        return parameterType;
-    }
 }

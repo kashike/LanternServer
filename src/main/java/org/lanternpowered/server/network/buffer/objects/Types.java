@@ -27,34 +27,23 @@ package org.lanternpowered.server.network.buffer.objects;
 
 import com.flowpowered.math.vector.Vector3f;
 import com.flowpowered.math.vector.Vector3i;
-import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import io.netty.handler.codec.CodecException;
 import io.netty.handler.codec.DecoderException;
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import org.lanternpowered.server.game.Lantern;
-import org.lanternpowered.server.game.registry.type.block.BlockRegistryModule;
 import org.lanternpowered.server.game.registry.type.item.ItemRegistryModule;
 import org.lanternpowered.server.inventory.LanternItemStack;
 import org.lanternpowered.server.network.buffer.ByteBuffer;
 import org.lanternpowered.server.network.objects.LocalizedText;
-import org.lanternpowered.server.network.entity.ParameterValueType;
-import org.lanternpowered.server.network.entity.ParameterValueTypes;
 import org.lanternpowered.server.network.objects.RawItemStack;
 import org.lanternpowered.server.text.gson.JsonTextSerializer;
 import org.lanternpowered.server.text.gson.JsonTextTranslatableSerializer;
-import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.data.DataView;
 import org.spongepowered.api.item.ItemType;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.text.Text;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
 public final class Types {
 

@@ -30,7 +30,7 @@ import static org.lanternpowered.server.network.vanilla.message.codec.play.Codec
 import com.flowpowered.math.vector.Vector3d;
 import org.lanternpowered.server.entity.LanternEntity;
 import org.lanternpowered.server.network.entity.EntityUpdateContext;
-import org.lanternpowered.server.network.entity.ParameterList;
+import org.lanternpowered.server.network.entity.parameter.ParameterList;
 import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayOutEntityMetadata;
 import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayOutSpawnObject;
 

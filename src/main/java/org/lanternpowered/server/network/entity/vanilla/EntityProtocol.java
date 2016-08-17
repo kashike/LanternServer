@@ -32,12 +32,12 @@ import org.lanternpowered.server.entity.LanternEntity;
 import org.lanternpowered.server.network.buffer.ByteBuffer;
 import org.lanternpowered.server.network.buffer.ByteBufferAllocator;
 import org.lanternpowered.server.network.entity.AbstractEntityProtocol;
-import org.lanternpowered.server.network.entity.ByteBufParameterList;
+import org.lanternpowered.server.network.entity.parameter.ByteBufParameterList;
 import org.lanternpowered.server.network.entity.EntityUpdateContext;
-import org.lanternpowered.server.network.entity.ParameterList;
-import org.lanternpowered.server.network.entity.ParameterType;
-import org.lanternpowered.server.network.entity.ParameterTypeCollection;
-import org.lanternpowered.server.network.entity.ParameterValueTypes;
+import org.lanternpowered.server.network.entity.parameter.ParameterList;
+import org.lanternpowered.server.network.entity.parameter.ParameterType;
+import org.lanternpowered.server.network.entity.parameter.ParameterTypeCollection;
+import org.lanternpowered.server.network.entity.parameter.ParameterValueTypes;
 import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayOutDestroyEntities;
 import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayOutEntityHeadLook;
 import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayOutEntityLook;
@@ -51,7 +51,7 @@ import org.spongepowered.api.entity.living.Living;
 
 public abstract class EntityProtocol<E extends LanternEntity> extends AbstractEntityProtocol<E> {
 
-    public static final ParameterTypeCollection TYPE = new ParameterTypeCollection();
+    public static final ParameterTypeCollection PARAMETERS = new ParameterTypeCollection();
 
     /**
      * Bit mask Meaning
@@ -63,32 +63,32 @@ public abstract class EntityProtocol<E extends LanternEntity> extends AbstractEn
      * 0x40	    Glowing effect
      * 0x80	    Flying with elytra
      */
-    public static final ParameterType<Byte> BASE_DATA = TYPE.newParameterType(ParameterValueTypes.BYTE);
+    public static final ParameterType<Byte> BASE_DATA = PARAMETERS.newParameterType(ParameterValueTypes.BYTE);
 
     /**
      * The air level of the entity.
      */
-    public static final ParameterType<Integer> AIR_LEVEL = TYPE.newParameterType(ParameterValueTypes.INTEGER);
+    public static final ParameterType<Integer> AIR_LEVEL = PARAMETERS.newParameterType(ParameterValueTypes.INTEGER);
 
     /**
      * The custom name of the entity.
      */
-    public static final ParameterType<String> CUSTOM_NAME = TYPE.newParameterType(ParameterValueTypes.STRING);
+    public static final ParameterType<String> CUSTOM_NAME = PARAMETERS.newParameterType(ParameterValueTypes.STRING);
 
     /**
      * Whether the custom name is always visible.
      */
-    public static final ParameterType<Boolean> CUSTOM_NAME_VISIBLE = TYPE.newParameterType(ParameterValueTypes.BOOLEAN);
+    public static final ParameterType<Boolean> CUSTOM_NAME_VISIBLE = PARAMETERS.newParameterType(ParameterValueTypes.BOOLEAN);
 
     /**
      * Whether the entity is silent.
      */
-    public static final ParameterType<Boolean> IS_SILENT = TYPE.newParameterType(ParameterValueTypes.BOOLEAN);
+    public static final ParameterType<Boolean> IS_SILENT = PARAMETERS.newParameterType(ParameterValueTypes.BOOLEAN);
 
     /**
      * Whether the entity has no gravity.
      */
-    public static final ParameterType<Boolean> NO_GRAVITY = TYPE.newParameterType(ParameterValueTypes.BOOLEAN);
+    public static final ParameterType<Boolean> NO_GRAVITY = PARAMETERS.newParameterType(ParameterValueTypes.BOOLEAN);
 
     private double lastX;
     private double lastY;
@@ -118,14 +118,14 @@ public abstract class EntityProtocol<E extends LanternEntity> extends AbstractEn
         final Vector3d headRot = this.entity instanceof Living ? ((Living) this.entity).getHeadRotation() : null;
         final Vector3d pos = this.entity.getPosition();
 
-        double x = pos.getX();
-        double y = pos.getY();
-        double z = pos.getZ();
+        final double x = pos.getX();
+        final double y = pos.getY();
+        final double z = pos.getZ();
 
-        double yaw = rot.getY();
+        final double yaw = rot.getY();
         // All living entities have a head rotation and changing the pitch
         // would only affect the head pitch.
-        double pitch = (headRot != null ? headRot : rot).getX();
+        final double pitch = (headRot != null ? headRot : rot).getX();
 
         boolean dirtyPos = x != this.lastX || y != this.lastY || z != this.lastZ;
         boolean dirtyRot = yaw != this.lastYaw || z != this.lastPitch;
@@ -168,29 +168,29 @@ public abstract class EntityProtocol<E extends LanternEntity> extends AbstractEn
             this.lastZ = z;
         }
         if (dirtyRot) {
-            context.sendToAllExceptSelf(new MessagePlayOutEntityLook(entityId, wrapAngle(yaw), wrapAngle(pitch), false));
+            context.sendToAllExceptSelf(() -> new MessagePlayOutEntityLook(entityId, wrapAngle(yaw), wrapAngle(pitch), false));
         }
         if (headRot != null) {
             double headYaw = headRot.getY();
             if (headYaw != this.lastHeadYaw) {
-                context.sendToAllExceptSelf(new MessagePlayOutEntityHeadLook(entityId, wrapAngle(headYaw)));
+                context.sendToAllExceptSelf(() -> new MessagePlayOutEntityHeadLook(entityId, wrapAngle(headYaw)));
             }
             this.lastHeadYaw = yaw;
         }
         final Vector3d velocity = this.entity.getVelocity();
-        x = velocity.getX();
-        y = velocity.getY();
-        z = velocity.getZ();
-        if (x != this.lastVelX || y != this.lastVelY || z != this.lastVelZ) {
-            context.sendToAll(new MessagePlayOutEntityVelocity(entityId, x, y, z));
-            this.lastVelX = x;
-            this.lastVelY = y;
-            this.lastVelZ = z;
+        final double vx = velocity.getX();
+        final double vy = velocity.getY();
+        final double vz = velocity.getZ();
+        if (vx != this.lastVelX || vy != this.lastVelY || vz != this.lastVelZ) {
+            context.sendToAll(() -> new MessagePlayOutEntityVelocity(entityId, vx, vy, vz));
+            this.lastVelX = vx;
+            this.lastVelY = vy;
+            this.lastVelZ = vz;
         }
         final ParameterList parameterList = this.fillParameters(false);
         // There were parameters applied
         if (!parameterList.isEmpty()) {
-            context.sendToAll(new MessagePlayOutEntityMetadata(entityId, parameterList));
+            context.sendToAll(() -> new MessagePlayOutEntityMetadata(entityId, parameterList));
         }
         // TODO: Update attributes
     }

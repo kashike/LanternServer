@@ -23,26 +23,27 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lanternpowered.server.network.vanilla.message.type.play;
+package org.lanternpowered.server.network.entity.parameter;
 
-import org.lanternpowered.server.network.entity.parameter.ParameterList;
-import org.lanternpowered.server.network.message.Message;
+public interface ParameterList {
 
-public final class MessagePlayOutEntityMetadata implements Message {
+    boolean isEmpty();
 
-    private final int entityId;
-    private final ParameterList parameterList;
+    <T> void add(ParameterType<T> type, T value);
 
-    public MessagePlayOutEntityMetadata(int entityId, ParameterList parameterList) {
-        this.parameterList = parameterList;
-        this.entityId = entityId;
+    default void add(ParameterType<Byte> type, byte value) {
+        this.add(type, (Byte) value);
     }
 
-    public int getEntityId() {
-        return this.entityId;
+    default void add(ParameterType<Integer> type, int value) {
+        this.add(type, (Integer) value);
     }
 
-    public ParameterList getParameterList() {
-        return this.parameterList;
+    default void add(ParameterType<Float> type, float value) {
+        this.add(type, (Float) value);
+    }
+
+    default void add(ParameterType<Boolean> type, boolean value) {
+        this.add(type, (Boolean) value);
     }
 }

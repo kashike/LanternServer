@@ -23,23 +23,43 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lanternpowered.server.network.entity;
+package org.lanternpowered.server.network.entity.parameter;
 
-public final class ParameterType<T> {
+import static com.google.common.base.Preconditions.checkNotNull;
 
-    private final ParameterValueType<T> valueType;
-    final byte index;
+import java.util.ArrayList;
+import java.util.List;
 
-    ParameterType(int index, ParameterValueType<T> valueType) {
-        this.valueType = valueType;
-        this.index = (byte) index;
+public final class ParameterTypeCollection {
+
+    private final List<ParameterType<?>> parameterTypes;
+
+    public ParameterTypeCollection() {
+        this(new ArrayList<>());
     }
 
-    public ParameterValueType<T> getValueType() {
-        return this.valueType;
+    private ParameterTypeCollection(List<ParameterType<?>> parameterTypes) {
+        this.parameterTypes = parameterTypes;
     }
 
-    public int getIndex() {
-        return this.index;
+    /**
+     * Copies this {@link ParameterTypeCollection}.
+     */
+    public ParameterTypeCollection copy() {
+        return new ParameterTypeCollection(new ArrayList<>(this.parameterTypes));
+    }
+
+    /**
+     * Creates a new {@link ParameterType}.
+     *
+     * @param valueType The parameter value type
+     * @param <T> The value type
+     * @return The parameter type
+     */
+    public <T> ParameterType<T> newParameterType(ParameterValueType<T> valueType) {
+        final ParameterType<T> parameterType = new ParameterType<>(
+                this.parameterTypes.size(), checkNotNull(valueType, "valueType"));
+        this.parameterTypes.add(parameterType);
+        return parameterType;
     }
 }

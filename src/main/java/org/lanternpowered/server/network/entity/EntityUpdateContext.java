@@ -56,6 +56,13 @@ public interface EntityUpdateContext {
     void sendToAll(Message message);
 
     /**
+     * Sends the {@link Message} to all the trackers.
+     *
+     * @param message The message
+     */
+    void sendToAll(Supplier<Message> message);
+
+    /**
      * Sends the {@link Message} to all the trackers except the owner.
      *
      * @param message The message
