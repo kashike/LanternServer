@@ -28,9 +28,7 @@ package org.lanternpowered.server.network.vanilla.message.type.play;
 import com.flowpowered.math.vector.Vector3d;
 import org.lanternpowered.server.network.entity.ParameterList;
 import org.lanternpowered.server.network.message.Message;
-import org.lanternpowered.server.network.objects.Parameter;
 
-import java.util.List;
 import java.util.UUID;
 
 public final class MessagePlayOutSpawnMob implements Message {

@@ -41,7 +41,6 @@ import org.lanternpowered.server.game.registry.type.item.ItemRegistryModule;
 import org.lanternpowered.server.inventory.LanternItemStack;
 import org.lanternpowered.server.network.buffer.ByteBuffer;
 import org.lanternpowered.server.network.objects.LocalizedText;
-import org.lanternpowered.server.network.objects.Parameter;
 import org.lanternpowered.server.network.entity.ParameterValueType;
 import org.lanternpowered.server.network.entity.ParameterValueTypes;
 import org.lanternpowered.server.network.objects.RawItemStack;
@@ -188,109 +187,6 @@ public final class Types {
             return new LanternItemStack(itemType, rawItemStack.getAmount());
         }
     });
-
-    /**
-     * A parameter list.
-     */
-    public static final Type<List<Parameter<?>>> PARAMETERS = Type.create(new TypeToken<List<Parameter<?>>>() {},
-            new ValueSerializer<List<Parameter<?>>>() {
-
-                private final static int BYTE = 0;
-                private final static int INTEGER = 1;
-                private final static int FLOAT = 2;
-                private final static int STRING = 3;
-                private final static int TEXT = 4;
-                private final static int ITEM_STACK = 5;
-                private final static int BOOLEAN = 6;
-                private final static int VECTOR_F = 7;
-                private final static int VECTOR_3_I = 8;
-                private final static int OPTIONAL_VECTOR_I = 9;
-                private final static int DIRECTION = 10;
-                private final static int OPTIONAL_UUID = 11;
-                private final static int BLOCK_STATE = 12;
-
-                private final Object2IntMap<ParameterValueType<?>> idByParameterType = new Object2IntOpenHashMap<>();
-
-                {
-                    this.idByParameterType.put(ParameterValueTypes.BYTE, BYTE);
-                    this.idByParameterType.put(ParameterValueTypes.INTEGER, INTEGER);
-                    this.idByParameterType.put(ParameterValueTypes.FLOAT, FLOAT);
-                    this.idByParameterType.put(ParameterValueTypes.STRING, STRING);
-                    this.idByParameterType.put(ParameterValueTypes.TEXT, TEXT);
-                    this.idByParameterType.put(ParameterValueTypes.ITEM_STACK, ITEM_STACK);
-                    this.idByParameterType.put(ParameterValueTypes.BOOLEAN, BOOLEAN);
-                    this.idByParameterType.put(ParameterValueTypes.VECTOR_F, VECTOR_F);
-                    this.idByParameterType.put(ParameterValueTypes.VECTOR_I, VECTOR_3_I);
-                    this.idByParameterType.put(ParameterValueTypes.OPTIONAL_VECTOR_I, OPTIONAL_VECTOR_I);
-                    this.idByParameterType.put(ParameterValueTypes.DIRECTION, DIRECTION);
-                    this.idByParameterType.put(ParameterValueTypes.OPTIONAL_UUID, OPTIONAL_UUID);
-                    this.idByParameterType.put(ParameterValueTypes.OPTIONAL_BLOCK_STATE, BLOCK_STATE);
-                }
-
-                @Override
-                public void write(ByteBuffer buf, List<Parameter<?>> object) throws CodecException {
-                    for (Parameter<?> parameter : object) {
-                        final int type = this.idByParameterType.get(parameter.getParameterType());
-                        buf.writeByte((byte) type);
-                        buf.writeByte((byte) parameter.getIndex());
-                        switch (type) {
-                            case BYTE:
-                                buf.writeByte((Byte) parameter.getObject());
-                                break;
-                            case INTEGER:
-                                buf.writeVarInt((Integer) parameter.getObject());
-                                break;
-                            case FLOAT:
-                                buf.writeFloat((Float) parameter.getObject());
-                                break;
-                            case STRING:
-                                buf.writeString((String) parameter.getObject());
-                                break;
-                            case TEXT:
-                                buf.write(Types.TEXT, (Text) parameter.getObject());
-                                break;
-                            case ITEM_STACK:
-                                buf.write(Types.ITEM_STACK, (ItemStack) parameter.getObject());
-                                break;
-                            case BOOLEAN:
-                                buf.writeBoolean((Boolean) parameter.getObject());
-                                break;
-                            case VECTOR_F:
-                                buf.write(Types.VECTOR_3_F, (Vector3f) parameter.getObject());
-                                break;
-                            case VECTOR_3_I:
-                                buf.write(Types.VECTOR_3_I, (Vector3i) parameter.getObject());
-                                break;
-                            case OPTIONAL_VECTOR_I:
-                                final Vector3i position = ((Optional<Vector3i>) parameter.getObject()).orElse(null);
-                                buf.writeBoolean(position != null);
-                                if (position != null) {
-                                    buf.write(Types.VECTOR_3_I, (Vector3i) parameter.getObject());
-                                }
-                                break;
-                            case DIRECTION:
-                                buf.writeVarInt(0); // TODO
-                                break;
-                            case OPTIONAL_UUID:
-                                final UUID uuid = ((Optional<UUID>) parameter.getObject()).orElse(null);
-                                buf.writeBoolean(uuid != null);
-                                if (uuid != null) {
-                                    buf.writeUniqueId(uuid);
-                                }
-                                break;
-                            case BLOCK_STATE:
-                                buf.writeVarInt(BlockRegistryModule.get().getStateInternalId((BlockState) parameter.getObject()));
-                                break;
-                        }
-                    }
-                    buf.writeByte((byte) 0xff);
-                }
-
-                @Override
-                public List<Parameter<?>> read(ByteBuffer buf) throws CodecException {
-                    throw new DecoderException();
-                }
-            });
 
     /**
      * A raw item stack.

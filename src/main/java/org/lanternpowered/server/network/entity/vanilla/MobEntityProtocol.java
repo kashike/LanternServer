@@ -23,30 +23,40 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lanternpowered.server.network.vanilla.message.codec.play;
+package org.lanternpowered.server.network.entity.vanilla;
+
+import static org.lanternpowered.server.network.vanilla.message.codec.play.CodecUtils.wrapAngle;
 
 import com.flowpowered.math.vector.Vector3d;
-import io.netty.handler.codec.CodecException;
-import org.lanternpowered.server.network.buffer.ByteBuffer;
-import org.lanternpowered.server.network.entity.AbstractParameterList;
-import org.lanternpowered.server.network.message.codec.Codec;
-import org.lanternpowered.server.network.message.codec.CodecContext;
-import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayOutSpawnPlayer;
+import org.lanternpowered.server.entity.LanternEntityLiving;
+import org.lanternpowered.server.network.entity.EntityUpdateContext;
+import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayOutSpawnMob;
 
-public final class CodecPlayOutSpawnPlayer implements Codec<MessagePlayOutSpawnPlayer> {
+public abstract class MobEntityProtocol<E extends LanternEntityLiving> extends LivingEntityProtocol<E> {
+
+    public MobEntityProtocol(E entity) {
+        super(entity);
+    }
+
+    /**
+     * Gets the mob type.
+     *
+     * @return The mob type
+     */
+    protected abstract int getMobType();
 
     @Override
-    public ByteBuffer encode(CodecContext context, MessagePlayOutSpawnPlayer message) throws CodecException {
-        ByteBuffer buf = context.byteBufAlloc().buffer();
-        buf.writeVarInt(message.getEntityId());
-        buf.writeUniqueId(message.getUniqueId());
-        Vector3d vector = message.getPosition();
-        buf.writeDouble(vector.getX());
-        buf.writeDouble(vector.getY());
-        buf.writeDouble(vector.getZ());
-        buf.writeByte((byte) message.getYaw());
-        buf.writeByte((byte) message.getPitch());
-        ((AbstractParameterList) message.getParameterList()).write(buf);
-        return buf;
+    public void spawn(EntityUpdateContext context) {
+        final Vector3d rot = this.entity.getRotation();
+        final Vector3d headRot = this.entity.getHeadRotation();
+        final Vector3d pos = this.entity.getPosition();
+        final Vector3d vel = this.entity.getVelocity();
+
+        double yaw = rot.getY();
+        double headPitch = headRot.getX();
+        double headYaw = headRot.getY();
+
+        context.sendToAllExceptSelf(() -> new MessagePlayOutSpawnMob(this.entity.getEntityId(), this.entity.getUniqueId(), this.getMobType(),
+                pos, wrapAngle(yaw), wrapAngle(headPitch), wrapAngle(headYaw), vel, this.fillParameters(true)));
     }
 }

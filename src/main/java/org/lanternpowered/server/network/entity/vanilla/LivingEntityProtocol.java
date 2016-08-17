@@ -25,15 +25,10 @@
  */
 package org.lanternpowered.server.network.entity.vanilla;
 
-import static org.lanternpowered.server.network.vanilla.message.codec.play.CodecUtils.wrapAngle;
-
-import com.flowpowered.math.vector.Vector3d;
 import org.lanternpowered.server.entity.LanternEntityLiving;
-import org.lanternpowered.server.network.entity.ParameterTypeCollection;
-import org.lanternpowered.server.network.entity.EntityUpdateContext;
 import org.lanternpowered.server.network.entity.ParameterType;
+import org.lanternpowered.server.network.entity.ParameterTypeCollection;
 import org.lanternpowered.server.network.entity.ParameterValueTypes;
-import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayOutSpawnMob;
 
 public abstract class LivingEntityProtocol<E extends LanternEntityLiving> extends EntityProtocol<E> {
 
@@ -68,27 +63,5 @@ public abstract class LivingEntityProtocol<E extends LanternEntityLiving> extend
 
     public LivingEntityProtocol(E entity) {
         super(entity);
-    }
-
-    /**
-     * Gets the mob type.
-     *
-     * @return The mob type
-     */
-    protected abstract int getMobType();
-
-    @Override
-    public void spawn(EntityUpdateContext context) {
-        final Vector3d rot = this.entity.getRotation();
-        final Vector3d headRot = this.entity.getHeadRotation();
-        final Vector3d pos = this.entity.getPosition();
-        final Vector3d vel = this.entity.getVelocity();
-
-        double yaw = rot.getY();
-        double headPitch = headRot.getX();
-        double headYaw = headRot.getY();
-
-        context.sendToAllExceptSelf(() -> new MessagePlayOutSpawnMob(this.entity.getEntityId(), this.entity.getUniqueId(), this.getMobType(),
-                pos, wrapAngle(yaw), wrapAngle(headPitch), wrapAngle(headYaw), vel, this.fillParameters(true)));
     }
 }
