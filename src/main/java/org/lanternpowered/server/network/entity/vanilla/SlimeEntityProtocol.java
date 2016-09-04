@@ -26,12 +26,8 @@
 package org.lanternpowered.server.network.entity.vanilla;
 
 import org.lanternpowered.server.entity.LanternEntityLiving;
-import org.lanternpowered.server.network.entity.parameter.ParameterList;
-import org.spongepowered.api.data.key.Keys;
 
-public class SlimeEntityProtocol<E extends LanternEntityLiving> extends MobEntityProtocol<E> {
-
-    private int lastSize;
+public class SlimeEntityProtocol<E extends LanternEntityLiving> extends AbstractSlimeEntityProtocol<E> {
 
     public SlimeEntityProtocol(E entity) {
         super(entity);
@@ -40,19 +36,5 @@ public class SlimeEntityProtocol<E extends LanternEntityLiving> extends MobEntit
     @Override
     protected int getMobType() {
         return 55;
-    }
-
-    @Override
-    protected void spawn(ParameterList parameterList) {
-        parameterList.add(EntityParameters.Slime.SIZE, this.entity.get(Keys.SLIME_SIZE).orElse(1));
-    }
-
-    @Override
-    protected void update(ParameterList parameterList) {
-        final int size = this.entity.get(Keys.SLIME_SIZE).orElse(1);
-        if (this.lastSize != size) {
-            parameterList.add(EntityParameters.Slime.SIZE, size);
-            this.lastSize = size;
-        }
     }
 }

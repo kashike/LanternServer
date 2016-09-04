@@ -23,35 +23,31 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lanternpowered.server.network.entity.parameter;
+package org.lanternpowered.server.network.entity.vanilla;
 
-import java.util.Optional;
+import org.lanternpowered.server.entity.LanternEntityLiving;
+import org.lanternpowered.server.network.entity.parameter.ParameterList;
+import org.spongepowered.api.data.key.Keys;
 
-import javax.annotation.Nullable;
+public abstract class AbstractSlimeEntityProtocol<E extends LanternEntityLiving> extends MobEntityProtocol<E> {
 
-public interface ParameterList {
+    private int lastSize;
 
-    boolean isEmpty();
-
-    <T> void add(ParameterType<T> type, T value);
-
-    default <T> void addOptional(ParameterType<Optional<T>> type, @Nullable T value) {
-        this.add(type, Optional.ofNullable(value));
+    public AbstractSlimeEntityProtocol(E entity) {
+        super(entity);
     }
 
-    default void add(ParameterType<Byte> type, byte value) {
-        this.add(type, (Byte) value);
+    @Override
+    protected void spawn(ParameterList parameterList) {
+        parameterList.add(EntityParameters.AbstractSlime.SIZE, this.entity.get(Keys.SLIME_SIZE).orElse(1));
     }
 
-    default void add(ParameterType<Integer> type, int value) {
-        this.add(type, (Integer) value);
-    }
-
-    default void add(ParameterType<Float> type, float value) {
-        this.add(type, (Float) value);
-    }
-
-    default void add(ParameterType<Boolean> type, boolean value) {
-        this.add(type, (Boolean) value);
+    @Override
+    protected void update(ParameterList parameterList) {
+        final int size = this.entity.get(Keys.SLIME_SIZE).orElse(1);
+        if (this.lastSize != size) {
+            parameterList.add(EntityParameters.AbstractSlime.SIZE, size);
+            this.lastSize = size;
+        }
     }
 }

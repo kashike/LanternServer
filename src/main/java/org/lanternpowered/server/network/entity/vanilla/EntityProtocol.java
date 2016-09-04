@@ -43,6 +43,8 @@ import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayOu
 import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayOutEntityRelativeMove;
 import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayOutEntityTeleport;
 import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayOutEntityVelocity;
+import org.lanternpowered.server.text.LanternTexts;
+import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.living.Living;
 
@@ -60,6 +62,8 @@ public abstract class EntityProtocol<E extends LanternEntity> extends AbstractEn
     private double lastVelX;
     private double lastVelY;
     private double lastVelZ;
+
+    private byte lastFlags;
 
     public EntityProtocol(E entity) {
         super(entity);
@@ -169,6 +173,22 @@ public abstract class EntityProtocol<E extends LanternEntity> extends AbstractEn
         return parameterList;
     }
 
+    protected boolean isCrouched() {
+        return false;
+    }
+
+    protected boolean isUsingItem() {
+        return false;
+    }
+
+    protected boolean isSprinting() {
+        return false;
+    }
+
+    protected boolean isElytraFlying() {
+        return false;
+    }
+
     /**
      * Fills the {@link ParameterList} with parameters to spawn the {@link Entity} on
      * the client.
@@ -176,9 +196,39 @@ public abstract class EntityProtocol<E extends LanternEntity> extends AbstractEn
      * @param parameterList The parameter list to fill
      */
     protected void spawn(ParameterList parameterList) {
+        parameterList.add(EntityParameters.Base.FLAGS, this.packFlags());
         parameterList.add(EntityParameters.Base.AIR_LEVEL, this.getInitialAirLevel());
+        parameterList.add(EntityParameters.Base.CUSTOM_NAME, this.entity.get(Keys.DISPLAY_NAME).map(LanternTexts::toLegacy).orElse(""));
+        parameterList.add(EntityParameters.Base.CUSTOM_NAME_VISIBLE, this.entity.get(Keys.CUSTOM_NAME_VISIBLE).orElse(true));
+        parameterList.add(EntityParameters.Base.IS_SILENT, this.entity.get(Keys.IS_SILENT).orElse(false));
         // Always disable gravity, we will handle our own physics
         parameterList.add(EntityParameters.Base.NO_GRAVITY, true);
+    }
+
+    private byte packFlags() {
+        byte flags = 0;
+        if (this.entity.get(Keys.FIRE_TICKS).orElse(0) > 0) {
+            flags |= 0x01;
+        }
+        if (this.isCrouched()) {
+            flags |= 0x02;
+        }
+        if (this.isSprinting()) {
+            flags |= 0x08;
+        }
+        if (this.isUsingItem()) {
+            flags |= 0x10;
+        }
+        if (this.entity.get(Keys.INVISIBLE).orElse(false)) {
+            flags |= 0x20;
+        }
+        if (this.entity.get(Keys.GLOWING).orElse(false)) {
+            flags |= 0x40;
+        }
+        if (this.isElytraFlying()) {
+            flags |= 0x80;
+        }
+        return flags;
     }
 
     /**
@@ -188,6 +238,11 @@ public abstract class EntityProtocol<E extends LanternEntity> extends AbstractEn
      * @param parameterList The parameter list to fill
      */
     protected void update(ParameterList parameterList) {
+        final byte flags = this.packFlags();
+        if (flags != this.lastFlags) {
+            parameterList.add(EntityParameters.Base.FLAGS, flags);
+            this.lastFlags = flags;
+        }
     }
 
     /**

@@ -29,6 +29,9 @@ import org.lanternpowered.server.network.entity.parameter.ParameterType;
 import org.lanternpowered.server.network.entity.parameter.ParameterTypeCollection;
 import org.lanternpowered.server.network.entity.parameter.ParameterValueTypes;
 
+import java.util.Optional;
+import java.util.UUID;
+
 public final class EntityParameters {
 
     public static final class Base {
@@ -36,7 +39,7 @@ public final class EntityParameters {
         public static final ParameterTypeCollection PARAMETERS = new ParameterTypeCollection();
 
         /**
-         * Bit mask     Meaning
+         * Bit mask Meaning
          * 0x01	    On Fire
          * 0x02	    Crouched
          * 0x08	    Sprinting
@@ -116,7 +119,7 @@ public final class EntityParameters {
         public static final ParameterTypeCollection PARAMETERS = Living.PARAMETERS.copy();
 
         /**
-         * Bit mask     Meaning
+         * Bit mask Meaning
          * 0x01     NoAI
          * 0x02     Left handed
          */
@@ -154,7 +157,7 @@ public final class EntityParameters {
         }
     }
 
-    public static final class Slime {
+    public static final class AbstractSlime {
 
         public static final ParameterTypeCollection PARAMETERS = Insentient.PARAMETERS.copy();
 
@@ -163,7 +166,360 @@ public final class EntityParameters {
          */
         public static final ParameterType<Integer> SIZE = PARAMETERS.newParameterType(ParameterValueTypes.INTEGER);
 
+        private AbstractSlime() {
+        }
+    }
+
+    public static final class Slime {
+
+        public static final ParameterTypeCollection PARAMETERS = AbstractSlime.PARAMETERS.copy();
+
         private Slime() {
+        }
+    }
+
+    public static final class MagmaCube {
+
+        public static final ParameterTypeCollection PARAMETERS = AbstractSlime.PARAMETERS.copy();
+
+        private MagmaCube() {
+        }
+    }
+
+    public static final class Bat {
+
+        public static final ParameterTypeCollection PARAMETERS = Insentient.PARAMETERS.copy();
+
+        /**
+         * Bit mask Meaning
+         * 0x01	    Is hanging
+         */
+        public static final ParameterType<Byte> FLAGS = PARAMETERS.newParameterType(ParameterValueTypes.BYTE);
+
+        private Bat() {
+        }
+    }
+
+    public static final class Ageable {
+
+        public static final ParameterTypeCollection PARAMETERS = Insentient.PARAMETERS.copy();
+
+        /**
+         * Whether the entity is a baby.
+         */
+        public static final ParameterType<Boolean> IS_BABY = PARAMETERS.newParameterType(ParameterValueTypes.BOOLEAN);
+
+        private Ageable() {
+        }
+    }
+
+    public static final class AbstractHorse {
+
+        public static final ParameterTypeCollection PARAMETERS = Ageable.PARAMETERS.copy();
+
+        /**
+         * Bit mask	Meaning
+         * 0x01     Unused
+         * 0x02	    Is Tame
+         * 0x04	    Is saddled
+         * 0x08	    Has Chest
+         * 0x10	    Is Bred
+         * 0x20	    Is eating
+         * 0x40	    Is rearing
+         * 0x80	    Is mouth open
+         */
+        public static final ParameterType<Byte> FLAGS = PARAMETERS.newParameterType(ParameterValueTypes.BYTE);
+
+        /**
+         * The owner of the horse.
+         */
+        public static final ParameterType<Optional<UUID>> OWNER = PARAMETERS.newParameterType(ParameterValueTypes.OPTIONAL_UUID);
+
+        private AbstractHorse() {
+        }
+    }
+
+    public static final class Horse {
+
+        public static final ParameterTypeCollection PARAMETERS = AbstractHorse.PARAMETERS.copy();
+
+        public static final ParameterType<Integer> VARIANT = PARAMETERS.newParameterType(ParameterValueTypes.INTEGER);
+
+        public static final ParameterType<Integer> ARMOR = PARAMETERS.newParameterType(ParameterValueTypes.INTEGER);
+
+        private Horse() {
+        }
+    }
+
+    public static final class ChestedHorse {
+
+        public static final ParameterTypeCollection PARAMETERS = AbstractHorse.PARAMETERS.copy();
+
+        public static final ParameterType<Boolean> HAS_CHEST = PARAMETERS.newParameterType(ParameterValueTypes.BOOLEAN);
+
+        private ChestedHorse() {
+        }
+    }
+
+    public static final class ZombieHorse {
+
+        public static final ParameterTypeCollection PARAMETERS = AbstractHorse.PARAMETERS.copy();
+
+        private ZombieHorse() {
+        }
+    }
+
+    public static final class SkeletonHorse {
+
+        public static final ParameterTypeCollection PARAMETERS = AbstractHorse.PARAMETERS.copy();
+
+        private SkeletonHorse() {
+        }
+    }
+
+    public static final class Donkey {
+
+        public static final ParameterTypeCollection PARAMETERS = ChestedHorse.PARAMETERS.copy();
+
+        private Donkey() {
+        }
+    }
+
+    public static final class Mule {
+
+        public static final ParameterTypeCollection PARAMETERS = ChestedHorse.PARAMETERS.copy();
+
+        private Mule() {
+        }
+    }
+
+    public static final class AbstractZombie {
+
+        public static final ParameterTypeCollection PARAMETERS = Ageable.PARAMETERS.copy();
+
+        public static final ParameterType<Integer> UNUSED = PARAMETERS.newParameterType(ParameterValueTypes.INTEGER);
+
+        public static final ParameterType<Boolean> HANDS_UP = PARAMETERS.newParameterType(ParameterValueTypes.BOOLEAN);
+
+        private AbstractZombie() {
+        }
+    }
+
+    public static final class Zombie {
+
+        public static final ParameterTypeCollection PARAMETERS = AbstractZombie.PARAMETERS.copy();
+
+        private Zombie() {
+        }
+    }
+
+    public static final class VillagerZombie {
+
+        public static final ParameterTypeCollection PARAMETERS = AbstractZombie.PARAMETERS.copy();
+
+        public static final ParameterType<Boolean> IS_CONVERTING = PARAMETERS.newParameterType(ParameterValueTypes.BOOLEAN);
+
+        public static final ParameterType<Integer> PROFESSION = PARAMETERS.newParameterType(ParameterValueTypes.INTEGER);
+
+        private VillagerZombie() {
+        }
+    }
+
+    public static final class Husk {
+
+        public static final ParameterTypeCollection PARAMETERS = AbstractZombie.PARAMETERS.copy();
+
+        private Husk() {
+        }
+    }
+
+    public static final class AbstractSkeleton {
+
+        public static final ParameterTypeCollection PARAMETERS = Insentient.PARAMETERS.copy();
+
+        public static final ParameterType<Boolean> IS_SWINGING_ARMS = PARAMETERS.newParameterType(ParameterValueTypes.BOOLEAN);
+
+        private AbstractSkeleton() {
+        }
+    }
+
+    public static final class Skeleton {
+
+        public static final ParameterTypeCollection PARAMETERS = AbstractSkeleton.PARAMETERS.copy();
+
+        private Skeleton() {
+        }
+    }
+
+    public static final class WitherSkeleton {
+
+        public static final ParameterTypeCollection PARAMETERS = AbstractSkeleton.PARAMETERS.copy();
+
+        private WitherSkeleton() {
+        }
+    }
+
+    public static final class Stray {
+
+        public static final ParameterTypeCollection PARAMETERS = AbstractSkeleton.PARAMETERS.copy();
+
+        private Stray() {
+        }
+    }
+
+    public static final class AbstractGuardian {
+
+        public static final ParameterTypeCollection PARAMETERS = Insentient.PARAMETERS.copy();
+
+        public static final ParameterType<Boolean> IS_RETRACTING_SPIKES = PARAMETERS.newParameterType(ParameterValueTypes.BOOLEAN);
+
+        public static final ParameterType<Integer> TARGET = PARAMETERS.newParameterType(ParameterValueTypes.INTEGER);
+
+        private AbstractGuardian() {
+        }
+    }
+
+    public static final class Guardian {
+
+        public static final ParameterTypeCollection PARAMETERS = AbstractGuardian.PARAMETERS.copy();
+
+        private Guardian() {
+        }
+    }
+
+    public static final class ElderGuardian {
+
+        public static final ParameterTypeCollection PARAMETERS = AbstractGuardian.PARAMETERS.copy();
+
+        private ElderGuardian() {
+        }
+    }
+
+    public static final class Pig {
+
+        public static final ParameterTypeCollection PARAMETERS = Ageable.PARAMETERS.copy();
+
+        public static final ParameterType<Boolean> HAS_SADDLE = PARAMETERS.newParameterType(ParameterValueTypes.BOOLEAN);
+
+        private Pig() {
+        }
+    }
+
+    public static final class Rabbit {
+
+        public static final ParameterTypeCollection PARAMETERS = Ageable.PARAMETERS.copy();
+
+        public static final ParameterType<Integer> VARIANT = PARAMETERS.newParameterType(ParameterValueTypes.INTEGER);
+
+        private Rabbit() {
+        }
+    }
+
+    public static final class PolarBear {
+
+        public static final ParameterTypeCollection PARAMETERS = Ageable.PARAMETERS.copy();
+
+        public static final ParameterType<Boolean> STANDING_UP = PARAMETERS.newParameterType(ParameterValueTypes.BOOLEAN);
+
+        private PolarBear() {
+        }
+    }
+
+    public static final class Sheep {
+
+        public static final ParameterTypeCollection PARAMETERS = Ageable.PARAMETERS.copy();
+
+        /**
+         * Bit mask	Meaning
+         * 0x0F	    Color
+         * 0x10	    Is sheared
+         */
+        public static final ParameterType<Byte> FLAGS = PARAMETERS.newParameterType(ParameterValueTypes.BYTE);
+
+        private Sheep() {
+        }
+    }
+
+    public static final class TameableAnimal {
+
+        public static final ParameterTypeCollection PARAMETERS = Ageable.PARAMETERS.copy();
+
+        /**
+         * Bit mask	Meaning
+         * 0x01	    Is sitting
+         * 0x02	    Is angry
+         * 0x04	    Is tamed
+         */
+        public static final ParameterType<Byte> FLAGS = PARAMETERS.newParameterType(ParameterValueTypes.BYTE);
+
+        public static final ParameterType<Optional<UUID>> OWNER = PARAMETERS.newParameterType(ParameterValueTypes.OPTIONAL_UUID);
+
+        private TameableAnimal() {
+        }
+    }
+
+    public static final class Ocelot {
+
+        public static final ParameterTypeCollection PARAMETERS = TameableAnimal.PARAMETERS.copy();
+
+        public static final ParameterType<Integer> VARIANT = PARAMETERS.newParameterType(ParameterValueTypes.INTEGER);
+
+        private Ocelot() {
+        }
+    }
+
+    public static final class Wolf {
+
+        public static final ParameterTypeCollection PARAMETERS = TameableAnimal.PARAMETERS.copy();
+
+        /**
+         * 0 - maxHealth, only works when tamed
+         */
+        public static final ParameterType<Float> TAIL_ROTATION = PARAMETERS.newParameterType(ParameterValueTypes.FLOAT);
+
+        public static final ParameterType<Boolean> IS_BEGGING = PARAMETERS.newParameterType(ParameterValueTypes.BOOLEAN);
+
+        public static final ParameterType<Integer> COLLAR_COLOR = PARAMETERS.newParameterType(ParameterValueTypes.INTEGER);
+
+        private Wolf() {
+        }
+    }
+
+    public static final class Villager {
+
+        public static final ParameterTypeCollection PARAMETERS = Ageable.PARAMETERS.copy();
+
+        public static final ParameterType<Integer> PROFESSION = PARAMETERS.newParameterType(ParameterValueTypes.INTEGER);
+
+        private Villager() {
+        }
+    }
+
+    public static final class IronGolem {
+
+        public static final ParameterTypeCollection PARAMETERS = Insentient.PARAMETERS.copy();
+
+        /**
+         * Bit mask	Meaning
+         * 0x01	    Is player-created
+         */
+        public static final ParameterType<Byte> FLAGS = PARAMETERS.newParameterType(ParameterValueTypes.BYTE);
+
+        private IronGolem() {
+        }
+    }
+
+    public static final class Snowman {
+
+        public static final ParameterTypeCollection PARAMETERS = Insentient.PARAMETERS.copy();
+
+        /**
+         * Bit mask	Meaning
+         * 0x10	    No pumpkin hat
+         */
+        public static final ParameterType<Byte> FLAGS = PARAMETERS.newParameterType(ParameterValueTypes.BYTE);
+
+        private Snowman() {
         }
     }
 

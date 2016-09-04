@@ -27,7 +27,7 @@ package org.lanternpowered.server.network.entity.vanilla;
 
 import org.lanternpowered.server.entity.LanternEntityLiving;
 
-public class MagmaCubeEntityProtocol<E extends LanternEntityLiving> extends SlimeEntityProtocol<E> {
+public class MagmaCubeEntityProtocol<E extends LanternEntityLiving> extends AbstractSlimeEntityProtocol<E> {
 
     public MagmaCubeEntityProtocol(E entity) {
         super(entity);
