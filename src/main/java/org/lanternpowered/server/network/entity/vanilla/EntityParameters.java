@@ -40,13 +40,13 @@ public final class EntityParameters {
 
         /**
          * Bit mask Meaning
-         * 0x01	    On Fire
-         * 0x02	    Crouched
-         * 0x08	    Sprinting
-         * 0x10	    Eating/drinking/blocking
-         * 0x20	    Invisible
-         * 0x40	    Glowing effect
-         * 0x80	    Flying with elytra
+         * 0x01     On Fire
+         * 0x02     Crouched
+         * 0x08     Sprinting
+         * 0x10     Eating/drinking/blocking
+         * 0x20     Invisible
+         * 0x40     Glowing effect
+         * 0x80     Flying with elytra
          */
         public static final ParameterType<Byte> FLAGS = PARAMETERS.newParameterType(ParameterValueTypes.BYTE);
 
@@ -85,8 +85,8 @@ public final class EntityParameters {
 
         /**
          * Bit mask Meaning
-         * 0x01	    Is hand active
-         * 0x02	    Active hand (0 = main hand, 1 = offhand)
+         * 0x01     Is hand active
+         * 0x02     Active hand (0 = main hand, 1 = offhand)
          */
         public static final ParameterType<Byte> HAND_DATA = PARAMETERS.newParameterType(ParameterValueTypes.BYTE);
 
@@ -220,13 +220,13 @@ public final class EntityParameters {
         /**
          * Bit mask	Meaning
          * 0x01     Unused
-         * 0x02	    Is Tame
-         * 0x04	    Is saddled
-         * 0x08	    Has Chest
-         * 0x10	    Is Bred
-         * 0x20	    Is eating
-         * 0x40	    Is rearing
-         * 0x80	    Is mouth open
+         * 0x02     Is Tame
+         * 0x04     Is saddled
+         * 0x08     Has Chest
+         * 0x10     Is Bred
+         * 0x20     Is eating
+         * 0x40     Is rearing
+         * 0x80     Is mouth open
          */
         public static final ParameterType<Byte> FLAGS = PARAMETERS.newParameterType(ParameterValueTypes.BYTE);
 
@@ -313,7 +313,7 @@ public final class EntityParameters {
         }
     }
 
-    public static final class VillagerZombie {
+    public static final class ZombieVillager {
 
         public static final ParameterTypeCollection PARAMETERS = AbstractZombie.PARAMETERS.copy();
 
@@ -321,7 +321,7 @@ public final class EntityParameters {
 
         public static final ParameterType<Integer> PROFESSION = PARAMETERS.newParameterType(ParameterValueTypes.INTEGER);
 
-        private VillagerZombie() {
+        private ZombieVillager() {
         }
     }
 

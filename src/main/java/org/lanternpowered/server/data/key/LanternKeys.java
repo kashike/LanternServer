@@ -47,4 +47,8 @@ public class LanternKeys {
             makeValueKey(Boolean.class, DataQuery.of("CanPickupLoot"), "lantern:can_pickup_loot");
     public static final Key<Value<Boolean>> IS_EFFECT =
             makeValueKey(Boolean.class, DataQuery.of("IsEffect"), "lantern:is_effect");
+    public static final Key<Value<Boolean>> IS_BABY =
+            makeValueKey(Boolean.class, DataQuery.of("IsBaby"), "lantern:is_baby");
+    public static final Key<Value<Boolean>> ARE_HANDS_UP =
+            makeValueKey(Boolean.class, DataQuery.of("AreHandsUp"), "lantern:are_hands_up");
 }
