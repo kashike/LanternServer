@@ -23,41 +23,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lanternpowered.server.network.vanilla.message.type.play;
+package org.lanternpowered.server.network.entity.parameter;
 
-import com.flowpowered.math.vector.Vector3d;
-import com.flowpowered.math.vector.Vector3i;
-import org.lanternpowered.server.item.ItemInteractionType;
-import org.lanternpowered.server.network.message.Message;
-import org.spongepowered.api.util.Direction;
+public final class NullParameterList implements ParameterList {
 
-public final class MessagePlayInPlayerBlockPlacement implements Message {
+    public static NullParameterList INSTANCE = new NullParameterList();
 
-    private final Vector3i position;
-    private final Vector3d clickOffset;
-    private final Direction face;
-    private final ItemInteractionType interactionType;
-
-    public MessagePlayInPlayerBlockPlacement(Vector3i position, Vector3d clickOffset, Direction face, ItemInteractionType interactionType) {
-        this.interactionType = interactionType;
-        this.clickOffset = clickOffset;
-        this.position = position;
-        this.face = face;
+    private NullParameterList() {
     }
 
-    public Vector3i getPosition() {
-        return this.position;
+    @Override
+    public boolean isEmpty() {
+        return true;
     }
 
-    public Vector3d getClickOffset() {
-        return this.clickOffset;
-    }
-
-    public Direction getFace() {
-        return this.face;
-    }
-
-    public ItemInteractionType getInteractionType() {
-        return this.interactionType;
+    @Override
+    public <T> void add(ParameterType<T> type, T value) {
     }
 }

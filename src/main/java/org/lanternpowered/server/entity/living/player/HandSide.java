@@ -23,41 +23,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lanternpowered.server.network.vanilla.message.type.play;
+package org.lanternpowered.server.entity.living.player;
 
-import com.flowpowered.math.vector.Vector3d;
-import com.flowpowered.math.vector.Vector3i;
-import org.lanternpowered.server.item.ItemInteractionType;
-import org.lanternpowered.server.network.message.Message;
-import org.spongepowered.api.util.Direction;
-
-public final class MessagePlayInPlayerBlockPlacement implements Message {
-
-    private final Vector3i position;
-    private final Vector3d clickOffset;
-    private final Direction face;
-    private final ItemInteractionType interactionType;
-
-    public MessagePlayInPlayerBlockPlacement(Vector3i position, Vector3d clickOffset, Direction face, ItemInteractionType interactionType) {
-        this.interactionType = interactionType;
-        this.clickOffset = clickOffset;
-        this.position = position;
-        this.face = face;
-    }
-
-    public Vector3i getPosition() {
-        return this.position;
-    }
-
-    public Vector3d getClickOffset() {
-        return this.clickOffset;
-    }
-
-    public Direction getFace() {
-        return this.face;
-    }
-
-    public ItemInteractionType getInteractionType() {
-        return this.interactionType;
-    }
+public enum HandSide {
+    LEFT,
+    RIGHT,
 }

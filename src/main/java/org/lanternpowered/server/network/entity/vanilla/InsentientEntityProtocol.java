@@ -25,38 +25,35 @@
  */
 package org.lanternpowered.server.network.entity.vanilla;
 
-import static org.lanternpowered.server.network.vanilla.message.codec.play.CodecUtils.wrapAngle;
-
-import com.flowpowered.math.vector.Vector3d;
+import org.lanternpowered.server.data.key.LanternKeys;
 import org.lanternpowered.server.entity.LanternEntityLiving;
-import org.lanternpowered.server.network.entity.EntityUpdateContext;
-import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayOutSpawnMob;
+import org.lanternpowered.server.entity.living.player.HandSide;
+import org.lanternpowered.server.network.entity.parameter.ParameterList;
 
-public abstract class MobEntityProtocol<E extends LanternEntityLiving> extends LivingEntityProtocol<E> {
+public abstract class InsentientEntityProtocol<E extends LanternEntityLiving> extends CreatureEntityProtocol<E> {
 
-    public MobEntityProtocol(E entity) {
+    private HandSide lastDominantHand = HandSide.RIGHT;
+
+    protected InsentientEntityProtocol(E entity) {
         super(entity);
     }
 
-    /**
-     * Gets the mob type.
-     *
-     * @return The mob type
-     */
-    protected abstract int getMobType();
+    @Override
+    protected void spawn(ParameterList parameterList) {
+        super.spawn(parameterList);
+        // Ignore the NoAI tag, isn't used on the client
+        parameterList.add(EntityParameters.Insentient.FLAGS,
+                (byte) (this.entity.get(LanternKeys.DOMINANT_HAND).orElse(HandSide.RIGHT) == HandSide.LEFT ? 0x2 : 0));
+    }
 
     @Override
-    public void spawn(EntityUpdateContext context) {
-        final Vector3d rot = this.entity.getRotation();
-        final Vector3d headRot = this.entity.getHeadRotation();
-        final Vector3d pos = this.entity.getPosition();
-        final Vector3d vel = this.entity.getVelocity();
-
-        double yaw = rot.getY();
-        double headPitch = headRot.getX();
-        double headYaw = headRot.getY();
-
-        context.sendToAllExceptSelf(() -> new MessagePlayOutSpawnMob(this.entity.getEntityId(), this.entity.getUniqueId(), this.getMobType(),
-                pos, wrapAngle(yaw), wrapAngle(headPitch), wrapAngle(headYaw), vel, this.fillParameters(true)));
+    protected void update(ParameterList parameterList) {
+        super.update(parameterList);
+        final HandSide dominantHand = this.entity.get(LanternKeys.DOMINANT_HAND).orElse(HandSide.RIGHT);
+        if (dominantHand != this.lastDominantHand) {
+            // Ignore the NoAI tag, isn't used on the client
+            parameterList.add(EntityParameters.Insentient.FLAGS, (byte) (dominantHand == HandSide.LEFT ? 0x2 : 0));
+            this.lastDominantHand = dominantHand;
+        }
     }
 }

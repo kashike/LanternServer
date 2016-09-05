@@ -34,6 +34,7 @@ import org.lanternpowered.server.network.buffer.ByteBufferAllocator;
 import org.lanternpowered.server.network.entity.AbstractEntityProtocol;
 import org.lanternpowered.server.network.entity.EntityUpdateContext;
 import org.lanternpowered.server.network.entity.parameter.ByteBufParameterList;
+import org.lanternpowered.server.network.entity.parameter.NullParameterList;
 import org.lanternpowered.server.network.entity.parameter.ParameterList;
 import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayOutDestroyEntities;
 import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayOutEntityHeadLook;
@@ -149,7 +150,8 @@ public abstract class EntityProtocol<E extends LanternEntity> extends AbstractEn
             this.lastVelY = vy;
             this.lastVelZ = vz;
         }
-        final ParameterList parameterList = this.fillParameters(false);
+        final ParameterList parameterList = context == EntityUpdateContext.EMPTY ?
+                this.fillParameters(false, NullParameterList.INSTANCE) : this.fillParameters(false);
         // There were parameters applied
         if (!parameterList.isEmpty()) {
             context.sendToAll(() -> new MessagePlayOutEntityMetadata(entityId, parameterList));
@@ -164,7 +166,10 @@ public abstract class EntityProtocol<E extends LanternEntity> extends AbstractEn
      * @return The byte buffer
      */
     ParameterList fillParameters(boolean initial) {
-        final ByteBufParameterList parameterList = new ByteBufParameterList(ByteBufferAllocator.unpooled());
+        return this.fillParameters(initial, new ByteBufParameterList(ByteBufferAllocator.unpooled()));
+    }
+
+    ParameterList fillParameters(boolean initial, ParameterList parameterList) {
         if (initial) {
             this.spawn(parameterList);
         } else {

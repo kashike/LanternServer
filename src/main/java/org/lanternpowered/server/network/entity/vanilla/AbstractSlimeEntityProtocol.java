@@ -29,7 +29,7 @@ import org.lanternpowered.server.entity.LanternEntityLiving;
 import org.lanternpowered.server.network.entity.parameter.ParameterList;
 import org.spongepowered.api.data.key.Keys;
 
-public abstract class AbstractSlimeEntityProtocol<E extends LanternEntityLiving> extends MobEntityProtocol<E> {
+public abstract class AbstractSlimeEntityProtocol<E extends LanternEntityLiving> extends InsentientEntityProtocol<E> {
 
     private int lastSize;
 

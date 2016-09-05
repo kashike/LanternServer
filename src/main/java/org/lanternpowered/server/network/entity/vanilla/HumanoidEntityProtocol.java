@@ -28,13 +28,18 @@ package org.lanternpowered.server.network.entity.vanilla;
 import static org.lanternpowered.server.network.vanilla.message.codec.play.CodecUtils.wrapAngle;
 
 import com.flowpowered.math.vector.Vector3d;
+import org.lanternpowered.server.data.key.LanternKeys;
 import org.lanternpowered.server.entity.LanternEntityLiving;
+import org.lanternpowered.server.entity.living.player.HandSide;
 import org.lanternpowered.server.network.entity.EntityUpdateContext;
+import org.lanternpowered.server.network.entity.parameter.ParameterList;
 import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayOutEntityHeadLook;
 import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayOutEntityVelocity;
 import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayOutSpawnPlayer;
 
 public class HumanoidEntityProtocol<E extends LanternEntityLiving> extends LivingEntityProtocol<E> {
+
+    private HandSide lastDominantHand = HandSide.RIGHT;
 
     public HumanoidEntityProtocol(E entity) {
         super(entity);
@@ -58,6 +63,25 @@ public class HumanoidEntityProtocol<E extends LanternEntityLiving> extends Livin
         context.sendToAllExceptSelf(() -> new MessagePlayOutEntityHeadLook(entityId, wrapAngle(headYaw)));
         if (!vel.equals(Vector3d.ZERO)) {
             context.sendToAllExceptSelf(() -> new MessagePlayOutEntityVelocity(entityId, vel.getX(), vel.getY(), vel.getZ()));
+        }
+    }
+
+    @Override
+    protected void spawn(ParameterList parameterList) {
+        super.spawn(parameterList);
+        // Ignore the NoAI tag, isn't used on the client
+        parameterList.add(EntityParameters.Humanoid.MAIN_HAND,
+                (byte) (this.entity.get(LanternKeys.DOMINANT_HAND).orElse(HandSide.RIGHT) == HandSide.RIGHT ? 1 : 0));
+        parameterList.add(EntityParameters.Humanoid.SCORE, this.entity.get(LanternKeys.SCORE).orElse(0));
+    }
+
+    @Override
+    protected void update(ParameterList parameterList) {
+        super.update(parameterList);
+        final HandSide dominantHand = this.entity.get(LanternKeys.DOMINANT_HAND).orElse(HandSide.RIGHT);
+        if (dominantHand != this.lastDominantHand) {
+            parameterList.add(EntityParameters.Insentient.FLAGS, (byte) (dominantHand == HandSide.RIGHT ? 1 : 0));
+            this.lastDominantHand = dominantHand;
         }
     }
 }

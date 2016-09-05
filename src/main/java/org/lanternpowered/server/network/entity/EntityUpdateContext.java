@@ -32,6 +32,8 @@ import java.util.function.Supplier;
 
 public interface EntityUpdateContext {
 
+    Empty EMPTY = new Empty();
+
     /**
      * Sends the {@link Message} to the owner, will only do something
      * if the owner is a {@link Player}.
@@ -75,4 +77,34 @@ public interface EntityUpdateContext {
      * @param messageSupplier The message supplier
      */
     void sendToAllExceptSelf(Supplier<Message> messageSupplier);
+
+    final class Empty implements EntityUpdateContext {
+
+        private Empty() {
+        }
+
+        @Override
+        public void sendToSelf(Message message) {
+        }
+
+        @Override
+        public void sendToSelf(Supplier<Message> messageSupplier) {
+        }
+
+        @Override
+        public void sendToAll(Message message) {
+        }
+
+        @Override
+        public void sendToAll(Supplier<Message> message) {
+        }
+
+        @Override
+        public void sendToAllExceptSelf(Message message) {
+        }
+
+        @Override
+        public void sendToAllExceptSelf(Supplier<Message> messageSupplier) {
+        }
+    }
 }

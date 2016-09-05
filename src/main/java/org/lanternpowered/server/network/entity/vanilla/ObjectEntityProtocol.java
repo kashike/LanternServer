@@ -36,6 +36,8 @@ import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayOu
 
 public abstract class ObjectEntityProtocol<E extends LanternEntity> extends EntityProtocol<E> {
 
+    private int lastObjectData;
+
     public ObjectEntityProtocol(E entity) {
         super(entity);
     }
@@ -59,7 +61,19 @@ public abstract class ObjectEntityProtocol<E extends LanternEntity> extends Enti
                 this.getObjectType(), this.getObjectData(), pos, wrapAngle(yaw), wrapAngle(pitch), vel));
         final ParameterList parameterList = this.fillParameters(true);
         if (!parameterList.isEmpty()) {
-            context.sendToAll(new MessagePlayOutEntityMetadata(entityId, parameterList));
+            context.sendToAll(() -> new MessagePlayOutEntityMetadata(entityId, parameterList));
+        }
+    }
+
+    @Override
+    public void update(EntityUpdateContext context) {
+        final int objectData = this.getObjectData();
+        if (this.lastObjectData != objectData) {
+            this.spawn(context);
+            super.update(EntityUpdateContext.EMPTY);
+            this.lastObjectData = objectData;
+        } else {
+            super.update(context);
         }
     }
 }
