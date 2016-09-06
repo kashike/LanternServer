@@ -57,6 +57,8 @@ public final class LanternKeys {
     // TODO: Replace this key with Keys#DOMINANT_HAND when the api is fixed.
     public static final Key<Value<HandSide>> DOMINANT_HAND =
             makeValueKey(HandSide.class, DataQuery.of("DominantHand"), "lantern:dominant_hand");
+    public static final Key<Value<Boolean>> IS_CONVERTING =
+            makeValueKey(Boolean.class, DataQuery.of("IsConverting"), "lantern:is_converting");
 
     private LanternKeys() {
     }
