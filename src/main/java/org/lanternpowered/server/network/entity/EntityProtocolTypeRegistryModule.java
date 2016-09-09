@@ -31,6 +31,7 @@ import org.lanternpowered.server.game.registry.PluginCatalogRegistryModule;
 import org.lanternpowered.server.network.entity.vanilla.HuskEntityProtocol;
 import org.lanternpowered.server.network.entity.vanilla.LightningEntityProtocol;
 import org.lanternpowered.server.network.entity.vanilla.MagmaCubeEntityProtocol;
+import org.lanternpowered.server.network.entity.vanilla.PaintingEntityProtocol;
 import org.lanternpowered.server.network.entity.vanilla.RabbitEntityProtocol;
 import org.lanternpowered.server.network.entity.vanilla.SlimeEntityProtocol;
 import org.lanternpowered.server.network.entity.vanilla.VillagerEntityProtocol;
@@ -48,6 +49,7 @@ public class EntityProtocolTypeRegistryModule extends PluginCatalogRegistryModul
         this.register(new EntityProtocolType<>("minecraft", "husk", LanternEntityLiving.class, HuskEntityProtocol::new));
         this.register(new EntityProtocolType<>("minecraft", "lightning", LanternEntity.class, LightningEntityProtocol::new));
         this.register(new EntityProtocolType<>("minecraft", "magma_cube", LanternEntityLiving.class, MagmaCubeEntityProtocol::new));
+        this.register(new EntityProtocolType<>("minecraft", "painting", LanternEntity.class, PaintingEntityProtocol::new));
         this.register(new EntityProtocolType<>("minecraft", "rabbit", LanternEntityLiving.class, RabbitEntityProtocol::new));
         this.register(new EntityProtocolType<>("minecraft", "slime", LanternEntityLiving.class, SlimeEntityProtocol::new));
         this.register(new EntityProtocolType<>("minecraft", "villager", LanternEntityLiving.class, VillagerEntityProtocol::new));

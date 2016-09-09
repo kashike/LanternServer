@@ -23,29 +23,59 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lanternpowered.server.network.entity.vanilla;
+package org.lanternpowered.server.network.vanilla.message.type.play;
 
-import org.lanternpowered.server.entity.LanternEntity;
-import org.lanternpowered.server.network.entity.EntityUpdateContext;
-import org.lanternpowered.server.network.entity.parameter.ParameterList;
-import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayOutSpawnThunderbolt;
+import org.lanternpowered.server.network.message.Message;
+import org.spongepowered.api.data.type.Art;
+import org.spongepowered.api.util.Direction;
 
-public class LightningEntityProtocol<E extends LanternEntity> extends EntityProtocol<E> {
+import java.util.UUID;
 
-    public LightningEntityProtocol(E entity) {
-        super(entity);
+public final class MessagePlayOutSpawnPainting implements Message {
+
+    private final int entityId;
+    private final UUID uniqueId;
+    private final Art art;
+    private final Direction direction;
+    private final int x;
+    private final int y;
+    private final int z;
+
+    public MessagePlayOutSpawnPainting(int entityId, UUID uniqueId, Art art, int x, int y, int z, Direction direction) {
+        this.entityId = entityId;
+        this.uniqueId = uniqueId;
+        this.direction = direction;
+        this.art = art;
+        this.x = x;
+        this.y = y;
+        this.z = z;
     }
 
-    @Override
-    public void spawn(EntityUpdateContext context) {
-        context.sendToAllExceptSelf(new MessagePlayOutSpawnThunderbolt(this.entity.getEntityId(), this.entity.getPosition()));
+    public int getEntityId() {
+        return this.entityId;
     }
 
-    @Override
-    public void spawn(ParameterList parameterList) {
+    public UUID getUniqueId() {
+        return this.uniqueId;
     }
 
-    @Override
-    public void update(ParameterList parameterList) {
+    public Art getArt() {
+        return this.art;
+    }
+
+    public Direction getDirection() {
+        return this.direction;
+    }
+
+    public int getX() {
+        return this.x;
+    }
+
+    public int getY() {
+        return this.y;
+    }
+
+    public int getZ() {
+        return this.z;
     }
 }
