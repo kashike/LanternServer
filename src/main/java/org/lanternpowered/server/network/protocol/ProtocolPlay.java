@@ -347,7 +347,7 @@ final class ProtocolPlay extends ProtocolBase {
         outbound.bind(0x01, CodecPlayOutSpawnExperienceOrb.class, MessagePlayOutSpawnExperienceOrb.class);
         outbound.bind(0x02, CodecPlayOutSpawnThunderbolt.class, MessagePlayOutSpawnThunderbolt.class);
         outbound.bind(0x03, CodecPlayOutSpawnMob.class, MessagePlayOutSpawnMob.class);
-        outbound.bind(0x03, CodecPlayOutSpawnPainting.class, MessagePlayOutSpawnPainting.class);
+        outbound.bind(0x04, CodecPlayOutSpawnPainting.class, MessagePlayOutSpawnPainting.class);
         outbound.bind(0x05, CodecPlayOutSpawnPlayer.class, MessagePlayOutSpawnPlayer.class);
         // 0x06
         outbound.bind(0x07, CodecPlayOutStatistics.class, MessagePlayOutStatistics.class);
