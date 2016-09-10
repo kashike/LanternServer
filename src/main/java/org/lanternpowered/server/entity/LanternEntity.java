@@ -31,7 +31,6 @@ import static com.google.common.base.Preconditions.checkState;
 
 import com.flowpowered.math.vector.Vector2i;
 import com.flowpowered.math.vector.Vector3d;
-import com.flowpowered.math.vector.Vector3i;
 import org.lanternpowered.server.component.BaseComponentHolder;
 import org.lanternpowered.server.component.misc.Health;
 import org.lanternpowered.server.data.AbstractDataHolder;
@@ -268,8 +267,7 @@ public class LanternEntity extends BaseComponentHolder implements Entity, Abstra
 
     @Override
     public EntityType getType() {
-        // TODO Auto-generated method stub
-        return null;
+        return this.entityType;
     }
 
     @Override

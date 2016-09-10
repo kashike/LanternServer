@@ -27,6 +27,11 @@ package org.lanternpowered.server.entity.weather;
 
 import org.lanternpowered.server.entity.LanternEntity;
 
+import java.util.UUID;
+
 public class LanternLightning extends LanternEntity implements AbstractLightning {
 
+    public LanternLightning(UUID uniqueId) {
+        super(uniqueId);
+    }
 }
