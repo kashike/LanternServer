@@ -1,0 +1,40 @@
+{
+    "parent": "generic/living",
+    "interfaces": [
+        "org.spongepowered.api.entity.living.monster.Slime"
+    ],
+    "spawn-type-overrides": [
+        {
+            "type": "natural, spawn_egg",
+            "overrides": {
+                "values": {
+                    "data": {
+                        "slime_size": "@ 1 << $random.range(0, 2)"
+                    }
+                }
+            }
+        }
+    ],
+    "loot-table": "@[u] $data.slime_size == 1 ? 'minecraft:loot_tables/entities/slime.json' : 'generic/empty'",
+    "data": {
+        "values": {
+            "slime_size": 1,
+            "max_health": "@ $data.slime_size * $data.slime_size",
+            "movement_speed": "@ 0.2 + 0.1 * $data.slime_size"
+        },
+        "properties": {
+            "org.spongepowered.api.data.property.entity.EyeLocationProperty": "@ $data.slime_size * 0.625"
+        }
+    },
+    "bounding-box": {
+        "min": [ "@[u] $data.slime_size * -0.255", 0.0, "@[u] $data.slime_size * -0.255" ],
+        "max": [ "@[u] $data.slime_size * 0.255", "@[u] $data.slime_size * 0.51", "@[u] $data.slime_size * 0.255" ]
+    },
+    "equipment": {
+    },
+    "protocol": {
+        "type": "minecraft:slime",
+        "tracking-range": 80,
+        "tracking-update-rate": 3
+    }
+}

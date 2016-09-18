@@ -1,0 +1,33 @@
+[
+    {
+        "rolls": 1,
+        "entries": [
+            {
+                "weight": 1,
+                "objects": [
+                    {
+                        "type": "entity",
+                        "object": {
+                            "type": "minecraft:item",
+                            "data": {
+                                "represented_item": {
+                                    "type": "minecraft:slime_ball",
+                                    "quantity": "@ $random.range(0, 2)"
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "type": "entity",
+                        "object": {
+                            "type": "minecraft:experience_orb",
+                            "data": {
+                                "contained_experience": "@ $data.slime_size"
+                            }
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+]
