@@ -6,15 +6,10 @@
                 "weight": 1,
                 "objects": [
                     {
-                        "type": "entity",
+                        "type": "item",
                         "object": {
-                            "type": "minecraft:item",
-                            "data": {
-                                "represented_item": {
-                                    "type": "minecraft:slime_ball",
-                                    "quantity": "@ $random.range(0, 2)"
-                                }
-                            }
+                            "type": "minecraft:slime_ball",
+                            "quantity": "@ $random.range(0, 2)"
                         }
                     },
                     {

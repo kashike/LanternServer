@@ -23,7 +23,7 @@
             "movement_speed": "@ 0.2 + 0.1 * $data.slime_size"
         },
         "properties": {
-            "org.spongepowered.api.data.property.entity.EyeLocationProperty": "@ $data.slime_size * 0.625"
+            "org.spongepowered.api.data.property.entity.EyeHeightProperty": "@ $data.slime_size * 0.625"
         }
     },
     "bounding-box": {
@@ -31,6 +31,52 @@
         "max": [ "@[u] $data.slime_size * 0.255", "@[u] $data.slime_size * 0.51", "@[u] $data.slime_size * 0.255" ]
     },
     "equipment": {
+    },
+    "ai": {
+        "normal": [
+            {
+                "priority": 1,
+                "type": "minecraft:slime_attack",
+                "flags": [
+                    "attack"
+                ],
+                "data": {
+                },
+                "run-concurrent-with": [
+                    "*",
+                    "! @flag movement"
+                ]
+            },
+            {
+                "priority": 2,
+                "type": "minecraft:slime_hop",
+                "flags": [
+                    "movement"
+                ],
+                "run-concurrent-with": [
+                    "*",
+                    "! @flag attack",
+                    "! minecraft:slime_attack"
+                ]
+            }
+        ],
+        "target": [
+            {
+                "priority": 1,
+                "type": "minecraft:find_nearest_player",
+                "data": {
+                    "range": 32
+                }
+            },
+            {
+                "priority": 2,
+                "type": "minecraft:find_nearest_entity",
+                "data": {
+                    "entity-type": "minecraft:iron_golem",
+                    "range": 16
+                }
+            }
+        ]
     },
     "protocol": {
         "type": "minecraft:slime",
