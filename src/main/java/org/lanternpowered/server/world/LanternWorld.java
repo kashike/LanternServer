@@ -1195,15 +1195,12 @@ public class LanternWorld extends BaseComponentHolder implements AbstractExtent,
         if (this.weatherUniverse != null) {
             this.weatherUniverse.pulse();
         }
-        // TODO: This is temporarily, pulses will be given to all
-        // entities in the future and it will be chunk based
-        this.players.forEach(LanternPlayer::pulse);
-        // TODO: Maybe async?
-        this.observedChunkManager.pulse();
 
         // Pulse the entities
         this.pulseEntities();
 
+        // TODO: Maybe async?
+        this.observedChunkManager.pulse();
         this.entityProtocolManager.updateTrackers(this.players);
     }
 
