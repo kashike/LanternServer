@@ -27,12 +27,14 @@ package org.lanternpowered.server.network.entity;
 
 import org.lanternpowered.server.entity.LanternEntity;
 import org.lanternpowered.server.entity.LanternEntityLiving;
+import org.lanternpowered.server.entity.living.player.LanternPlayer;
 import org.lanternpowered.server.game.registry.PluginCatalogRegistryModule;
 import org.lanternpowered.server.network.entity.vanilla.HumanoidEntityProtocol;
 import org.lanternpowered.server.network.entity.vanilla.HuskEntityProtocol;
 import org.lanternpowered.server.network.entity.vanilla.LightningEntityProtocol;
 import org.lanternpowered.server.network.entity.vanilla.MagmaCubeEntityProtocol;
 import org.lanternpowered.server.network.entity.vanilla.PaintingEntityProtocol;
+import org.lanternpowered.server.network.entity.vanilla.PlayerEntityProtocol;
 import org.lanternpowered.server.network.entity.vanilla.RabbitEntityProtocol;
 import org.lanternpowered.server.network.entity.vanilla.SlimeEntityProtocol;
 import org.lanternpowered.server.network.entity.vanilla.VillagerEntityProtocol;
@@ -52,6 +54,7 @@ public class EntityProtocolTypeRegistryModule extends PluginCatalogRegistryModul
         this.register(new LanternEntityProtocolType<>("minecraft", "lightning", LanternEntity.class, LightningEntityProtocol::new));
         this.register(new LanternEntityProtocolType<>("minecraft", "magma_cube", LanternEntityLiving.class, MagmaCubeEntityProtocol::new));
         this.register(new LanternEntityProtocolType<>("minecraft", "painting", LanternEntity.class, PaintingEntityProtocol::new));
+        this.register(new LanternEntityProtocolType<>("minecraft", "player", LanternPlayer.class, PlayerEntityProtocol::new));
         this.register(new LanternEntityProtocolType<>("minecraft", "rabbit", LanternEntityLiving.class, RabbitEntityProtocol::new));
         this.register(new LanternEntityProtocolType<>("minecraft", "slime", LanternEntityLiving.class, SlimeEntityProtocol::new));
         this.register(new LanternEntityProtocolType<>("minecraft", "villager", LanternEntityLiving.class, VillagerEntityProtocol::new));

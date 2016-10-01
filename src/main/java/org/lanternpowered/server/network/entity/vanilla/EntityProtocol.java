@@ -206,8 +206,12 @@ public abstract class EntityProtocol<E extends LanternEntity> extends AbstractEn
         parameterList.add(EntityParameters.Base.CUSTOM_NAME, this.entity.get(Keys.DISPLAY_NAME).map(LanternTexts::toLegacy).orElse(""));
         parameterList.add(EntityParameters.Base.CUSTOM_NAME_VISIBLE, this.entity.get(Keys.CUSTOM_NAME_VISIBLE).orElse(true));
         parameterList.add(EntityParameters.Base.IS_SILENT, this.entity.get(Keys.IS_SILENT).orElse(false));
-        // Always disable gravity, we will handle our own physics
-        parameterList.add(EntityParameters.Base.NO_GRAVITY, false);
+        parameterList.add(EntityParameters.Base.NO_GRAVITY, this.hasNoGravity());
+    }
+
+    boolean hasNoGravity() {
+        // Always disable gravity for regular entities, we will handle our own physics
+        return true;
     }
 
     private byte packFlags() {

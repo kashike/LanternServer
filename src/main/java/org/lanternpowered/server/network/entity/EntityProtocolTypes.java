@@ -27,6 +27,7 @@ package org.lanternpowered.server.network.entity;
 
 import org.lanternpowered.server.entity.LanternEntity;
 import org.lanternpowered.server.entity.LanternEntityLiving;
+import org.lanternpowered.server.entity.living.player.LanternPlayer;
 import org.spongepowered.api.util.generator.dummy.DummyObjectProvider;
 
 public final class EntityProtocolTypes {
@@ -40,6 +41,8 @@ public final class EntityProtocolTypes {
     public static final EntityProtocolType<LanternEntityLiving> MAGMA_CUBE = dummy("MAGMA_CUBE");
 
     public static final EntityProtocolType<LanternEntity> PAINTING = dummy("PAINTING");
+
+    public static final EntityProtocolType<LanternPlayer> PLAYER = dummy("PLAYER");
 
     public static final EntityProtocolType<LanternEntityLiving> RABBIT = dummy("RABBIT");
 

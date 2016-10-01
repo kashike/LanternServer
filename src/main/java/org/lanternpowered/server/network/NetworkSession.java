@@ -781,7 +781,7 @@ public final class NetworkSession extends SimpleChannelInboundHandler<Message> i
         }
         this.player = new LanternPlayer(this.gameProfile, this);
         this.player.setEntityId(LanternEntity.getIdAllocator().poll());
-        this.player.setEntityProtocolType(EntityProtocolTypes.HUMAN);
+        this.player.setEntityProtocolType(EntityProtocolTypes.PLAYER);
 
         try {
             PlayerIO.load(Lantern.getGame().getSavesDirectory(), this.player);
