@@ -25,7 +25,6 @@
  */
 package org.lanternpowered.server.network.buffer;
 
-import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.DecoderException;
 import io.netty.util.ReferenceCounted;
 import org.lanternpowered.server.network.buffer.objects.Type;

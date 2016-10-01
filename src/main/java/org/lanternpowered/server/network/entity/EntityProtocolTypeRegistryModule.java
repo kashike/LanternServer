@@ -42,20 +42,20 @@ import org.lanternpowered.server.network.entity.vanilla.ZombieVillagerEntityProt
 public class EntityProtocolTypeRegistryModule extends PluginCatalogRegistryModule<EntityProtocolType> {
 
     public EntityProtocolTypeRegistryModule() {
-        super(null);
+        super(EntityProtocolTypes.class);
     }
 
     @Override
     public void registerDefaults() {
-        this.register(new EntityProtocolType<>("minecraft", "human", LanternEntityLiving.class, HumanoidEntityProtocol::new));
-        this.register(new EntityProtocolType<>("minecraft", "husk", LanternEntityLiving.class, HuskEntityProtocol::new));
-        this.register(new EntityProtocolType<>("minecraft", "lightning", LanternEntity.class, LightningEntityProtocol::new));
-        this.register(new EntityProtocolType<>("minecraft", "magma_cube", LanternEntityLiving.class, MagmaCubeEntityProtocol::new));
-        this.register(new EntityProtocolType<>("minecraft", "painting", LanternEntity.class, PaintingEntityProtocol::new));
-        this.register(new EntityProtocolType<>("minecraft", "rabbit", LanternEntityLiving.class, RabbitEntityProtocol::new));
-        this.register(new EntityProtocolType<>("minecraft", "slime", LanternEntityLiving.class, SlimeEntityProtocol::new));
-        this.register(new EntityProtocolType<>("minecraft", "villager", LanternEntityLiving.class, VillagerEntityProtocol::new));
-        this.register(new EntityProtocolType<>("minecraft", "zombie", LanternEntityLiving.class, ZombieEntityProtocol::new));
-        this.register(new EntityProtocolType<>("minecraft", "zombie_villager", LanternEntityLiving.class, ZombieVillagerEntityProtocol::new));
+        this.register(new LanternEntityProtocolType<>("minecraft", "human", LanternEntityLiving.class, HumanoidEntityProtocol::new));
+        this.register(new LanternEntityProtocolType<>("minecraft", "husk", LanternEntityLiving.class, HuskEntityProtocol::new));
+        this.register(new LanternEntityProtocolType<>("minecraft", "lightning", LanternEntity.class, LightningEntityProtocol::new));
+        this.register(new LanternEntityProtocolType<>("minecraft", "magma_cube", LanternEntityLiving.class, MagmaCubeEntityProtocol::new));
+        this.register(new LanternEntityProtocolType<>("minecraft", "painting", LanternEntity.class, PaintingEntityProtocol::new));
+        this.register(new LanternEntityProtocolType<>("minecraft", "rabbit", LanternEntityLiving.class, RabbitEntityProtocol::new));
+        this.register(new LanternEntityProtocolType<>("minecraft", "slime", LanternEntityLiving.class, SlimeEntityProtocol::new));
+        this.register(new LanternEntityProtocolType<>("minecraft", "villager", LanternEntityLiving.class, VillagerEntityProtocol::new));
+        this.register(new LanternEntityProtocolType<>("minecraft", "zombie", LanternEntityLiving.class, ZombieEntityProtocol::new));
+        this.register(new LanternEntityProtocolType<>("minecraft", "zombie_villager", LanternEntityLiving.class, ZombieVillagerEntityProtocol::new));
     }
 }

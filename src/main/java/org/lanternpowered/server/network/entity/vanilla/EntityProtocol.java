@@ -72,7 +72,7 @@ public abstract class EntityProtocol<E extends LanternEntity> extends AbstractEn
 
     @Override
     protected void destroy(EntityUpdateContext context) {
-        context.sendToAll(new MessagePlayOutDestroyEntities(new int[] { this.entity.getEntityId() }));
+        context.sendToAllExceptSelf(new MessagePlayOutDestroyEntities(new int[] { this.entity.getEntityId() }));
     }
 
     @Override
@@ -150,7 +150,7 @@ public abstract class EntityProtocol<E extends LanternEntity> extends AbstractEn
             this.lastVelY = vy;
             this.lastVelZ = vz;
         }
-        final ParameterList parameterList = context == EntityUpdateContext.EMPTY ?
+        final ParameterList parameterList = context == EntityUpdateContext.empty() ?
                 this.fillParameters(false, NullParameterList.INSTANCE) : this.fillParameters(false);
         // There were parameters applied
         if (!parameterList.isEmpty()) {
@@ -207,7 +207,7 @@ public abstract class EntityProtocol<E extends LanternEntity> extends AbstractEn
         parameterList.add(EntityParameters.Base.CUSTOM_NAME_VISIBLE, this.entity.get(Keys.CUSTOM_NAME_VISIBLE).orElse(true));
         parameterList.add(EntityParameters.Base.IS_SILENT, this.entity.get(Keys.IS_SILENT).orElse(false));
         // Always disable gravity, we will handle our own physics
-        parameterList.add(EntityParameters.Base.NO_GRAVITY, true);
+        parameterList.add(EntityParameters.Base.NO_GRAVITY, false);
     }
 
     private byte packFlags() {

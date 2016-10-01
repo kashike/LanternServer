@@ -34,6 +34,7 @@ import org.lanternpowered.server.entity.living.player.HandSide;
 import org.lanternpowered.server.network.entity.EntityUpdateContext;
 import org.lanternpowered.server.network.entity.parameter.ParameterList;
 import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayOutEntityHeadLook;
+import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayOutEntityMetadata;
 import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayOutEntityVelocity;
 import org.lanternpowered.server.network.vanilla.message.type.play.MessagePlayOutSpawnPlayer;
 
@@ -58,8 +59,10 @@ public class HumanoidEntityProtocol<E extends LanternEntityLiving> extends Livin
         double headPitch = headRot.getX();
         double headYaw = headRot.getY();
 
+        final ParameterList parameterList = this.fillParameters(true);
         context.sendToAllExceptSelf(() -> new MessagePlayOutSpawnPlayer(this.entity.getEntityId(), this.entity.getUniqueId(),
-                pos, wrapAngle(yaw), wrapAngle(headPitch), this.fillParameters(true)));
+                pos, wrapAngle(yaw), wrapAngle(headPitch), parameterList));
+        context.sendToSelf(() -> new MessagePlayOutEntityMetadata(this.entity.getEntityId(), parameterList));
         context.sendToAllExceptSelf(() -> new MessagePlayOutEntityHeadLook(entityId, wrapAngle(headYaw)));
         if (!vel.equals(Vector3d.ZERO)) {
             context.sendToAllExceptSelf(() -> new MessagePlayOutEntityVelocity(entityId, vel.getX(), vel.getY(), vel.getZ()));
@@ -73,6 +76,8 @@ public class HumanoidEntityProtocol<E extends LanternEntityLiving> extends Livin
         parameterList.add(EntityParameters.Humanoid.MAIN_HAND,
                 (byte) (this.entity.get(LanternKeys.DOMINANT_HAND).orElse(HandSide.RIGHT) == HandSide.RIGHT ? 1 : 0));
         parameterList.add(EntityParameters.Humanoid.SCORE, this.entity.get(LanternKeys.SCORE).orElse(0));
+        parameterList.add(EntityParameters.Humanoid.SKIN_PARTS, (byte) 0);
+        parameterList.add(EntityParameters.Humanoid.ADDITIONAL_HEARTS, 0f);
     }
 
     @Override
@@ -80,7 +85,7 @@ public class HumanoidEntityProtocol<E extends LanternEntityLiving> extends Livin
         super.update(parameterList);
         final HandSide dominantHand = this.entity.get(LanternKeys.DOMINANT_HAND).orElse(HandSide.RIGHT);
         if (dominantHand != this.lastDominantHand) {
-            parameterList.add(EntityParameters.Insentient.FLAGS, (byte) (dominantHand == HandSide.RIGHT ? 1 : 0));
+            parameterList.add(EntityParameters.Humanoid.MAIN_HAND, (byte) (dominantHand == HandSide.RIGHT ? 1 : 0));
             this.lastDominantHand = dominantHand;
         }
     }

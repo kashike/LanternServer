@@ -25,14 +25,38 @@
  */
 package org.lanternpowered.server.network.entity;
 
-import org.lanternpowered.server.entity.LanternEntity;
-import org.spongepowered.api.CatalogType;
+import org.lanternpowered.server.network.message.Message;
 
-import java.util.function.Function;
+import java.util.function.Supplier;
 
-public interface EntityProtocolType<E extends LanternEntity> extends CatalogType {
+final class EmptyEntityUpdateContext implements EntityUpdateContext {
 
-    Class<E> getEntityType();
+    static final EmptyEntityUpdateContext INSTANCE = new EmptyEntityUpdateContext();
 
-    Function<E, AbstractEntityProtocol<E>> getSupplier();
+    private EmptyEntityUpdateContext() {
+    }
+
+    @Override
+    public void sendToSelf(Message message) {
+    }
+
+    @Override
+    public void sendToSelf(Supplier<Message> messageSupplier) {
+    }
+
+    @Override
+    public void sendToAll(Message message) {
+    }
+
+    @Override
+    public void sendToAll(Supplier<Message> message) {
+    }
+
+    @Override
+    public void sendToAllExceptSelf(Message message) {
+    }
+
+    @Override
+    public void sendToAllExceptSelf(Supplier<Message> messageSupplier) {
+    }
 }

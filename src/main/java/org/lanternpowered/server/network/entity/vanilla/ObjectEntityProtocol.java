@@ -70,7 +70,7 @@ public abstract class ObjectEntityProtocol<E extends LanternEntity> extends Enti
         final int objectData = this.getObjectData();
         if (this.lastObjectData != objectData) {
             this.spawn(context);
-            super.update(EntityUpdateContext.EMPTY);
+            super.update(EntityUpdateContext.empty());
             this.lastObjectData = objectData;
         } else {
             super.update(context);

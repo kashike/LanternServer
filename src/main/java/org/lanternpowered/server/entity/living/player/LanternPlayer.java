@@ -254,6 +254,7 @@ public class LanternPlayer extends LanternEntityHumanoid implements AbstractSubj
         this.registerKey(Keys.CAN_FLY, false).nonRemovableAttachedValueProcessor();
         this.registerKey(Keys.RESPAWN_LOCATIONS, new HashMap<>()).nonRemovableAttachedValueProcessor();
         this.registerKey(Keys.GAME_MODE, GameModes.NOT_SET).nonRemovableAttachedValueProcessor();
+        this.registerKey(LanternKeys.DOMINANT_HAND, HandSide.RIGHT).nonRemovableAttachedValueProcessor();
         this.registerKey(LanternKeys.SCORE, 0).nonRemovableAttachedValueProcessor();
     }
 
@@ -802,14 +803,6 @@ public class LanternPlayer extends LanternEntityHumanoid implements AbstractSubj
 
     public void setSkinParts(Set<SkinPart> skinParts) {
         this.skinParts = checkNotNull(skinParts, "skinParts");
-    }
-
-    public HandSide getMainHand() {
-        return this.mainHand;
-    }
-
-    public void setMainHand(HandSide mainHand) {
-        this.mainHand = checkNotNull(mainHand, "mainHand");
     }
 
     @Override

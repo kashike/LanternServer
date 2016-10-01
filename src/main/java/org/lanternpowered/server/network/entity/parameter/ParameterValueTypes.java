@@ -41,7 +41,7 @@ import java.util.UUID;
 public final class ParameterValueTypes {
 
     public static final ParameterValueType<Byte> BYTE = new ParameterValueType<>(0, ByteBuffer::writeByte);
-    public static final ParameterValueType<Integer> INTEGER = new ParameterValueType<>(1, ByteBuffer::writeInteger);
+    public static final ParameterValueType<Integer> INTEGER = new ParameterValueType<>(1, ByteBuffer::writeVarInt);
     public static final ParameterValueType<Float> FLOAT = new ParameterValueType<>(2, ByteBuffer::writeFloat);
     public static final ParameterValueType<String> STRING = new ParameterValueType<>(3, ByteBuffer::writeString);
     public static final ParameterValueType<Text> TEXT = new ParameterValueType<>(4, (buf, value) -> buf.write(Types.TEXT, value));

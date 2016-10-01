@@ -26,13 +26,36 @@
 package org.lanternpowered.server.network.entity;
 
 import org.lanternpowered.server.entity.LanternEntity;
-import org.spongepowered.api.CatalogType;
+import org.lanternpowered.server.entity.LanternEntityLiving;
+import org.spongepowered.api.util.generator.dummy.DummyObjectProvider;
 
-import java.util.function.Function;
+public final class EntityProtocolTypes {
 
-public interface EntityProtocolType<E extends LanternEntity> extends CatalogType {
+    public static final EntityProtocolType<LanternEntityLiving> HUMAN = dummy("HUMAN");
 
-    Class<E> getEntityType();
+    public static final EntityProtocolType<LanternEntityLiving> HUSK = dummy("HUSK");
 
-    Function<E, AbstractEntityProtocol<E>> getSupplier();
+    public static final EntityProtocolType<LanternEntity> LIGHTNING = dummy("LIGHTNING");
+
+    public static final EntityProtocolType<LanternEntityLiving> MAGMA_CUBE = dummy("MAGMA_CUBE");
+
+    public static final EntityProtocolType<LanternEntity> PAINTING = dummy("PAINTING");
+
+    public static final EntityProtocolType<LanternEntityLiving> RABBIT = dummy("RABBIT");
+
+    public static final EntityProtocolType<LanternEntityLiving> SLIME = dummy("SLIME");
+
+    public static final EntityProtocolType<LanternEntityLiving> VILLAGER = dummy("VILLAGER");
+
+    public static final EntityProtocolType<LanternEntityLiving> ZOMBIE = dummy("ZOMBIE");
+
+    public static final EntityProtocolType<LanternEntityLiving> ZOMBIE_VILLAGER = dummy("ZOMBIE_VILLAGER");
+
+    private static <E extends LanternEntity> EntityProtocolType<E> dummy(String name) {
+        //noinspection unchecked
+        return DummyObjectProvider.createFor(EntityProtocolType.class, name);
+    }
+
+    private EntityProtocolTypes() {
+    }
 }

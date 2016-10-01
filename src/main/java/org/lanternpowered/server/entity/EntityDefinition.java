@@ -68,7 +68,7 @@ public class EntityDefinition {
          * base class.<p/>
          */
         @Setting("protocol-type")
-        private EntityProtocolType<?, ?> entityProtocolType;
+        private EntityProtocolType<?> entityProtocolType;
 
         /**
          * The maximum range that a {@link LanternPlayer} can track a

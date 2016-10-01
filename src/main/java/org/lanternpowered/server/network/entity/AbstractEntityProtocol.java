@@ -84,20 +84,23 @@ public abstract class AbstractEntityProtocol<E extends LanternEntity> {
 
         @Override
         public void sendToAll(Message message) {
-            this.sendToAllExceptSelf(message);
-            this.sendToSelf(message);
+            this.trackers.forEach(tracker -> tracker.getConnection().send(message));
         }
 
         @Override
         public void sendToAll(Supplier<Message> message) {
-            if (entity instanceof Player || !this.trackers.isEmpty()) {
+            if (!this.trackers.isEmpty()) {
                 this.sendToAll(message.get());
             }
         }
 
         @Override
         public void sendToAllExceptSelf(Message message) {
-            this.trackers.forEach(tracker -> tracker.getConnection().send(message));
+            this.trackers.forEach(tracker -> {
+                if (tracker != entity) {
+                    tracker.getConnection().send(message);
+                }
+            });
         }
 
         @Override
@@ -161,11 +164,6 @@ public abstract class AbstractEntityProtocol<E extends LanternEntity> {
      * Post updates the trackers of the entity.
      */
     void postUpdateTrackers() {
-        if (!this.trackers.isEmpty()) {
-            final SimpleEntityProtocolContext ctx = new SimpleEntityProtocolContext();
-            ctx.trackers = this.trackers;
-            this.destroy(ctx);
-        }
     }
 
     /**
@@ -178,9 +176,6 @@ public abstract class AbstractEntityProtocol<E extends LanternEntity> {
      */
     void updateTrackers(Set<LanternPlayer> players) {
         players = new HashSet<>(players);
-        if (this.entity instanceof LanternPlayer) {
-            players.remove(this.entity);
-        }
 
         final Set<LanternPlayer> removed = new HashSet<>();
         final Set<LanternPlayer> added = new HashSet<>();
@@ -190,14 +185,16 @@ public abstract class AbstractEntityProtocol<E extends LanternEntity> {
         final Iterator<LanternPlayer> trackerIt = this.trackers.iterator();
         while (trackerIt.hasNext()) {
             final LanternPlayer tracker = trackerIt.next();
-            if (!players.remove(tracker) || !this.isVisible(pos, tracker)) {
+            final boolean flag = players.remove(tracker);
+            if (tracker != this.entity &&
+                    (!flag || !this.isVisible(pos, tracker))) {
                 trackerIt.remove();
                 removed.add(tracker);
             }
         }
 
         for (LanternPlayer tracker : players) {
-            if (this.isVisible(pos, tracker)) {
+            if (tracker == this.entity || this.isVisible(pos, tracker)) {
                 added.add(tracker);
             }
         }

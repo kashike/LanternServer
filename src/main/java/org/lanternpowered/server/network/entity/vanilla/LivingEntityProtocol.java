@@ -42,9 +42,11 @@ public abstract class LivingEntityProtocol<E extends LanternEntityLiving> extend
     @Override
     protected void spawn(ParameterList parameterList) {
         super.spawn(parameterList);
-        parameterList.add(EntityParameters.Living.HAND_DATA, (byte) 0); // TODO
+        parameterList.add(EntityParameters.Living.HAND_DATA, (byte) 0);
         parameterList.add(EntityParameters.Living.HEALTH, this.entity.get(Keys.HEALTH).orElse(1.0).floatValue());
         parameterList.add(EntityParameters.Living.ARROWS_IN_ENTITY, this.entity.get(LanternKeys.ARROWS_IN_ENTITY).orElse(0));
+        parameterList.add(EntityParameters.Living.POTION_EFFECT_COLOR, 0);
+        parameterList.add(EntityParameters.Living.POTION_EFFECT_AMBIENT, false);
     }
 
     @Override

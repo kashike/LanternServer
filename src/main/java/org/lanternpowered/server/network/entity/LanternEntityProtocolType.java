@@ -25,14 +25,34 @@
  */
 package org.lanternpowered.server.network.entity;
 
+import com.google.common.base.MoreObjects;
+import org.lanternpowered.server.catalog.PluginCatalogType;
 import org.lanternpowered.server.entity.LanternEntity;
-import org.spongepowered.api.CatalogType;
 
 import java.util.function.Function;
 
-public interface EntityProtocolType<E extends LanternEntity> extends CatalogType {
+public class LanternEntityProtocolType<E extends LanternEntity> extends PluginCatalogType.Base implements EntityProtocolType<E> {
 
-    Class<E> getEntityType();
+    private final Class<E> entityType;
+    private final Function<E, AbstractEntityProtocol<E>> entityProtocolSupplier;
 
-    Function<E, AbstractEntityProtocol<E>> getSupplier();
+    public LanternEntityProtocolType(String pluginId, String name, Class<E> entityType,
+            Function<E, AbstractEntityProtocol<E>> entityProtocolSupplier) {
+        super(pluginId, name);
+        this.entityType = entityType;
+        this.entityProtocolSupplier = entityProtocolSupplier;
+    }
+
+    public Class<E> getEntityType() {
+        return this.entityType;
+    }
+
+    public Function<E, AbstractEntityProtocol<E>> getSupplier() {
+        return this.entityProtocolSupplier;
+    }
+
+    @Override
+    protected MoreObjects.ToStringHelper toStringHelper() {
+        return super.toStringHelper().add("entityType", this.entityType);
+    }
 }

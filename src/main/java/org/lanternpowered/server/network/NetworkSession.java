@@ -53,6 +53,7 @@ import org.lanternpowered.server.entity.LanternEntity;
 import org.lanternpowered.server.entity.living.player.LanternPlayer;
 import org.lanternpowered.server.entity.living.player.tab.GlobalTabList;
 import org.lanternpowered.server.game.Lantern;
+import org.lanternpowered.server.network.entity.EntityProtocolTypes;
 import org.lanternpowered.server.network.message.AsyncHelper;
 import org.lanternpowered.server.network.message.BulkMessage;
 import org.lanternpowered.server.network.message.HandlerMessage;
@@ -764,6 +765,7 @@ public final class NetworkSession extends SimpleChannelInboundHandler<Message> i
                 Lantern.getLogger().warn("An error occurred while saving the player data of {} ({})", this.gameProfile.getName().get(),
                         this.gameProfile.getUniqueId(), e);
             }
+            this.player.remove(LanternEntity.RemoveState.DESTROYED);
             this.player.setWorld(null);
         }
     }
@@ -779,6 +781,7 @@ public final class NetworkSession extends SimpleChannelInboundHandler<Message> i
         }
         this.player = new LanternPlayer(this.gameProfile, this);
         this.player.setEntityId(LanternEntity.getIdAllocator().poll());
+        this.player.setEntityProtocolType(EntityProtocolTypes.HUMAN);
 
         try {
             PlayerIO.load(Lantern.getGame().getSavesDirectory(), this.player);

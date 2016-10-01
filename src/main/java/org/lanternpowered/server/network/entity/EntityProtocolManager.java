@@ -29,7 +29,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.lanternpowered.server.entity.LanternEntity;
 import org.lanternpowered.server.entity.living.player.LanternPlayer;
-import org.lanternpowered.server.network.entity.vanilla.EntityProtocol;
 import org.spongepowered.api.entity.Entity;
 
 import java.util.HashSet;
@@ -54,6 +53,8 @@ public final class EntityProtocolManager {
      * @param entity The entity
      */
     public void add(LanternEntity entity) {
+        //noinspection ConstantConditions,unchecked
+        this.add(entity, (EntityProtocolType) entity.getEntityProtocolType());
     }
 
     /**
@@ -66,10 +67,10 @@ public final class EntityProtocolManager {
      * @param protocolType The protocol type
      */
     public <E extends LanternEntity> void add(E entity,
-            EntityProtocolType<E, ? extends EntityProtocol<E>> protocolType) {
+            EntityProtocolType<E> protocolType) {
         checkNotNull(entity, "entity");
         checkNotNull(protocolType, "protocolType");
-        final AbstractEntityProtocol<E> entityProtocol = protocolType.getEntityProtocolSupplier().apply(entity);
+        final AbstractEntityProtocol<E> entityProtocol = protocolType.getSupplier().apply(entity);
         final AbstractEntityProtocol<?> removed = this.entityProtocols.put(entity, entityProtocol);
         if (removed != null) {
             this.queuedForRemoval.add(removed);

@@ -49,8 +49,8 @@ public class ByteBufParameterList extends AbstractParameterList {
         if (this.buf == null) {
             this.buf = this.byteBufAllocator.buffer();
         }
-        this.buf.writeByte(type.getValueType().getInternalId());
         this.buf.writeByte(type.index);
+        this.buf.writeByte(type.getValueType().getInternalId());
     }
 
     @Override

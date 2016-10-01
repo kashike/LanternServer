@@ -38,7 +38,7 @@ public class EntityProtocolSpec {
 
     @Expose
     @SerializedName("entity-protocol-type")
-    private EntityProtocolType<?, ?> entityProtocolType;
+    private EntityProtocolType<?> entityProtocolType;
 
     @Expose
     @SerializedName("tracking-range")
@@ -48,7 +48,7 @@ public class EntityProtocolSpec {
     @SerializedName("tracking-update-rate")
     private int trackingUpdateRate = 4;
 
-    public EntityProtocolSpec(EntityProtocolType<?, ?> entityProtocolType) {
+    public EntityProtocolSpec(EntityProtocolType<?> entityProtocolType) {
         this.entityProtocolType = entityProtocolType;
     }
 
@@ -66,7 +66,7 @@ public class EntityProtocolSpec {
                 "The protocol type %s specified by this spec isn't applicable for %s",
                 this.entityProtocolType.getId(), entity.getType().getId());
         //noinspection unchecked
-        final EntityProtocol entityProtocol = (EntityProtocol) ((Function) this.entityProtocolType.getEntityProtocolSupplier()).apply(entity);
+        final EntityProtocol entityProtocol = (EntityProtocol) ((Function) this.entityProtocolType.getSupplier()).apply(entity);
         entityProtocol.setTrackingRange(this.trackingRange);
         entityProtocol.setTickRate(this.trackingUpdateRate);
         return entityProtocol;
@@ -77,7 +77,7 @@ public class EntityProtocolSpec {
      *
      * @return The entity protocol type
      */
-    public EntityProtocolType<?, ?> getEntityProtocolType() {
+    public EntityProtocolType<?> getEntityProtocolType() {
         return this.entityProtocolType;
     }
 
