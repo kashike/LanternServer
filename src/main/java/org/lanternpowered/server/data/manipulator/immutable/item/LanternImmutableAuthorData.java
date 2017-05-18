@@ -44,7 +44,7 @@ public class LanternImmutableAuthorData extends AbstractImmutableData<ImmutableA
 
     @Override
     public void registerKeys() {
-        registerKey(Keys.BOOK_AUTHOR, Text.EMPTY).notRemovable();
+        registerKey(Keys.BOOK_AUTHOR, Text.EMPTY);
     }
 
     @Override

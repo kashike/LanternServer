@@ -48,8 +48,8 @@ public class LanternDurabilityData extends AbstractData<DurabilityData, Immutabl
 
     @Override
     public void registerKeys() {
-        registerKey(Keys.ITEM_DURABILITY, 100).notRemovable();
-        registerKey(Keys.UNBREAKABLE, false).notRemovable();
+        registerKey(Keys.ITEM_DURABILITY, 100);
+        registerKey(Keys.UNBREAKABLE, false);
     }
 
     @Override

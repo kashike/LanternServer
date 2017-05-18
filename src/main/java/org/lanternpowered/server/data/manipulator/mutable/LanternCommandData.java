@@ -26,53 +26,30 @@
 package org.lanternpowered.server.data.manipulator.mutable;
 
 import org.spongepowered.api.data.key.Keys;
-import org.spongepowered.api.data.manipulator.immutable.ImmutableCommandData;
 import org.spongepowered.api.data.manipulator.mutable.CommandData;
 import org.spongepowered.api.data.value.mutable.OptionalValue;
 import org.spongepowered.api.data.value.mutable.Value;
 import org.spongepowered.api.text.Text;
 
-import java.util.Optional;
-
-public class LanternCommandData extends AbstractData<CommandData, ImmutableCommandData> implements CommandData {
-
-    public LanternCommandData() {
-        super(CommandData.class, ImmutableCommandData.class);
-    }
-
-    public LanternCommandData(ImmutableCommandData manipulator) {
-        super(manipulator);
-    }
-
-    public LanternCommandData(CommandData manipulator) {
-        super(manipulator);
-    }
+public interface LanternCommandData extends CommandData {
 
     @Override
-    public void registerKeys() {
-        registerKey(Keys.COMMAND, "").notRemovable();
-        registerKey(Keys.SUCCESS_COUNT, 0).notRemovable();
-        registerKey(Keys.TRACKS_OUTPUT, true).notRemovable();
-        registerKey(Keys.LAST_COMMAND_OUTPUT, Optional.empty()).notRemovable();
-    }
-
-    @Override
-    public Value<String> storedCommand() {
+    default Value<String> storedCommand() {
         return getValue(Keys.COMMAND).get();
     }
 
     @Override
-    public Value<Integer> successCount() {
+    default Value<Integer> successCount() {
         return getValue(Keys.SUCCESS_COUNT).get();
     }
 
     @Override
-    public Value<Boolean> doesTrackOutput() {
+    default Value<Boolean> doesTrackOutput() {
         return getValue(Keys.TRACKS_OUTPUT).get();
     }
 
     @Override
-    public OptionalValue<Text> lastOutput() {
+    default OptionalValue<Text> lastOutput() {
         return getValue(Keys.LAST_COMMAND_OUTPUT).get();
     }
 }

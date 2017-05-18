@@ -25,28 +25,15 @@
  */
 package org.lanternpowered.server.data.manipulator.immutable;
 
+import org.lanternpowered.server.data.manipulator.IImmutableValueHolder;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.manipulator.immutable.ImmutableWetData;
-import org.spongepowered.api.data.manipulator.mutable.WetData;
 import org.spongepowered.api.data.value.immutable.ImmutableValue;
 
-public class LanternImmutableWetData extends AbstractImmutableData<ImmutableWetData, WetData> implements ImmutableWetData {
-
-    public LanternImmutableWetData() {
-        super(ImmutableWetData.class, WetData.class);
-    }
-
-    public LanternImmutableWetData(WetData manipulator) {
-        super(manipulator);
-    }
+public interface LanternImmutableWetData extends ImmutableWetData, IImmutableValueHolder {
 
     @Override
-    public void registerKeys() {
-        registerKey(Keys.IS_WET, false).notRemovable();
-    }
-
-    @Override
-    public ImmutableValue<Boolean> wet() {
+    default ImmutableValue<Boolean> wet() {
         return getImmutableValue(Keys.IS_WET).get();
     }
 }

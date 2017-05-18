@@ -53,9 +53,9 @@ public interface AbstractDataHolder extends AbstractCompositeValueStore<DataHold
     @SuppressWarnings("unchecked")
     default <M extends DataManipulator<M, I>, I extends ImmutableDataManipulator<I, M>> Optional<M> create(
             DataManipulatorRegistration<M, I> registration) {
-        final M manipulator = registration.getManipulatorSupplier().get();
+        final M manipulator = registration.createMutable();
         for (Key<?> key : registration.getRequiredKeys()) {
-            final Optional value = getValue(key);
+            final Optional value = getValue((Key) key);
             if (value.isPresent()) {
                 manipulator.set((Key) key, value.get());
             } else if (!supports(key)) {
@@ -146,7 +146,8 @@ public interface AbstractDataHolder extends AbstractCompositeValueStore<DataHold
                     }
                     return builder.result(DataTransactionResult.Type.SUCCESS).build();
                 } else if (function != MergeFunction.IGNORE_ALL) {
-                    valueContainer = function.merge((ValueContainer) create(optRegistration.get()).orElse(null), valueContainer);
+                    valueContainer = (DataManipulator<?, ?>) function.merge(
+                            (ValueContainer) create(optRegistration.get()).orElse(null), (ValueContainer) valueContainer);
                 }
                 final DataTransactionResult.Builder builder = DataTransactionResult.builder();
                 boolean success = false;
@@ -207,9 +208,24 @@ public interface AbstractDataHolder extends AbstractCompositeValueStore<DataHold
         return DataTransactionResult.failNoData();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     default DataTransactionResult copyFrom(DataHolder that, MergeFunction function) {
-        return null;
+        final Collection<DataManipulator<?, ?>> containers = that.getContainers();
+        final DataTransactionResult.Builder builder = DataTransactionResult.builder();
+        boolean success = false;
+        for (DataManipulator<?, ?> thatContainer : containers) {
+            final DataManipulator<?, ?> thisContainer = get(thatContainer.getClass()).orElse(null);
+            final DataManipulator<?, ?> merged = function.merge(thisContainer, thatContainer);
+            final DataTransactionResult result = offer(merged);
+            builder.reject(result.getRejectedData());
+            builder.replace(result.getReplacedData());
+            builder.success(result.getSuccessfulData());
+            if (!result.getSuccessfulData().isEmpty()) {
+                success = true;
+            }
+        }
+        return builder.result(success ? DataTransactionResult.Type.SUCCESS : DataTransactionResult.Type.FAILURE).build();
     }
 
     @SuppressWarnings("unchecked")
@@ -217,7 +233,7 @@ public interface AbstractDataHolder extends AbstractCompositeValueStore<DataHold
     default Collection<DataManipulator<?, ?>> getContainers() {
         final ImmutableList.Builder<DataManipulator<?, ?>> builder = ImmutableList.builder();
         for (DataManipulatorRegistration registration : DataManipulatorRegistry.get().getAll()) {
-            DataManipulator manipulator = (DataManipulator<?, ?>) registration.getImmutableManipulatorSupplier().get();
+            DataManipulator manipulator = (DataManipulator<?, ?>) registration.createMutable();
             for (Key key : (Set<Key>) registration.getRequiredKeys()) {
                 final Optional value = getValue(key);
                 if (value.isPresent()) {
@@ -239,6 +255,16 @@ public interface AbstractDataHolder extends AbstractCompositeValueStore<DataHold
         }
 
         return builder.build();
+    }
+
+    @Override
+    default DataHolder copy() {
+        return this;
+    }
+
+    @Override
+    default int getContentVersion() {
+        return 1;
     }
 
     @Override

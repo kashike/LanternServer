@@ -25,35 +25,15 @@
  */
 package org.lanternpowered.server.data.manipulator.mutable;
 
-import org.lanternpowered.server.profile.LanternGameProfile;
 import org.spongepowered.api.data.key.Keys;
-import org.spongepowered.api.data.manipulator.immutable.ImmutableRepresentedPlayerData;
 import org.spongepowered.api.data.manipulator.mutable.RepresentedPlayerData;
 import org.spongepowered.api.data.value.mutable.Value;
 import org.spongepowered.api.profile.GameProfile;
 
-public class LanternRepresentedPlayerData extends AbstractData<RepresentedPlayerData, ImmutableRepresentedPlayerData>
-        implements RepresentedPlayerData {
-
-    public LanternRepresentedPlayerData() {
-        super(RepresentedPlayerData.class, ImmutableRepresentedPlayerData.class);
-    }
-
-    public LanternRepresentedPlayerData(ImmutableRepresentedPlayerData manipulator) {
-        super(manipulator);
-    }
-
-    public LanternRepresentedPlayerData(RepresentedPlayerData manipulator) {
-        super(manipulator);
-    }
+public interface LanternRepresentedPlayerData extends RepresentedPlayerData {
 
     @Override
-    public void registerKeys() {
-        registerKey(Keys.REPRESENTED_PLAYER, LanternGameProfile.UNKNOWN).notRemovable();
-    }
-
-    @Override
-    public Value<GameProfile> owner() {
+    default Value<GameProfile> owner() {
         return getValue(Keys.REPRESENTED_PLAYER).get();
     }
 }

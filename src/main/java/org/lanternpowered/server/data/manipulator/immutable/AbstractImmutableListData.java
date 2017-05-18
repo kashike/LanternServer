@@ -42,7 +42,7 @@ public abstract class AbstractImmutableListData<E, I extends ImmutableListData<E
 
     public AbstractImmutableListData(Class<I> immutableManipulatorType, Class<M> manipulatorType, Key<ListValue<E>> listKey) {
         super(immutableManipulatorType, manipulatorType);
-        registerKey(listKey, new ArrayList<>()).notRemovable();
+        registerKey(listKey, new ArrayList<>());
         this.listKey = listKey;
     }
 

@@ -25,30 +25,16 @@
  */
 package org.lanternpowered.server.data.manipulator.immutable;
 
+import org.lanternpowered.server.data.manipulator.IImmutableValueHolder;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.manipulator.immutable.ImmutableDisplayNameData;
-import org.spongepowered.api.data.manipulator.mutable.DisplayNameData;
 import org.spongepowered.api.data.value.immutable.ImmutableValue;
 import org.spongepowered.api.text.Text;
 
-public class LanternImmutableDisplayNameData extends AbstractImmutableData<ImmutableDisplayNameData, DisplayNameData>
-        implements ImmutableDisplayNameData {
-
-    public LanternImmutableDisplayNameData() {
-        super(ImmutableDisplayNameData.class, DisplayNameData.class);
-    }
-
-    public LanternImmutableDisplayNameData(DisplayNameData manipulator) {
-        super(manipulator);
-    }
+public interface LanternImmutableDisplayNameData extends ImmutableDisplayNameData, IImmutableValueHolder {
 
     @Override
-    public void registerKeys() {
-        registerKey(Keys.DISPLAY_NAME, Text.EMPTY).notRemovable();
-    }
-
-    @Override
-    public ImmutableValue<Text> displayName() {
+    default ImmutableValue<Text> displayName() {
         return getImmutableValue(Keys.DISPLAY_NAME).get();
     }
 }

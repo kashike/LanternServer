@@ -45,7 +45,7 @@ public class LanternImmutableBlockItemData extends AbstractImmutableData<Immutab
 
     @Override
     public void registerKeys() {
-        registerKey(Keys.ITEM_BLOCKSTATE, BlockTypes.AIR.getDefaultState()).notRemovable();
+        registerKey(Keys.ITEM_BLOCKSTATE, BlockTypes.AIR.getDefaultState());
     }
 
     @Override

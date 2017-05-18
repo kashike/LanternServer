@@ -50,7 +50,7 @@ public class LanternPlaceableData extends AbstractData<PlaceableData, ImmutableP
 
     @Override
     public void registerKeys() {
-        registerKey(Keys.PLACEABLE_BLOCKS, new HashSet<>()).notRemovable();
+        registerKey(Keys.PLACEABLE_BLOCKS, new HashSet<>());
     }
 
     @Override

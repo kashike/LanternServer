@@ -49,7 +49,7 @@ public class LanternBlockItemData extends AbstractData<BlockItemData, ImmutableB
 
     @Override
     public void registerKeys() {
-        registerKey(Keys.ITEM_BLOCKSTATE, BlockTypes.AIR.getDefaultState()).notRemovable();
+        registerKey(Keys.ITEM_BLOCKSTATE, BlockTypes.AIR.getDefaultState());
     }
 
     @Override

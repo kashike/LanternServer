@@ -23,23 +23,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lanternpowered.server.data.manipulator;
-
-import org.lanternpowered.server.data.manipulator.mutable.AbstractData;
-
-final class RegistrationManipulatorDataBuilder<M extends AbstractData<M, ?>> extends AbstractData.AbstractManipulatorDataBuilder<M> {
-
-    private final DataManipulatorRegistration<M, ?> registration;
-
-    RegistrationManipulatorDataBuilder(Class<M> requiredClass, int supportedVersion,
-            DataManipulatorRegistration<M, ?> registration) {
-        super(requiredClass, supportedVersion);
-        this.registration = registration;
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    protected M buildManipulator() {
-        return this.registration.getManipulatorSupplier().get();
-    }
-}
+/**
+ * All the classes in this package were used to design the type generators.
+ */
+@org.spongepowered.api.util.annotation.NonnullByDefault
+package org.lanternpowered.server.data.manipulator.gen.dummy;

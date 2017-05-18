@@ -26,29 +26,15 @@
 package org.lanternpowered.server.data.manipulator.immutable;
 
 import com.flowpowered.math.vector.Vector3d;
+import org.lanternpowered.server.data.manipulator.IImmutableValueHolder;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.manipulator.immutable.ImmutableTargetedLocationData;
-import org.spongepowered.api.data.manipulator.mutable.TargetedLocationData;
 import org.spongepowered.api.data.value.immutable.ImmutableValue;
 
-public class LanternImmutableTargetedLocationData extends AbstractImmutableData<ImmutableTargetedLocationData, TargetedLocationData>
-        implements ImmutableTargetedLocationData {
-
-    public LanternImmutableTargetedLocationData() {
-        super(ImmutableTargetedLocationData.class, TargetedLocationData.class);
-    }
-
-    public LanternImmutableTargetedLocationData(TargetedLocationData manipulator) {
-        super(manipulator);
-    }
+public interface LanternImmutableTargetedLocationData extends ImmutableTargetedLocationData, IImmutableValueHolder {
 
     @Override
-    public void registerKeys() {
-        registerKey(Keys.TARGETED_LOCATION, Vector3d.ZERO).notRemovable();
-    }
-
-    @Override
-    public ImmutableValue<Vector3d> target() {
+    default ImmutableValue<Vector3d> target() {
         return getImmutableValue(Keys.TARGETED_LOCATION).get();
     }
 }

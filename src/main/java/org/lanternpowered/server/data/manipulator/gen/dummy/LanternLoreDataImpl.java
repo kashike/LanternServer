@@ -23,24 +23,34 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lanternpowered.server.data.manipulator;
+package org.lanternpowered.server.data.manipulator.gen.dummy;
 
-import org.lanternpowered.server.data.manipulator.immutable.AbstractImmutableData;
+import org.lanternpowered.server.data.manipulator.mutable.AbstractListData;
+import org.spongepowered.api.data.key.Key;
+import org.spongepowered.api.data.key.Keys;
+import org.spongepowered.api.data.manipulator.immutable.item.ImmutableLoreData;
+import org.spongepowered.api.data.manipulator.mutable.item.LoreData;
+import org.spongepowered.api.data.value.mutable.ListValue;
+import org.spongepowered.api.text.Text;
 
-final class RegistrationImmutableManipulatorDataBuilder<I extends AbstractImmutableData<I, ?>>
-        extends AbstractImmutableData.AbstractImmutableManipulatorDataBuilder<I> {
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Supplier;
 
-    private final DataManipulatorRegistration<?, I> registration;
+public class LanternLoreDataImpl extends AbstractListData<Text, LoreData, ImmutableLoreData> implements LoreData {
 
-    RegistrationImmutableManipulatorDataBuilder(Class<I> requiredClass, int supportedVersion,
-            DataManipulatorRegistration<?, I> registration) {
-        super(requiredClass, supportedVersion);
-        this.registration = registration;
+    public static Key<ListValue<Text>> key;
+    public static Supplier<List<Text>> listSupplier;
+
+    public LanternLoreDataImpl() {
+        super(LoreData.class, ImmutableLoreData.class, key, listSupplier.get());
     }
 
-    @SuppressWarnings("unchecked")
-    @Override
-    protected I buildManipulator() {
-        return this.registration.getImmutableManipulatorSupplier().get();
+    public LanternLoreDataImpl(ImmutableLoreData manipulator) {
+        super(manipulator);
+    }
+
+    public LanternLoreDataImpl(LoreData manipulator) {
+        super(manipulator);
     }
 }

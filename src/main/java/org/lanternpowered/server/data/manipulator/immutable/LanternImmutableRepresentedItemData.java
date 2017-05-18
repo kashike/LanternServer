@@ -25,30 +25,16 @@
  */
 package org.lanternpowered.server.data.manipulator.immutable;
 
+import org.lanternpowered.server.data.manipulator.IImmutableValueHolder;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.manipulator.immutable.ImmutableRepresentedItemData;
-import org.spongepowered.api.data.manipulator.mutable.RepresentedItemData;
 import org.spongepowered.api.data.value.immutable.ImmutableValue;
 import org.spongepowered.api.item.inventory.ItemStackSnapshot;
 
-public class LanternImmutableRepresentedItemData extends AbstractImmutableData<ImmutableRepresentedItemData, RepresentedItemData>
-        implements ImmutableRepresentedItemData {
-
-    public LanternImmutableRepresentedItemData() {
-        super(ImmutableRepresentedItemData.class, RepresentedItemData.class);
-    }
-
-    public LanternImmutableRepresentedItemData(RepresentedItemData manipulator) {
-        super(manipulator);
-    }
+public interface LanternImmutableRepresentedItemData extends ImmutableRepresentedItemData, IImmutableValueHolder {
 
     @Override
-    public void registerKeys() {
-        registerKey(Keys.REPRESENTED_ITEM, ItemStackSnapshot.NONE).notRemovable();
-    }
-
-    @Override
-    public ImmutableValue<ItemStackSnapshot> item() {
+    default ImmutableValue<ItemStackSnapshot> item() {
         return getImmutableValue(Keys.REPRESENTED_ITEM).get();
     }
 }

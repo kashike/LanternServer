@@ -47,12 +47,12 @@ public class LanternHideData extends AbstractData<HideData, ImmutableHideData> i
 
     @Override
     public void registerKeys() {
-        registerKey(Keys.HIDE_ENCHANTMENTS, false).notRemovable();
-        registerKey(Keys.HIDE_ATTRIBUTES, false).notRemovable();
-        registerKey(Keys.HIDE_UNBREAKABLE, false).notRemovable();
-        registerKey(Keys.HIDE_CAN_DESTROY, false).notRemovable();
-        registerKey(Keys.HIDE_CAN_PLACE, false).notRemovable();
-        registerKey(Keys.HIDE_MISCELLANEOUS, false).notRemovable();
+        registerKey(Keys.HIDE_ENCHANTMENTS, false);
+        registerKey(Keys.HIDE_ATTRIBUTES, false);
+        registerKey(Keys.HIDE_UNBREAKABLE, false);
+        registerKey(Keys.HIDE_CAN_DESTROY, false);
+        registerKey(Keys.HIDE_CAN_PLACE, false);
+        registerKey(Keys.HIDE_MISCELLANEOUS, false);
     }
 
     @Override

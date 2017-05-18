@@ -25,50 +25,32 @@
  */
 package org.lanternpowered.server.data.manipulator.immutable;
 
+import org.lanternpowered.server.data.manipulator.IImmutableValueHolder;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.manipulator.immutable.ImmutableCommandData;
-import org.spongepowered.api.data.manipulator.mutable.CommandData;
 import org.spongepowered.api.data.value.immutable.ImmutableOptionalValue;
 import org.spongepowered.api.data.value.immutable.ImmutableValue;
 import org.spongepowered.api.text.Text;
 
-import java.util.Optional;
-
-public class LanternImmutableCommandData extends AbstractImmutableData<ImmutableCommandData, CommandData> implements ImmutableCommandData {
-
-    public LanternImmutableCommandData() {
-        super(ImmutableCommandData.class, CommandData.class);
-    }
-
-    public LanternImmutableCommandData(CommandData manipulator) {
-        super(manipulator);
-    }
+public interface LanternImmutableCommandData extends ImmutableCommandData, IImmutableValueHolder {
 
     @Override
-    public void registerKeys() {
-        registerKey(Keys.COMMAND, "").notRemovable();
-        registerKey(Keys.SUCCESS_COUNT, 0).notRemovable();
-        registerKey(Keys.TRACKS_OUTPUT, true).notRemovable();
-        registerKey(Keys.LAST_COMMAND_OUTPUT, Optional.empty()).notRemovable();
-    }
-
-    @Override
-    public ImmutableValue<String> storedCommand() {
+    default ImmutableValue<String> storedCommand() {
         return getImmutableValue(Keys.COMMAND).get();
     }
 
     @Override
-    public ImmutableValue<Integer> successCount() {
+    default ImmutableValue<Integer> successCount() {
         return getImmutableValue(Keys.SUCCESS_COUNT).get();
     }
 
     @Override
-    public ImmutableValue<Boolean> doesTrackOutput() {
+    default ImmutableValue<Boolean> doesTrackOutput() {
         return getImmutableValue(Keys.TRACKS_OUTPUT).get();
     }
 
     @Override
-    public ImmutableOptionalValue<Text> lastOutput() {
+    default ImmutableOptionalValue<Text> lastOutput() {
         return (ImmutableOptionalValue<Text>) getImmutableValue(Keys.LAST_COMMAND_OUTPUT).get();
     }
 }

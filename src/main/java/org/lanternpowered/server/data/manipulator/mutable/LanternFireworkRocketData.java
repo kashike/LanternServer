@@ -26,31 +26,13 @@
 package org.lanternpowered.server.data.manipulator.mutable;
 
 import org.spongepowered.api.data.key.Keys;
-import org.spongepowered.api.data.manipulator.immutable.ImmutableFireworkRocketData;
 import org.spongepowered.api.data.manipulator.mutable.FireworkRocketData;
 import org.spongepowered.api.data.value.mutable.MutableBoundedValue;
 
-public class LanternFireworkRocketData extends AbstractData<FireworkRocketData, ImmutableFireworkRocketData> implements FireworkRocketData {
-
-    public LanternFireworkRocketData() {
-        super(FireworkRocketData.class, ImmutableFireworkRocketData.class);
-    }
-
-    public LanternFireworkRocketData(ImmutableFireworkRocketData manipulator) {
-        super(manipulator);
-    }
-
-    public LanternFireworkRocketData(FireworkRocketData manipulator) {
-        super(manipulator);
-    }
+public interface LanternFireworkRocketData extends FireworkRocketData {
 
     @Override
-    public void registerKeys() {
-        registerKey(Keys.FIREWORK_FLIGHT_MODIFIER, 0).notRemovable();
-    }
-
-    @Override
-    public MutableBoundedValue<Integer> flightModifier() {
+    default MutableBoundedValue<Integer> flightModifier() {
         return getValue(Keys.FIREWORK_FLIGHT_MODIFIER).get();
     }
 }

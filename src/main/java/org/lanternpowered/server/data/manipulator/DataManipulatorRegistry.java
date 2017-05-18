@@ -25,10 +25,10 @@
  */
 package org.lanternpowered.server.data.manipulator;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.lanternpowered.server.data.manipulator.immutable.IImmutableDataManipulator;
+import com.flowpowered.math.vector.Vector3d;
+import org.lanternpowered.server.data.manipulator.gen.DataManipulatorGenerator;
 import org.lanternpowered.server.data.manipulator.immutable.LanternImmutableColoredData;
 import org.lanternpowered.server.data.manipulator.immutable.LanternImmutableCommandData;
 import org.lanternpowered.server.data.manipulator.immutable.LanternImmutableDisplayNameData;
@@ -60,7 +60,6 @@ import org.lanternpowered.server.data.manipulator.immutable.item.LanternImmutabl
 import org.lanternpowered.server.data.manipulator.immutable.item.LanternImmutablePlaceableData;
 import org.lanternpowered.server.data.manipulator.immutable.item.LanternImmutableSpawnableData;
 import org.lanternpowered.server.data.manipulator.immutable.item.LanternImmutableStoredEnchantmentData;
-import org.lanternpowered.server.data.manipulator.mutable.IDataManipulator;
 import org.lanternpowered.server.data.manipulator.mutable.LanternColoredData;
 import org.lanternpowered.server.data.manipulator.mutable.LanternCommandData;
 import org.lanternpowered.server.data.manipulator.mutable.LanternDisplayNameData;
@@ -74,6 +73,8 @@ import org.lanternpowered.server.data.manipulator.mutable.LanternRotationalData;
 import org.lanternpowered.server.data.manipulator.mutable.LanternSkullData;
 import org.lanternpowered.server.data.manipulator.mutable.LanternTargetedLocationData;
 import org.lanternpowered.server.data.manipulator.mutable.LanternWetData;
+import org.lanternpowered.server.data.manipulator.mutable.block.LanternAttachedData;
+import org.lanternpowered.server.data.manipulator.immutable.block.LanternImmutableAttachedData;
 import org.lanternpowered.server.data.manipulator.mutable.item.LanternAuthorData;
 import org.lanternpowered.server.data.manipulator.mutable.item.LanternBlockItemData;
 import org.lanternpowered.server.data.manipulator.mutable.item.LanternBreakableData;
@@ -92,9 +93,12 @@ import org.lanternpowered.server.data.manipulator.mutable.item.LanternPagedData;
 import org.lanternpowered.server.data.manipulator.mutable.item.LanternPlaceableData;
 import org.lanternpowered.server.data.manipulator.mutable.item.LanternSpawnableData;
 import org.lanternpowered.server.data.manipulator.mutable.item.LanternStoredEnchantmentData;
+import org.lanternpowered.server.data.value.IValueContainer;
 import org.lanternpowered.server.game.Lantern;
+import org.lanternpowered.server.plugin.InternalPluginsInfo;
+import org.lanternpowered.server.profile.LanternGameProfile;
 import org.spongepowered.api.data.DataManager;
-import org.spongepowered.api.data.key.Key;
+import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.manipulator.DataManipulator;
 import org.spongepowered.api.data.manipulator.ImmutableDataManipulator;
 import org.spongepowered.api.data.manipulator.immutable.ImmutableColoredData;
@@ -110,6 +114,7 @@ import org.spongepowered.api.data.manipulator.immutable.ImmutableRotationalData;
 import org.spongepowered.api.data.manipulator.immutable.ImmutableSkullData;
 import org.spongepowered.api.data.manipulator.immutable.ImmutableTargetedLocationData;
 import org.spongepowered.api.data.manipulator.immutable.ImmutableWetData;
+import org.spongepowered.api.data.manipulator.immutable.block.ImmutableAttachedData;
 import org.spongepowered.api.data.manipulator.immutable.item.ImmutableAuthorData;
 import org.spongepowered.api.data.manipulator.immutable.item.ImmutableBlockItemData;
 import org.spongepowered.api.data.manipulator.immutable.item.ImmutableBreakableData;
@@ -141,6 +146,7 @@ import org.spongepowered.api.data.manipulator.mutable.RotationalData;
 import org.spongepowered.api.data.manipulator.mutable.SkullData;
 import org.spongepowered.api.data.manipulator.mutable.TargetedLocationData;
 import org.spongepowered.api.data.manipulator.mutable.WetData;
+import org.spongepowered.api.data.manipulator.mutable.block.AttachedData;
 import org.spongepowered.api.data.manipulator.mutable.item.AuthorData;
 import org.spongepowered.api.data.manipulator.mutable.item.BlockItemData;
 import org.spongepowered.api.data.manipulator.mutable.item.BreakableData;
@@ -159,16 +165,21 @@ import org.spongepowered.api.data.manipulator.mutable.item.PagedData;
 import org.spongepowered.api.data.manipulator.mutable.item.PlaceableData;
 import org.spongepowered.api.data.manipulator.mutable.item.SpawnableData;
 import org.spongepowered.api.data.manipulator.mutable.item.StoredEnchantmentData;
+import org.spongepowered.api.item.inventory.ItemStackSnapshot;
+import org.spongepowered.api.plugin.PluginContainer;
+import org.spongepowered.api.text.Text;
+import org.spongepowered.api.util.Color;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
+
+import javax.annotation.Nullable;
 
 public class DataManipulatorRegistry {
 
@@ -179,34 +190,46 @@ public class DataManipulatorRegistry {
     }
 
     private final Map<Class, DataManipulatorRegistration> registrationByClass = new HashMap<>();
+    private final DataManipulatorGenerator dataManipulatorGenerator = new DataManipulatorGenerator();
 
     {
-        register(ColoredData.class, LanternColoredData::new, LanternColoredData::new, LanternColoredData::new,
-                ImmutableColoredData.class, LanternImmutableColoredData::new, LanternImmutableColoredData::new);
-        register(CommandData.class, LanternCommandData::new, LanternCommandData::new, LanternCommandData::new,
-                ImmutableCommandData.class, LanternImmutableCommandData::new, LanternImmutableCommandData::new);
-        register(DisplayNameData.class, LanternDisplayNameData::new, LanternDisplayNameData::new, LanternDisplayNameData::new,
-                ImmutableDisplayNameData.class, LanternImmutableDisplayNameData::new, LanternImmutableDisplayNameData::new);
+        register(ColoredData.class, ImmutableColoredData.class, LanternColoredData.class, LanternImmutableColoredData.class,
+                c -> c.registerKey(Keys.COLOR, Color.WHITE));
+        register(CommandData.class, ImmutableCommandData.class, LanternCommandData.class, LanternImmutableCommandData.class,
+                c -> {
+                    c.registerKey(Keys.COMMAND, "");
+                    c.registerKey(Keys.SUCCESS_COUNT, 0);
+                    c.registerKey(Keys.TRACKS_OUTPUT, true);
+                    c.registerKey(Keys.LAST_COMMAND_OUTPUT, Optional.empty());
+                });
+        register(DisplayNameData.class, ImmutableDisplayNameData.class, LanternDisplayNameData.class, LanternImmutableDisplayNameData.class,
+                c -> c.registerKey(Keys.DISPLAY_NAME, Text.EMPTY));
+        register(FireworkRocketData.class, ImmutableFireworkRocketData.class, LanternFireworkRocketData.class, LanternImmutableFireworkRocketData.class,
+                c -> c.registerKey(Keys.FIREWORK_FLIGHT_MODIFIER, 0));
+        register(RepresentedItemData.class, ImmutableRepresentedItemData.class, LanternRepresentedItemData.class, LanternImmutableRepresentedItemData.class,
+                c -> c.registerKey(Keys.REPRESENTED_ITEM, ItemStackSnapshot.NONE));
+        register(RepresentedPlayerData.class, ImmutableRepresentedPlayerData.class, LanternRepresentedPlayerData.class, LanternImmutableRepresentedPlayerData.class,
+                c -> c.registerKey(Keys.REPRESENTED_PLAYER, LanternGameProfile.UNKNOWN));
+        register(TargetedLocationData.class, ImmutableTargetedLocationData.class, LanternTargetedLocationData.class, LanternImmutableTargetedLocationData.class,
+                c -> c.registerKey(Keys.TARGETED_LOCATION, Vector3d.ZERO));
+        register(WetData.class, ImmutableWetData.class, LanternWetData.class, LanternImmutableWetData.class,
+                c -> c.registerKey(Keys.IS_WET, false));
+
+        /// not supported yet: list and variant manipulators
         register(DyeableData.class, LanternDyeableData::new, LanternDyeableData::new, LanternDyeableData::new,
                 ImmutableDyeableData.class, LanternImmutableDyeableData::new, LanternImmutableDyeableData::new);
         register(FireworkEffectData.class, LanternFireworkEffectData::new, LanternFireworkEffectData::new, LanternFireworkEffectData::new,
                 ImmutableFireworkEffectData.class, LanternImmutableFireworkEffectData::new, LanternImmutableFireworkEffectData::new);
-        register(FireworkRocketData.class, LanternFireworkRocketData::new, LanternFireworkRocketData::new, LanternFireworkRocketData::new,
-                ImmutableFireworkRocketData.class, LanternImmutableFireworkRocketData::new, LanternImmutableFireworkRocketData::new);
         register(PotionEffectData.class, LanternPotionEffectData::new, LanternPotionEffectData::new, LanternPotionEffectData::new,
                 ImmutablePotionEffectData.class, LanternImmutablePotionEffectData::new, LanternImmutablePotionEffectData::new);
-        register(RepresentedItemData.class, LanternRepresentedItemData::new, LanternRepresentedItemData::new, LanternRepresentedItemData::new,
-                ImmutableRepresentedItemData.class, LanternImmutableRepresentedItemData::new, LanternImmutableRepresentedItemData::new);
-        register(RepresentedPlayerData.class, LanternRepresentedPlayerData::new, LanternRepresentedPlayerData::new, LanternRepresentedPlayerData::new,
-                ImmutableRepresentedPlayerData.class, LanternImmutableRepresentedPlayerData::new, LanternImmutableRepresentedPlayerData::new);
         register(RotationalData.class, LanternRotationalData::new, LanternRotationalData::new, LanternRotationalData::new,
                 ImmutableRotationalData.class, LanternImmutableRotationalData::new, LanternImmutableRotationalData::new);
         register(SkullData.class, LanternSkullData::new, LanternSkullData::new, LanternSkullData::new,
                 ImmutableSkullData.class, LanternImmutableSkullData::new, LanternImmutableSkullData::new);
-        register(TargetedLocationData.class, LanternTargetedLocationData::new, LanternTargetedLocationData::new, LanternTargetedLocationData::new,
-                ImmutableTargetedLocationData.class, LanternImmutableTargetedLocationData::new, LanternImmutableTargetedLocationData::new);
-        register(WetData.class, LanternWetData::new, LanternWetData::new, LanternWetData::new,
-                ImmutableWetData.class, LanternImmutableWetData::new, LanternImmutableWetData::new);
+
+        // block package
+        register(AttachedData.class, ImmutableAttachedData.class, LanternAttachedData.class, LanternImmutableAttachedData.class,
+                valueContainer -> valueContainer.registerKey(Keys.ATTACHED, false));
 
         // item package
         register(AuthorData.class, LanternAuthorData::new, LanternAuthorData::new, LanternAuthorData::new,
@@ -247,41 +270,117 @@ public class DataManipulatorRegistry {
                 ImmutableStoredEnchantmentData.class, LanternImmutableStoredEnchantmentData::new, LanternImmutableStoredEnchantmentData::new);
     }
 
+    private static final class RegistrationInfo {
+
+        public static RegistrationInfo build(Class<?> manipulatorType) {
+            final char[] name = manipulatorType.getCanonicalName().toCharArray();
+            final StringBuilder builder = new StringBuilder();
+
+            for (int i = 0; i < name.length; i++) {
+                if (Character.isUpperCase(name[i]) || name[i] == '.') {
+                    if (i != 0) {
+                        builder.append('_');
+                    }
+                    builder.append(Character.toLowerCase(name[i]));
+                } else {
+                    builder.append(name[i]);
+                }
+            }
+
+            final String fullName = manipulatorType.getName();
+            final String plugin;
+            if (fullName.startsWith("org.spongepowered.")) {
+                plugin = InternalPluginsInfo.SpongePlatform.IDENTIFIER;
+            } else if (fullName.startsWith("org.lanternpowered.")) {
+                plugin = InternalPluginsInfo.Implementation.IDENTIFIER;
+            } else {
+                final String[] parts = fullName.split(".");
+                if (parts.length > 1) {
+                    plugin = parts[1];
+                } else if (parts.length == 1) {
+                    plugin = parts[0];
+                } else {
+                    plugin = "unknown";
+                }
+            }
+
+            final PluginContainer pluginContainer = Lantern.getGame().getPluginManager().getPlugin(plugin)
+                    .orElseThrow(() -> new IllegalStateException("The plugin " + plugin + " does not exist!"));
+            return new RegistrationInfo(pluginContainer, builder.toString(), manipulatorType.getCanonicalName());
+        }
+
+        private final PluginContainer pluginContainer;
+        private final String id;
+        private final String name;
+
+        private RegistrationInfo(PluginContainer pluginContainer, String id, String name) {
+            this.pluginContainer = pluginContainer;
+            this.name = name;
+            this.id = id;
+        }
+    }
+
     @SuppressWarnings("unchecked")
     public <M extends DataManipulator<M, I>, I extends ImmutableDataManipulator<I, M>> DataManipulatorRegistration<M, I> register(
+            Class<M> manipulatorType, Supplier<M> manipulatorSupplier, Function<M, M> manipulatorCopyFunction, Function<I, M> immutableToMutableFunction,
+            Class<I> immutableManipulatorType, Supplier<I> immutableManipulatorSupplier, Function<M, I> mutableToImmutableFunction) {
+        final RegistrationInfo registrationInfo = RegistrationInfo.build(manipulatorType);
+        return register(registrationInfo.pluginContainer, registrationInfo.id, registrationInfo.name, manipulatorType, manipulatorSupplier,
+                manipulatorCopyFunction, immutableToMutableFunction, immutableManipulatorType, immutableManipulatorSupplier,
+                mutableToImmutableFunction);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <M extends DataManipulator<M, I>, I extends ImmutableDataManipulator<I, M>> DataManipulatorRegistration<M, I> register(
+            PluginContainer pluginContainer, String id, String name,
             Class<M> manipulatorType, Supplier<M> manipulatorSupplier, Function<M, M> manipulatorCopyFunction, Function<I, M> immutableToMutableFunction,
             Class<I> immutableManipulatorType, Supplier<I> immutableManipulatorSupplier, Function<M, I> mutableToImmutableFunction) {
         checkNotNull(manipulatorType, "manipulatorType");
         checkNotNull(manipulatorSupplier, "manipulatorSupplier");
         checkNotNull(immutableManipulatorType, "immutableManipulatorType");
         checkNotNull(immutableManipulatorSupplier, "immutableManipulatorSupplier");
-        final M manipulator = manipulatorSupplier.get();
-        checkArgument(manipulator instanceof IDataManipulator,
-                "The mutable manipulator implementation must implement IDataManipulator.");
-        //noinspection unchecked
-        final Class<M> manipulatorType1 = ((IDataManipulator<M, I>) manipulator).getMutableType();
-        checkArgument(manipulatorType1 == manipulatorType,
-                "The mutable data manipulator returns a different manipulator type, expected %s, but got %s",
-                manipulatorType, manipulatorType1);
-        final I immutableManipulator = immutableManipulatorSupplier.get();
-        checkArgument(immutableManipulator instanceof IImmutableDataManipulator,
-                "The immutable manipulator implementation must implement IImmutableData.");
-        //noinspection unchecked
-        final Class<I> immutableManipulatorType1 = ((IImmutableDataManipulator<I, M>) immutableManipulator).getImmutableType();
-        checkArgument(immutableManipulatorType1 == immutableManipulatorType,
-                "The immutable data manipulator returns a different manipulator type, expected %s, but got %s",
-                immutableManipulatorType, immutableManipulatorType1);
-        final Set<Key<?>> requiredKeys = new HashSet<>(manipulator.getKeys());
-        final DataManipulatorRegistration<M, I> registration = new DataManipulatorRegistration<>(
+        final DataManipulatorRegistration<M, I> registration = new SimpleDataManipulatorRegistration<>(pluginContainer, id, name,
                 manipulatorType, manipulatorSupplier, manipulatorCopyFunction, immutableToMutableFunction,
-                immutableManipulatorType, immutableManipulatorSupplier, mutableToImmutableFunction, requiredKeys);
-        this.registrationByClass.put(manipulatorType, registration);
-        this.registrationByClass.put(immutableManipulatorType, registration);
+                immutableManipulatorType, immutableManipulatorSupplier, mutableToImmutableFunction, manipulatorSupplier.get().getKeys());
+        return register(registration);
+    }
+
+    public <M extends DataManipulator<M, I>, I extends ImmutableDataManipulator<I, M>> DataManipulatorRegistration<M, I> register(
+            Class<M> manipulatorType, Class<I> immutableManipulatorType,
+            @Nullable Class<? extends M> mutableExpansion, @Nullable Class<? extends I> immutableExpansion,
+            @Nullable Consumer<IValueContainer<?>> registrationConsumer) {
+        final RegistrationInfo registrationInfo = RegistrationInfo.build(manipulatorType);
+        return register(registrationInfo.pluginContainer, registrationInfo.id, registrationInfo.name,
+                manipulatorType, immutableManipulatorType, mutableExpansion, immutableExpansion, registrationConsumer);
+    }
+
+    public <M extends DataManipulator<M, I>, I extends ImmutableDataManipulator<I, M>> DataManipulatorRegistration<M, I> register(
+            PluginContainer pluginContainer, String id, String name, Class<M> manipulatorType, Class<I> immutableManipulatorType) {
+        return register(pluginContainer, id, name, manipulatorType, immutableManipulatorType, null, null, null);
+    }
+
+    public <M extends DataManipulator<M, I>, I extends ImmutableDataManipulator<I, M>> DataManipulatorRegistration<M, I> register(
+            PluginContainer pluginContainer, String id, String name, Class<M> manipulatorType, Class<I> immutableManipulatorType,
+            @Nullable Class<? extends M> mutableExpansion, @Nullable Class<? extends I> immutableExpansion,
+            @Nullable Consumer<IValueContainer<?>> registrationConsumer) {
+        checkNotNull(manipulatorType, "manipulatorType");
+        checkNotNull(immutableManipulatorType, "immutableManipulatorType");
+        final DataManipulatorRegistration<M, I> registration = this.dataManipulatorGenerator.newRegistrationFor(
+                pluginContainer, id, name, manipulatorType, immutableManipulatorType, mutableExpansion, immutableExpansion, registrationConsumer);
+        return register(registration);
+    }
+
+    @SuppressWarnings("unchecked")
+    private <M extends DataManipulator<M, I>, I extends ImmutableDataManipulator<I, M>> DataManipulatorRegistration<M, I> register(
+            DataManipulatorRegistration<M, I> registration) {
+        checkNotNull(registration, "registration");
+        this.registrationByClass.put(registration.getManipulatorClass(), registration);
+        this.registrationByClass.put(registration.getImmutableManipulatorClass(), registration);
+        this.registrationByClass.put(registration.createMutable().getClass(), registration);
+        this.registrationByClass.put(registration.createImmutable().getClass(), registration);
         final DataManager dataManager = Lantern.getGame().getDataManager();
-        dataManager.registerBuilder(immutableManipulatorType,
-                new RegistrationImmutableManipulatorDataBuilder(immutableManipulatorType, 1, registration));
-        dataManager.registerBuilder(manipulatorType,
-                new RegistrationManipulatorDataBuilder(manipulatorType, 1, registration));
+        dataManager.registerBuilder(registration.getImmutableManipulatorClass(), registration.getImmutableDataBuilder());
+        dataManager.registerBuilder(registration.getManipulatorClass(), registration.getDataManipulatorBuilder());
         return registration;
     }
 

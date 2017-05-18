@@ -46,7 +46,7 @@ public class LanternImmutableBreakableData extends AbstractImmutableData<Immutab
 
     @Override
     public void registerKeys() {
-        registerKey(Keys.BREAKABLE_BLOCK_TYPES, new HashSet<>()).notRemovable();
+        registerKey(Keys.BREAKABLE_BLOCK_TYPES, new HashSet<>());
     }
 
     @Override

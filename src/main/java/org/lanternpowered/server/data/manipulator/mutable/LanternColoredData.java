@@ -26,32 +26,14 @@
 package org.lanternpowered.server.data.manipulator.mutable;
 
 import org.spongepowered.api.data.key.Keys;
-import org.spongepowered.api.data.manipulator.immutable.ImmutableColoredData;
 import org.spongepowered.api.data.manipulator.mutable.ColoredData;
 import org.spongepowered.api.data.value.mutable.Value;
 import org.spongepowered.api.util.Color;
 
-public class LanternColoredData extends AbstractData<ColoredData, ImmutableColoredData> implements ColoredData {
-
-    public LanternColoredData() {
-        super(ColoredData.class, ImmutableColoredData.class);
-    }
-
-    public LanternColoredData(ImmutableColoredData manipulator) {
-        super(manipulator);
-    }
-
-    public LanternColoredData(ColoredData manipulator) {
-        super(manipulator);
-    }
+public interface LanternColoredData extends ColoredData {
 
     @Override
-    public void registerKeys() {
-        registerKey(Keys.COLOR, Color.WHITE).notRemovable();
-    }
-
-    @Override
-    public Value<Color> color() {
+    default Value<Color> color() {
         return getValue(Keys.COLOR).get();
     }
 }

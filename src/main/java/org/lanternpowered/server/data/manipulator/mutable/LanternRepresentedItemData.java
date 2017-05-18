@@ -31,27 +31,10 @@ import org.spongepowered.api.data.manipulator.mutable.RepresentedItemData;
 import org.spongepowered.api.data.value.mutable.Value;
 import org.spongepowered.api.item.inventory.ItemStackSnapshot;
 
-public class LanternRepresentedItemData extends AbstractData<RepresentedItemData, ImmutableRepresentedItemData> implements RepresentedItemData {
-
-    public LanternRepresentedItemData() {
-        super(RepresentedItemData.class, ImmutableRepresentedItemData.class);
-    }
-
-    public LanternRepresentedItemData(ImmutableRepresentedItemData manipulator) {
-        super(manipulator);
-    }
-
-    public LanternRepresentedItemData(RepresentedItemData manipulator) {
-        super(manipulator);
-    }
+public interface LanternRepresentedItemData extends RepresentedItemData {
 
     @Override
-    public void registerKeys() {
-        registerKey(Keys.REPRESENTED_ITEM, ItemStackSnapshot.NONE).notRemovable();
-    }
-
-    @Override
-    public Value<ItemStackSnapshot> item() {
+    default Value<ItemStackSnapshot> item() {
         return getValue(Keys.REPRESENTED_ITEM).get();
     }
 }

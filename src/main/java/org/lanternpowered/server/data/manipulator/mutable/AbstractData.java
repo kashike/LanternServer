@@ -34,6 +34,7 @@ import org.lanternpowered.server.data.manipulator.ManipulatorHelper;
 import org.lanternpowered.server.data.manipulator.immutable.IImmutableDataManipulator;
 import org.lanternpowered.server.data.value.AbstractValueContainer;
 import org.lanternpowered.server.data.value.ElementHolder;
+import org.lanternpowered.server.data.value.ElementHolderKeyRegistration;
 import org.lanternpowered.server.data.value.KeyRegistration;
 import org.lanternpowered.server.data.value.LanternValueFactory;
 import org.lanternpowered.server.data.value.processor.ValueProcessor;
@@ -43,6 +44,7 @@ import org.spongepowered.api.data.DataHolder;
 import org.spongepowered.api.data.DataView;
 import org.spongepowered.api.data.key.Key;
 import org.spongepowered.api.data.manipulator.DataManipulator;
+import org.spongepowered.api.data.manipulator.DataManipulatorBuilder;
 import org.spongepowered.api.data.manipulator.ImmutableDataManipulator;
 import org.spongepowered.api.data.merge.MergeFunction;
 import org.spongepowered.api.data.persistence.AbstractDataBuilder;
@@ -56,6 +58,8 @@ import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
+import javax.annotation.Nullable;
+
 public abstract class AbstractData<M extends DataManipulator<M, I>, I extends ImmutableDataManipulator<I, M>> implements AbstractValueContainer<M, I>,
         IDataManipulator<M, I> {
 
@@ -63,19 +67,19 @@ public abstract class AbstractData<M extends DataManipulator<M, I>, I extends Im
     private final Class<M> manipulatorType;
     private final Class<I> immutableManipulatorType;
 
-    public AbstractData(Class<M> manipulatorType, Class<I> immutableManipulatorType) {
+    protected AbstractData(Class<M> manipulatorType, Class<I> immutableManipulatorType) {
         this.immutableManipulatorType = immutableManipulatorType;
         this.manipulatorType = manipulatorType;
         this.rawValueMap = new HashMap<>();
         registerKeys();
     }
 
-    public AbstractData(I manipulator) {
+    protected AbstractData(I manipulator) {
         //noinspection unchecked
         this((IDataManipulatorBase<M, I>) manipulator);
     }
 
-    public AbstractData(M manipulator) {
+    protected AbstractData(M manipulator) {
         //noinspection unchecked
         this((IDataManipulatorBase<M, I>) manipulator);
     }
@@ -92,6 +96,14 @@ public abstract class AbstractData<M extends DataManipulator<M, I>, I extends Im
             throw new IllegalArgumentException(
                     "The default DataManipulator's should extend AbstractValueContainer, others are currently unsupported.");
         }
+    }
+
+    @Override
+    public <V extends BaseValue<E>, E> ElementHolderKeyRegistration<V, E> registerKey(Key<? extends V> key, @Nullable E defaultValue) {
+        // Data container keys are non removable by default
+        final ElementHolderKeyRegistration<V, E> registration = AbstractValueContainer.super.registerKey(key, defaultValue);
+        registration.notRemovable();
+        return registration;
     }
 
     @Override
@@ -207,7 +219,7 @@ public abstract class AbstractData<M extends DataManipulator<M, I>, I extends Im
     public I asImmutable() {
         final DataManipulatorRegistration<M, I> registration = DataManipulatorRegistry.get().getByImmutable(this.immutableManipulatorType).get();
         //noinspection unchecked
-        return registration.getMutableToImmutableFunction().apply((M) this);
+        return registration.toImmutable((M) this);
     }
 
     @Override
@@ -225,7 +237,7 @@ public abstract class AbstractData<M extends DataManipulator<M, I>, I extends Im
     public M copy() {
         final DataManipulatorRegistration<M, I> registration = DataManipulatorRegistry.get().getByImmutable(this.immutableManipulatorType).get();
         //noinspection unchecked
-        return registration.getManipulatorCopyFunction().apply((M) this);
+        return registration.copyMutable((M) this);
     }
 
     @Override
@@ -238,18 +250,25 @@ public abstract class AbstractData<M extends DataManipulator<M, I>, I extends Im
         return this.manipulatorType;
     }
 
-    public static abstract class AbstractManipulatorDataBuilder<T extends AbstractData> extends AbstractDataBuilder<T> {
+    public static abstract class AbstractManipulatorDataBuilder<M extends DataManipulator<M, I>, I extends ImmutableDataManipulator<I, M>>
+            extends AbstractDataBuilder<M> implements DataManipulatorBuilder<M, I> {
 
-        protected AbstractManipulatorDataBuilder(Class<T> requiredClass, int supportedVersion) {
+        private final Class<M> requiredClass;
+
+        protected AbstractManipulatorDataBuilder(Class<M> requiredClass, int supportedVersion) {
             super(requiredClass, supportedVersion);
+            this.requiredClass = requiredClass;
+        }
+
+        @Override
+        public Optional<M> createFrom(DataHolder dataHolder) {
+            return dataHolder.get(this.requiredClass);
         }
 
         @SuppressWarnings("unchecked")
         @Override
-        protected Optional<T> buildContent(DataView container) throws InvalidDataException {
-            return ManipulatorHelper.buildContent(container, this::buildManipulator);
+        protected Optional<M> buildContent(DataView container) throws InvalidDataException {
+            return (Optional) ManipulatorHelper.buildContent(container, () -> (AbstractValueContainer) create());
         }
-
-        protected abstract T buildManipulator();
     }
 }
