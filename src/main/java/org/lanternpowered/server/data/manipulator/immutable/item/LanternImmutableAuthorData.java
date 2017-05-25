@@ -25,30 +25,16 @@
  */
 package org.lanternpowered.server.data.manipulator.immutable.item;
 
-import org.lanternpowered.server.data.manipulator.immutable.AbstractImmutableData;
+import org.lanternpowered.server.data.manipulator.IImmutableValueHolder;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.manipulator.immutable.item.ImmutableAuthorData;
-import org.spongepowered.api.data.manipulator.mutable.item.AuthorData;
 import org.spongepowered.api.data.value.immutable.ImmutableValue;
 import org.spongepowered.api.text.Text;
 
-public class LanternImmutableAuthorData extends AbstractImmutableData<ImmutableAuthorData, AuthorData> implements ImmutableAuthorData {
-
-    public LanternImmutableAuthorData() {
-        super(ImmutableAuthorData.class, AuthorData.class);
-    }
-
-    public LanternImmutableAuthorData(AuthorData manipulator) {
-        super(manipulator);
-    }
+public interface LanternImmutableAuthorData extends ImmutableAuthorData, IImmutableValueHolder {
 
     @Override
-    public void registerKeys() {
-        registerKey(Keys.BOOK_AUTHOR, Text.EMPTY);
-    }
-
-    @Override
-    public ImmutableValue<Text> author() {
+    default ImmutableValue<Text> author() {
         return getImmutableValue(Keys.BOOK_AUTHOR).get();
     }
 }

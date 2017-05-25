@@ -26,44 +26,53 @@
 package org.lanternpowered.server.data.manipulator.gen;
 
 import static java.lang.String.format;
-import static org.objectweb.asm.Opcodes.ACC_PROTECTED;
 import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
 import static org.objectweb.asm.Opcodes.ACC_STATIC;
 import static org.objectweb.asm.Opcodes.ACC_SUPER;
 import static org.objectweb.asm.Opcodes.ALOAD;
+import static org.objectweb.asm.Opcodes.CHECKCAST;
 import static org.objectweb.asm.Opcodes.GETSTATIC;
 import static org.objectweb.asm.Opcodes.INVOKEINTERFACE;
 import static org.objectweb.asm.Opcodes.INVOKESPECIAL;
 import static org.objectweb.asm.Opcodes.RETURN;
 import static org.objectweb.asm.Opcodes.V1_8;
 
-import org.lanternpowered.server.data.manipulator.IDataManipulatorBase;
-import org.lanternpowered.server.data.manipulator.immutable.AbstractImmutableData;
-import org.lanternpowered.server.data.manipulator.mutable.AbstractData;
-import org.lanternpowered.server.data.value.IValueContainer;
+import com.google.common.reflect.TypeToken;
+import org.lanternpowered.server.data.manipulator.immutable.AbstractImmutableListData;
+import org.lanternpowered.server.data.manipulator.mutable.AbstractListData;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
+import org.spongepowered.api.data.key.Key;
 import org.spongepowered.api.data.manipulator.DataManipulator;
 import org.spongepowered.api.data.manipulator.ImmutableDataManipulator;
+import org.spongepowered.api.data.manipulator.immutable.ImmutableListData;
+import org.spongepowered.api.data.manipulator.mutable.ListData;
+import org.spongepowered.api.data.value.mutable.ListValue;
 
 import javax.annotation.Nullable;
 
-final class AbstractDataTypeGenerator extends TypeGenerator {
+final class AbstractListDataTypeGenerator extends TypeGenerator {
 
-    private static final String nAbstractImmutableData = Type.getInternalName(AbstractImmutableData.class);
-    private static final String nAbstractData = Type.getInternalName(AbstractData.class);
-    private static final String nIDataManipulatorBase = Type.getInternalName(IDataManipulatorBase.class);
-    private static final String nIValueContainer = Type.getInternalName(IValueContainer.class);
+    private static final String nKey = Type.getInternalName(Key.class);
+    private static final String dKey = Type.getDescriptor(Key.class);
+
+    private static final String nListValue = Type.getInternalName(ListValue.class);
+
+    private static final String nAbstractListData = Type.getInternalName(AbstractListData.class);
+    private static final String nAbstractImmutableListData = Type.getInternalName(AbstractImmutableListData.class);
+
+    private static final String dListData = Type.getDescriptor(ListData.class);
+
+    private static final String dImmutableListData = Type.getDescriptor(ImmutableListData.class);
 
     @Override
     <M extends DataManipulator<M, I>, I extends ImmutableDataManipulator<I, M>> void generateClasses(
             ClassWriter cwM, ClassWriter cwI,
             String mutableClassName, String immutableClassName,
             Class<M> manipulatorType, Class<I> immutableManipulatorType,
-            @Nullable Class<? extends M> mutableExpansion,
-            @Nullable Class<? extends I> immutableExpansion) {
+            @Nullable Class<? extends M> mutableExpansion, @Nullable Class<? extends I> immutableExpansion) {
         FieldVisitor fv;
         MethodVisitor mv;
 
@@ -77,6 +86,9 @@ final class AbstractDataTypeGenerator extends TypeGenerator {
         final String nMutableExpansion = mutableExpansion == null ? null : Type.getInternalName(mutableExpansion);
         final String nImmutableExpansion = immutableExpansion == null ? null : Type.getInternalName(immutableExpansion);
 
+        final Class<?> elementType = TypeToken.of(manipulatorType).resolveType(ListData.class.getTypeParameters()[0]).getRawType();
+        final String dElementType = Type.getDescriptor(elementType);
+
         // Mutable class
         {
             final String[] interfaces = new String[mutableExpansion != null ? 2 : 1];
@@ -89,72 +101,55 @@ final class AbstractDataTypeGenerator extends TypeGenerator {
             }
 
             cwM.visit(V1_8, ACC_PUBLIC + ACC_SUPER, mutableClassName,
-                    format("L%s<%s%s>;",
-                            nAbstractData, dManipulatorType, dImmutableManipulatorType) + signBuilder.toString(),
-                    nAbstractData, interfaces);
+                    format("L%s<%s;%s%s>;",
+                            nAbstractListData, dElementType, dManipulatorType, dImmutableManipulatorType) + signBuilder.toString(),
+                    nAbstractListData, interfaces);
 
             {
-                fv = cwM.visitField(ACC_PUBLIC + ACC_STATIC, "registrationConsumer", "Ljava/util/function/Consumer;",
-                        format("Ljava/util/function/Consumer<L%s<*>;>;", nIValueContainer), null);
+                fv = cwM.visitField(ACC_PUBLIC + ACC_STATIC, "key", dKey,
+                        format("L%s<L%s<%s>;>;", nKey, nListValue, dElementType), null);
                 fv.visitEnd();
             }
             {
-                mv = cwM.visitMethod(ACC_PROTECTED, "<init>", "()V", null, null);
+                fv = cwM.visitField(ACC_PUBLIC + ACC_STATIC, "listSupplier", "Ljava/util/function/Supplier;",
+                        format("Ljava/util/function/Supplier<Ljava/util/List<%s>;>;", dElementType), null);
+                fv.visitEnd();
+            }
+            {
+                mv = cwM.visitMethod(ACC_PUBLIC, "<init>", "()V", null, null);
                 mv.visitCode();
                 mv.visitVarInsn(ALOAD, 0);
                 mv.visitLdcInsn(Type.getType(manipulatorType));
                 mv.visitLdcInsn(Type.getType(immutableManipulatorType));
-                mv.visitMethodInsn(INVOKESPECIAL, nAbstractData, "<init>",
-                        "(Ljava/lang/Class;Ljava/lang/Class;)V", false);
+                mv.visitFieldInsn(GETSTATIC, mutableClassName, "key", dKey);
+                mv.visitFieldInsn(GETSTATIC, mutableClassName, "listSupplier", "Ljava/util/function/Supplier;");
+                mv.visitMethodInsn(INVOKEINTERFACE, "java/util/function/Supplier", "get", "()Ljava/lang/Object;", true);
+                mv.visitTypeInsn(CHECKCAST, "java/util/List");
+                mv.visitMethodInsn(INVOKESPECIAL, nAbstractListData, "<init>",
+                        format("(Ljava/lang/Class;Ljava/lang/Class;%sLjava/util/List;)V", dKey), false);
                 mv.visitInsn(RETURN);
-                mv.visitMaxs(3, 1);
+                mv.visitMaxs(5, 1);
                 mv.visitEnd();
             }
             {
-                mv = cwM.visitMethod(ACC_PROTECTED, "<init>",
-                        format("(%s)V", dImmutableManipulatorType), null, null);
+                mv = cwM.visitMethod(ACC_PUBLIC, "<init>", format("(%s)V", dImmutableManipulatorType), null, null);
                 mv.visitCode();
                 mv.visitVarInsn(ALOAD, 0);
                 mv.visitVarInsn(ALOAD, 1);
-                mv.visitMethodInsn(INVOKESPECIAL, nAbstractData, "<init>",
-                        "(Lorg/spongepowered/api/data/manipulator/ImmutableDataManipulator;)V", false);
+                mv.visitMethodInsn(INVOKESPECIAL, nAbstractListData, "<init>", format("(%s)V", dImmutableListData), false);
                 mv.visitInsn(RETURN);
                 mv.visitMaxs(2, 2);
                 mv.visitEnd();
             }
             {
-                mv = cwM.visitMethod(ACC_PROTECTED, "<init>",
-                        format("(%s)V", dManipulatorType), null, null);
+                mv = cwM.visitMethod(ACC_PUBLIC, "<init>", format("(%s)V", dManipulatorType), null, null);
                 mv.visitCode();
                 mv.visitVarInsn(ALOAD, 0);
                 mv.visitVarInsn(ALOAD, 1);
-                mv.visitMethodInsn(INVOKESPECIAL, nAbstractData, "<init>",
-                        "(Lorg/spongepowered/api/data/manipulator/DataManipulator;)V", false);
+                mv.visitMethodInsn(INVOKESPECIAL, nAbstractListData, "<init>",
+                        format("(%s)V", dListData), false);
                 mv.visitInsn(RETURN);
                 mv.visitMaxs(2, 2);
-                mv.visitEnd();
-            }
-            {
-                mv = cwM.visitMethod(ACC_PROTECTED, "<init>",
-                        format("(L%s;)V", nIDataManipulatorBase),
-                        format("(L%s<%s%s>;)V", nIDataManipulatorBase, dManipulatorType, dImmutableManipulatorType), null);
-                mv.visitCode();
-                mv.visitVarInsn(ALOAD, 0);
-                mv.visitVarInsn(ALOAD, 1);
-                mv.visitMethodInsn(INVOKESPECIAL, nAbstractData, "<init>",
-                        format("(L%s;)V", nIDataManipulatorBase), false);
-                mv.visitInsn(RETURN);
-                mv.visitMaxs(2, 2);
-                mv.visitEnd();
-            }
-            {
-                mv = cwM.visitMethod(ACC_PUBLIC, "registerKeys", "()V", null, null);
-                mv.visitCode();
-                mv.visitFieldInsn(GETSTATIC, mutableClassName, "registrationConsumer", "Ljava/util/function/Consumer;");
-                mv.visitVarInsn(ALOAD, 0);
-                mv.visitMethodInsn(INVOKEINTERFACE, "java/util/function/Consumer", "accept", "(Ljava/lang/Object;)V", true);
-                mv.visitInsn(RETURN);
-                mv.visitMaxs(2, 1);
                 mv.visitEnd();
             }
             cwM.visitEnd();
@@ -169,12 +164,20 @@ final class AbstractDataTypeGenerator extends TypeGenerator {
                 interfaces[1] = nImmutableExpansion;
                 signBuilder.append(dImmutableExpansion);
             }
-            cwI.visit(V1_8, ACC_PUBLIC + ACC_SUPER, immutableClassName, format("L%s<%s%s>;",
-                    nAbstractImmutableData, dImmutableManipulatorType, dManipulatorType) + signBuilder.toString(), nAbstractImmutableData, interfaces);
+
+            cwI.visit(V1_8, ACC_PUBLIC + ACC_SUPER, immutableClassName,
+                    format("L%s<%s%s%s>;",
+                            nAbstractImmutableListData, dElementType, dImmutableManipulatorType, dManipulatorType) + signBuilder.toString(),
+                    nAbstractImmutableListData, interfaces);
 
             {
-                fv = cwI.visitField(ACC_PUBLIC + ACC_STATIC, "registrationConsumer", "Ljava/util/function/Consumer;",
-                        format("Ljava/util/function/Consumer<L%s<*>;>;", nIValueContainer), null);
+                fv = cwI.visitField(ACC_PUBLIC + ACC_STATIC, "key", dKey,
+                        format("L%s<L%s<%s>;>;", nKey, nListValue, dElementType), null);
+                fv.visitEnd();
+            }
+            {
+                fv = cwI.visitField(ACC_PUBLIC + ACC_STATIC, "listSupplier", "Ljava/util/function/Supplier;",
+                        format("Ljava/util/function/Supplier<Ljava/util/List<%s>;>;", dElementType), null);
                 fv.visitEnd();
             }
             {
@@ -183,10 +186,14 @@ final class AbstractDataTypeGenerator extends TypeGenerator {
                 mv.visitVarInsn(ALOAD, 0);
                 mv.visitLdcInsn(Type.getType(immutableManipulatorType));
                 mv.visitLdcInsn(Type.getType(manipulatorType));
-                mv.visitMethodInsn(INVOKESPECIAL, nAbstractImmutableData, "<init>",
-                        "(Ljava/lang/Class;Ljava/lang/Class;)V", false);
+                mv.visitFieldInsn(GETSTATIC, immutableClassName, "key", dKey);
+                mv.visitFieldInsn(GETSTATIC, immutableClassName, "listSupplier", "Ljava/util/function/Supplier;");
+                mv.visitMethodInsn(INVOKEINTERFACE, "java/util/function/Supplier", "get", "()Ljava/lang/Object;", true);
+                mv.visitTypeInsn(CHECKCAST, "java/util/List");
+                mv.visitMethodInsn(INVOKESPECIAL, nAbstractImmutableListData, "<init>",
+                        format("(Ljava/lang/Class;Ljava/lang/Class;%sLjava/util/List;)V", dKey), false);
                 mv.visitInsn(RETURN);
-                mv.visitMaxs(3, 1);
+                mv.visitMaxs(5, 1);
                 mv.visitEnd();
             }
             {
@@ -194,20 +201,10 @@ final class AbstractDataTypeGenerator extends TypeGenerator {
                 mv.visitCode();
                 mv.visitVarInsn(ALOAD, 0);
                 mv.visitVarInsn(ALOAD, 1);
-                mv.visitMethodInsn(INVOKESPECIAL, nAbstractImmutableData, "<init>",
-                        "(Lorg/spongepowered/api/data/manipulator/DataManipulator;)V", false);
+                mv.visitMethodInsn(INVOKESPECIAL, nAbstractImmutableListData, "<init>",
+                        format("(%s)V", dListData), false);
                 mv.visitInsn(RETURN);
                 mv.visitMaxs(2, 2);
-                mv.visitEnd();
-            }
-            {
-                mv = cwI.visitMethod(ACC_PUBLIC, "registerKeys", "()V", null, null);
-                mv.visitCode();
-                mv.visitFieldInsn(GETSTATIC, immutableClassName, "registrationConsumer", "Ljava/util/function/Consumer;");
-                mv.visitVarInsn(ALOAD, 0);
-                mv.visitMethodInsn(INVOKEINTERFACE, "java/util/function/Consumer", "accept", "(Ljava/lang/Object;)V", true);
-                mv.visitInsn(RETURN);
-                mv.visitMaxs(2, 1);
                 mv.visitEnd();
             }
             cwI.visitEnd();

@@ -25,40 +25,20 @@
  */
 package org.lanternpowered.server.data.manipulator.mutable.item;
 
-import org.lanternpowered.server.data.manipulator.mutable.AbstractData;
 import org.spongepowered.api.data.key.Keys;
-import org.spongepowered.api.data.manipulator.immutable.item.ImmutableDurabilityData;
 import org.spongepowered.api.data.manipulator.mutable.item.DurabilityData;
 import org.spongepowered.api.data.value.mutable.MutableBoundedValue;
 import org.spongepowered.api.data.value.mutable.Value;
 
-public class LanternDurabilityData extends AbstractData<DurabilityData, ImmutableDurabilityData> implements DurabilityData {
-
-    public LanternDurabilityData() {
-        super(DurabilityData.class, ImmutableDurabilityData.class);
-    }
-
-    public LanternDurabilityData(ImmutableDurabilityData manipulator) {
-        super(manipulator);
-    }
-
-    public LanternDurabilityData(DurabilityData manipulator) {
-        super(manipulator);
-    }
+public interface LanternDurabilityData extends DurabilityData {
 
     @Override
-    public void registerKeys() {
-        registerKey(Keys.ITEM_DURABILITY, 100);
-        registerKey(Keys.UNBREAKABLE, false);
-    }
-
-    @Override
-    public MutableBoundedValue<Integer> durability() {
+    default MutableBoundedValue<Integer> durability() {
         return getValue(Keys.ITEM_DURABILITY).get();
     }
 
     @Override
-    public Value<Boolean> unbreakable() {
+    default Value<Boolean> unbreakable() {
         return getValue(Keys.UNBREAKABLE).get();
     }
 }

@@ -25,36 +25,15 @@
  */
 package org.lanternpowered.server.data.manipulator.mutable.item;
 
-import org.lanternpowered.server.data.manipulator.mutable.AbstractData;
 import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.data.key.Keys;
-import org.spongepowered.api.data.manipulator.immutable.item.ImmutablePlaceableData;
 import org.spongepowered.api.data.manipulator.mutable.item.PlaceableData;
 import org.spongepowered.api.data.value.mutable.SetValue;
 
-import java.util.HashSet;
-
-public class LanternPlaceableData extends AbstractData<PlaceableData, ImmutablePlaceableData> implements PlaceableData {
-
-    public LanternPlaceableData() {
-        super(PlaceableData.class, ImmutablePlaceableData.class);
-    }
-
-    public LanternPlaceableData(ImmutablePlaceableData manipulator) {
-        super(manipulator);
-    }
-
-    public LanternPlaceableData(PlaceableData manipulator) {
-        super(manipulator);
-    }
+public interface LanternPlaceableData extends PlaceableData {
 
     @Override
-    public void registerKeys() {
-        registerKey(Keys.PLACEABLE_BLOCKS, new HashSet<>());
-    }
-
-    @Override
-    public SetValue<BlockType> placeable() {
+    default SetValue<BlockType> placeable() {
         return getValue(Keys.PLACEABLE_BLOCKS).get();
     }
 }

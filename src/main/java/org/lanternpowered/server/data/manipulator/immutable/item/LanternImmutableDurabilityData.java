@@ -25,37 +25,21 @@
  */
 package org.lanternpowered.server.data.manipulator.immutable.item;
 
-import org.lanternpowered.server.data.manipulator.immutable.AbstractImmutableData;
+import org.lanternpowered.server.data.manipulator.IImmutableValueHolder;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.manipulator.immutable.item.ImmutableDurabilityData;
-import org.spongepowered.api.data.manipulator.mutable.item.DurabilityData;
 import org.spongepowered.api.data.value.immutable.ImmutableBoundedValue;
 import org.spongepowered.api.data.value.immutable.ImmutableValue;
 
-public class LanternImmutableDurabilityData extends AbstractImmutableData<ImmutableDurabilityData, DurabilityData>
-        implements ImmutableDurabilityData {
-
-    public LanternImmutableDurabilityData() {
-        super(ImmutableDurabilityData.class, DurabilityData.class);
-    }
-
-    public LanternImmutableDurabilityData(DurabilityData manipulator) {
-        super(manipulator);
-    }
+public interface LanternImmutableDurabilityData extends ImmutableDurabilityData, IImmutableValueHolder {
 
     @Override
-    public void registerKeys() {
-        registerKey(Keys.ITEM_DURABILITY, 100);
-        registerKey(Keys.UNBREAKABLE, false);
-    }
-
-    @Override
-    public ImmutableBoundedValue<Integer> durability() {
+    default ImmutableBoundedValue<Integer> durability() {
         return (ImmutableBoundedValue<Integer>) getImmutableValue(Keys.ITEM_DURABILITY).get();
     }
 
     @Override
-    public ImmutableValue<Boolean> unbreakable() {
+    default ImmutableValue<Boolean> unbreakable() {
         return getImmutableValue(Keys.UNBREAKABLE).get();
     }
 }

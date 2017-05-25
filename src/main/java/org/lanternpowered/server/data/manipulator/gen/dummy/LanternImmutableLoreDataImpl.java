@@ -23,21 +23,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lanternpowered.server.data.manipulator.immutable.item;
+package org.lanternpowered.server.data.manipulator.gen.dummy;
 
 import org.lanternpowered.server.data.manipulator.immutable.AbstractImmutableListData;
-import org.spongepowered.api.data.key.Keys;
-import org.spongepowered.api.data.manipulator.immutable.item.ImmutablePagedData;
-import org.spongepowered.api.data.manipulator.mutable.item.PagedData;
+import org.spongepowered.api.data.key.Key;
+import org.spongepowered.api.data.manipulator.immutable.item.ImmutableLoreData;
+import org.spongepowered.api.data.manipulator.mutable.item.LoreData;
+import org.spongepowered.api.data.value.mutable.ListValue;
 import org.spongepowered.api.text.Text;
 
-public class LanternImmutablePagedData extends AbstractImmutableListData<Text, ImmutablePagedData, PagedData> implements ImmutablePagedData {
+import java.util.List;
+import java.util.function.Supplier;
 
-    public LanternImmutablePagedData() {
-        super(ImmutablePagedData.class, PagedData.class, Keys.BOOK_PAGES);
+public class LanternImmutableLoreDataImpl extends AbstractImmutableListData<Text, ImmutableLoreData, LoreData> implements ImmutableLoreData {
+
+    public static Key<ListValue<Text>> key;
+    public static Supplier<List<Text>> listSupplier;
+
+    public LanternImmutableLoreDataImpl() {
+        super(ImmutableLoreData.class, LoreData.class, key, listSupplier.get());
     }
 
-    public LanternImmutablePagedData(PagedData manipulator) {
+    public LanternImmutableLoreDataImpl(LoreData manipulator) {
         super(manipulator);
     }
 }

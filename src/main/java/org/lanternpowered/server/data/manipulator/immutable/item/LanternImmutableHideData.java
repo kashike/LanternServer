@@ -25,59 +25,40 @@
  */
 package org.lanternpowered.server.data.manipulator.immutable.item;
 
-import org.lanternpowered.server.data.manipulator.immutable.AbstractImmutableData;
+import org.lanternpowered.server.data.manipulator.IImmutableValueHolder;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.manipulator.immutable.item.ImmutableHideData;
-import org.spongepowered.api.data.manipulator.mutable.item.HideData;
 import org.spongepowered.api.data.value.immutable.ImmutableValue;
 
-public class LanternImmutableHideData extends AbstractImmutableData<ImmutableHideData, HideData> implements ImmutableHideData {
-
-    public LanternImmutableHideData() {
-        super(ImmutableHideData.class, HideData.class);
-    }
-
-    public LanternImmutableHideData(HideData manipulator) {
-        super(manipulator);
-    }
+public interface LanternImmutableHideData extends ImmutableHideData, IImmutableValueHolder {
 
     @Override
-    public void registerKeys() {
-        registerKey(Keys.HIDE_ENCHANTMENTS, false);
-        registerKey(Keys.HIDE_ATTRIBUTES, false);
-        registerKey(Keys.HIDE_UNBREAKABLE, false);
-        registerKey(Keys.HIDE_CAN_DESTROY, false);
-        registerKey(Keys.HIDE_CAN_PLACE, false);
-        registerKey(Keys.HIDE_MISCELLANEOUS, false);
-    }
-
-    @Override
-    public ImmutableValue<Boolean> hideEnchantments() {
+    default ImmutableValue<Boolean> hideEnchantments() {
         return getImmutableValue(Keys.HIDE_ENCHANTMENTS).get();
     }
 
     @Override
-    public ImmutableValue<Boolean> hideAttributes() {
+    default ImmutableValue<Boolean> hideAttributes() {
         return getImmutableValue(Keys.HIDE_ATTRIBUTES).get();
     }
 
     @Override
-    public ImmutableValue<Boolean> hideUnbreakable() {
+    default ImmutableValue<Boolean> hideUnbreakable() {
         return getImmutableValue(Keys.UNBREAKABLE).get();
     }
 
     @Override
-    public ImmutableValue<Boolean> hideCanDestroy() {
+    default ImmutableValue<Boolean> hideCanDestroy() {
         return getImmutableValue(Keys.HIDE_CAN_DESTROY).get();
     }
 
     @Override
-    public ImmutableValue<Boolean> hideCanPlace() {
+    default ImmutableValue<Boolean> hideCanPlace() {
         return getImmutableValue(Keys.HIDE_CAN_PLACE).get();
     }
 
     @Override
-    public ImmutableValue<Boolean> hideMiscellaneous() {
+    default ImmutableValue<Boolean> hideMiscellaneous() {
         return getImmutableValue(Keys.HIDE_MISCELLANEOUS).get();
     }
 }

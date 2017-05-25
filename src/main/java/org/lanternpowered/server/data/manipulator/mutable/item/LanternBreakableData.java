@@ -25,36 +25,15 @@
  */
 package org.lanternpowered.server.data.manipulator.mutable.item;
 
-import org.lanternpowered.server.data.manipulator.mutable.AbstractData;
 import org.spongepowered.api.block.BlockType;
 import org.spongepowered.api.data.key.Keys;
-import org.spongepowered.api.data.manipulator.immutable.item.ImmutableBreakableData;
 import org.spongepowered.api.data.manipulator.mutable.item.BreakableData;
 import org.spongepowered.api.data.value.mutable.SetValue;
 
-import java.util.HashSet;
-
-public class LanternBreakableData extends AbstractData<BreakableData, ImmutableBreakableData> implements BreakableData {
-
-    public LanternBreakableData() {
-        super(BreakableData.class, ImmutableBreakableData.class);
-    }
-
-    public LanternBreakableData(ImmutableBreakableData manipulator) {
-        super(manipulator);
-    }
-
-    public LanternBreakableData(BreakableData manipulator) {
-        super(manipulator);
-    }
+public interface LanternBreakableData extends BreakableData {
 
     @Override
-    public void registerKeys() {
-        registerKey(Keys.BREAKABLE_BLOCK_TYPES, new HashSet<>());
-    }
-
-    @Override
-    public SetValue<BlockType> breakable() {
+    default SetValue<BlockType> breakable() {
         //noinspection unchecked
         return (SetValue<BlockType>) get(Keys.BREAKABLE_BLOCK_TYPES).get();
     }

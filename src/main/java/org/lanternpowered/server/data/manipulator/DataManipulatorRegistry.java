@@ -33,40 +33,33 @@ import org.lanternpowered.server.data.manipulator.immutable.LanternImmutableColo
 import org.lanternpowered.server.data.manipulator.immutable.LanternImmutableCommandData;
 import org.lanternpowered.server.data.manipulator.immutable.LanternImmutableDisplayNameData;
 import org.lanternpowered.server.data.manipulator.immutable.LanternImmutableDyeableData;
-import org.lanternpowered.server.data.manipulator.immutable.LanternImmutableFireworkEffectData;
 import org.lanternpowered.server.data.manipulator.immutable.LanternImmutableFireworkRocketData;
-import org.lanternpowered.server.data.manipulator.immutable.LanternImmutablePotionEffectData;
 import org.lanternpowered.server.data.manipulator.immutable.LanternImmutableRepresentedItemData;
 import org.lanternpowered.server.data.manipulator.immutable.LanternImmutableRepresentedPlayerData;
 import org.lanternpowered.server.data.manipulator.immutable.LanternImmutableRotationalData;
 import org.lanternpowered.server.data.manipulator.immutable.LanternImmutableSkullData;
 import org.lanternpowered.server.data.manipulator.immutable.LanternImmutableTargetedLocationData;
 import org.lanternpowered.server.data.manipulator.immutable.LanternImmutableWetData;
+import org.lanternpowered.server.data.manipulator.immutable.block.LanternImmutableAttachedData;
 import org.lanternpowered.server.data.manipulator.immutable.item.LanternImmutableAuthorData;
 import org.lanternpowered.server.data.manipulator.immutable.item.LanternImmutableBlockItemData;
 import org.lanternpowered.server.data.manipulator.immutable.item.LanternImmutableBreakableData;
 import org.lanternpowered.server.data.manipulator.immutable.item.LanternImmutableCoalData;
 import org.lanternpowered.server.data.manipulator.immutable.item.LanternImmutableCookedFishData;
 import org.lanternpowered.server.data.manipulator.immutable.item.LanternImmutableDurabilityData;
-import org.lanternpowered.server.data.manipulator.immutable.item.LanternImmutableEnchantmentData;
 import org.lanternpowered.server.data.manipulator.immutable.item.LanternImmutableFishData;
 import org.lanternpowered.server.data.manipulator.immutable.item.LanternImmutableGenerationData;
 import org.lanternpowered.server.data.manipulator.immutable.item.LanternImmutableGoldenAppleData;
 import org.lanternpowered.server.data.manipulator.immutable.item.LanternImmutableHideData;
 import org.lanternpowered.server.data.manipulator.immutable.item.LanternImmutableInventoryItemData;
-import org.lanternpowered.server.data.manipulator.immutable.item.LanternImmutableLoreData;
 import org.lanternpowered.server.data.manipulator.immutable.item.LanternImmutableMapItemData;
-import org.lanternpowered.server.data.manipulator.immutable.item.LanternImmutablePagedData;
 import org.lanternpowered.server.data.manipulator.immutable.item.LanternImmutablePlaceableData;
 import org.lanternpowered.server.data.manipulator.immutable.item.LanternImmutableSpawnableData;
-import org.lanternpowered.server.data.manipulator.immutable.item.LanternImmutableStoredEnchantmentData;
 import org.lanternpowered.server.data.manipulator.mutable.LanternColoredData;
 import org.lanternpowered.server.data.manipulator.mutable.LanternCommandData;
 import org.lanternpowered.server.data.manipulator.mutable.LanternDisplayNameData;
 import org.lanternpowered.server.data.manipulator.mutable.LanternDyeableData;
-import org.lanternpowered.server.data.manipulator.mutable.LanternFireworkEffectData;
 import org.lanternpowered.server.data.manipulator.mutable.LanternFireworkRocketData;
-import org.lanternpowered.server.data.manipulator.mutable.LanternPotionEffectData;
 import org.lanternpowered.server.data.manipulator.mutable.LanternRepresentedItemData;
 import org.lanternpowered.server.data.manipulator.mutable.LanternRepresentedPlayerData;
 import org.lanternpowered.server.data.manipulator.mutable.LanternRotationalData;
@@ -74,30 +67,27 @@ import org.lanternpowered.server.data.manipulator.mutable.LanternSkullData;
 import org.lanternpowered.server.data.manipulator.mutable.LanternTargetedLocationData;
 import org.lanternpowered.server.data.manipulator.mutable.LanternWetData;
 import org.lanternpowered.server.data.manipulator.mutable.block.LanternAttachedData;
-import org.lanternpowered.server.data.manipulator.immutable.block.LanternImmutableAttachedData;
 import org.lanternpowered.server.data.manipulator.mutable.item.LanternAuthorData;
 import org.lanternpowered.server.data.manipulator.mutable.item.LanternBlockItemData;
 import org.lanternpowered.server.data.manipulator.mutable.item.LanternBreakableData;
 import org.lanternpowered.server.data.manipulator.mutable.item.LanternCoalData;
 import org.lanternpowered.server.data.manipulator.mutable.item.LanternCookedFishData;
 import org.lanternpowered.server.data.manipulator.mutable.item.LanternDurabilityData;
-import org.lanternpowered.server.data.manipulator.mutable.item.LanternEnchantmentData;
 import org.lanternpowered.server.data.manipulator.mutable.item.LanternFishData;
 import org.lanternpowered.server.data.manipulator.mutable.item.LanternGenerationData;
 import org.lanternpowered.server.data.manipulator.mutable.item.LanternGoldenAppleData;
 import org.lanternpowered.server.data.manipulator.mutable.item.LanternHideData;
 import org.lanternpowered.server.data.manipulator.mutable.item.LanternInventoryItemData;
-import org.lanternpowered.server.data.manipulator.mutable.item.LanternLoreData;
 import org.lanternpowered.server.data.manipulator.mutable.item.LanternMapItemData;
-import org.lanternpowered.server.data.manipulator.mutable.item.LanternPagedData;
 import org.lanternpowered.server.data.manipulator.mutable.item.LanternPlaceableData;
 import org.lanternpowered.server.data.manipulator.mutable.item.LanternSpawnableData;
-import org.lanternpowered.server.data.manipulator.mutable.item.LanternStoredEnchantmentData;
 import org.lanternpowered.server.data.value.IValueContainer;
 import org.lanternpowered.server.game.Lantern;
 import org.lanternpowered.server.plugin.InternalPluginsInfo;
 import org.lanternpowered.server.profile.LanternGameProfile;
+import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.data.DataManager;
+import org.spongepowered.api.data.key.Key;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.manipulator.DataManipulator;
 import org.spongepowered.api.data.manipulator.ImmutableDataManipulator;
@@ -107,6 +97,7 @@ import org.spongepowered.api.data.manipulator.immutable.ImmutableDisplayNameData
 import org.spongepowered.api.data.manipulator.immutable.ImmutableDyeableData;
 import org.spongepowered.api.data.manipulator.immutable.ImmutableFireworkEffectData;
 import org.spongepowered.api.data.manipulator.immutable.ImmutableFireworkRocketData;
+import org.spongepowered.api.data.manipulator.immutable.ImmutableListData;
 import org.spongepowered.api.data.manipulator.immutable.ImmutablePotionEffectData;
 import org.spongepowered.api.data.manipulator.immutable.ImmutableRepresentedItemData;
 import org.spongepowered.api.data.manipulator.immutable.ImmutableRepresentedPlayerData;
@@ -139,6 +130,7 @@ import org.spongepowered.api.data.manipulator.mutable.DisplayNameData;
 import org.spongepowered.api.data.manipulator.mutable.DyeableData;
 import org.spongepowered.api.data.manipulator.mutable.FireworkEffectData;
 import org.spongepowered.api.data.manipulator.mutable.FireworkRocketData;
+import org.spongepowered.api.data.manipulator.mutable.ListData;
 import org.spongepowered.api.data.manipulator.mutable.PotionEffectData;
 import org.spongepowered.api.data.manipulator.mutable.RepresentedItemData;
 import org.spongepowered.api.data.manipulator.mutable.RepresentedPlayerData;
@@ -165,14 +157,18 @@ import org.spongepowered.api.data.manipulator.mutable.item.PagedData;
 import org.spongepowered.api.data.manipulator.mutable.item.PlaceableData;
 import org.spongepowered.api.data.manipulator.mutable.item.SpawnableData;
 import org.spongepowered.api.data.manipulator.mutable.item.StoredEnchantmentData;
+import org.spongepowered.api.data.value.mutable.ListValue;
 import org.spongepowered.api.item.inventory.ItemStackSnapshot;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.util.Color;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -193,6 +189,8 @@ public class DataManipulatorRegistry {
     private final DataManipulatorGenerator dataManipulatorGenerator = new DataManipulatorGenerator();
 
     {
+        // general package
+        /// normal containers
         register(ColoredData.class, ImmutableColoredData.class, LanternColoredData.class, LanternImmutableColoredData.class,
                 c -> c.registerKey(Keys.COLOR, Color.WHITE));
         register(CommandData.class, ImmutableCommandData.class, LanternCommandData.class, LanternImmutableCommandData.class,
@@ -215,59 +213,72 @@ public class DataManipulatorRegistry {
         register(WetData.class, ImmutableWetData.class, LanternWetData.class, LanternImmutableWetData.class,
                 c -> c.registerKey(Keys.IS_WET, false));
 
-        /// not supported yet: list and variant manipulators
+        /// variant containers: TODO
         register(DyeableData.class, LanternDyeableData::new, LanternDyeableData::new, LanternDyeableData::new,
                 ImmutableDyeableData.class, LanternImmutableDyeableData::new, LanternImmutableDyeableData::new);
-        register(FireworkEffectData.class, LanternFireworkEffectData::new, LanternFireworkEffectData::new, LanternFireworkEffectData::new,
-                ImmutableFireworkEffectData.class, LanternImmutableFireworkEffectData::new, LanternImmutableFireworkEffectData::new);
-        register(PotionEffectData.class, LanternPotionEffectData::new, LanternPotionEffectData::new, LanternPotionEffectData::new,
-                ImmutablePotionEffectData.class, LanternImmutablePotionEffectData::new, LanternImmutablePotionEffectData::new);
         register(RotationalData.class, LanternRotationalData::new, LanternRotationalData::new, LanternRotationalData::new,
                 ImmutableRotationalData.class, LanternImmutableRotationalData::new, LanternImmutableRotationalData::new);
         register(SkullData.class, LanternSkullData::new, LanternSkullData::new, LanternSkullData::new,
                 ImmutableSkullData.class, LanternImmutableSkullData::new, LanternImmutableSkullData::new);
+
+        /// list containers
+        registerList(FireworkEffectData.class, ImmutableFireworkEffectData.class, Keys.FIREWORK_EFFECTS);
+        registerList(PotionEffectData.class, ImmutablePotionEffectData.class, Keys.POTION_EFFECTS);
 
         // block package
         register(AttachedData.class, ImmutableAttachedData.class, LanternAttachedData.class, LanternImmutableAttachedData.class,
                 valueContainer -> valueContainer.registerKey(Keys.ATTACHED, false));
 
         // item package
-        register(AuthorData.class, LanternAuthorData::new, LanternAuthorData::new, LanternAuthorData::new,
-                ImmutableAuthorData.class, LanternImmutableAuthorData::new, LanternImmutableAuthorData::new);
-        register(BlockItemData.class, LanternBlockItemData::new, LanternBlockItemData::new, LanternBlockItemData::new,
-                ImmutableBlockItemData.class, LanternImmutableBlockItemData::new, LanternImmutableBlockItemData::new);
-        register(BreakableData.class, LanternBreakableData::new, LanternBreakableData::new, LanternBreakableData::new,
-                ImmutableBreakableData.class, LanternImmutableBreakableData::new, LanternImmutableBreakableData::new);
+        /// normal containers
+        register(AuthorData.class, ImmutableAuthorData.class, LanternAuthorData.class, LanternImmutableAuthorData.class,
+                c -> c.registerKey(Keys.BOOK_AUTHOR, Text.EMPTY));
+        register(BlockItemData.class, ImmutableBlockItemData.class, LanternBlockItemData.class, LanternImmutableBlockItemData.class,
+                c -> c.registerKey(Keys.ITEM_BLOCKSTATE, BlockTypes.AIR.getDefaultState()));
+        register(BreakableData.class, ImmutableBreakableData.class, LanternBreakableData.class, LanternImmutableBreakableData.class,
+                c -> c.registerKey(Keys.BREAKABLE_BLOCK_TYPES, new HashSet<>()));
+        register(DurabilityData.class, ImmutableDurabilityData.class, LanternDurabilityData.class, LanternImmutableDurabilityData.class,
+                c -> {
+                    c.registerKey(Keys.ITEM_DURABILITY, 100);
+                    c.registerKey(Keys.UNBREAKABLE, false);
+                });
+        register(GenerationData.class, ImmutableGenerationData.class, LanternGenerationData.class, LanternImmutableGenerationData.class,
+                c -> c.registerKey(Keys.GENERATION, 0, 0, Integer.MAX_VALUE));
+        register(HideData.class, ImmutableHideData.class, LanternHideData.class, LanternImmutableHideData.class,
+                c -> {
+                    c.registerKey(Keys.HIDE_ENCHANTMENTS, false);
+                    c.registerKey(Keys.HIDE_ATTRIBUTES, false);
+                    c.registerKey(Keys.HIDE_UNBREAKABLE, false);
+                    c.registerKey(Keys.HIDE_CAN_DESTROY, false);
+                    c.registerKey(Keys.HIDE_CAN_PLACE, false);
+                    c.registerKey(Keys.HIDE_MISCELLANEOUS, false);
+                });
+        register(MapItemData.class, ImmutableMapItemData.class, LanternMapItemData.class, LanternImmutableMapItemData.class,
+                c -> {});
+        register(PlaceableData.class, ImmutablePlaceableData.class, LanternPlaceableData.class, LanternImmutablePlaceableData.class,
+                c -> c.registerKey(Keys.PLACEABLE_BLOCKS, new HashSet<>()));
+
+        /// variant containers: TODO
         register(CoalData.class, LanternCoalData::new, LanternCoalData::new, LanternCoalData::new,
                 ImmutableCoalData.class, LanternImmutableCoalData::new, LanternImmutableCoalData::new);
         register(CookedFishData.class, LanternCookedFishData::new, LanternCookedFishData::new, LanternCookedFishData::new,
                 ImmutableCookedFishData.class, LanternImmutableCookedFishData::new, LanternImmutableCookedFishData::new);
-        register(DurabilityData.class, LanternDurabilityData::new, LanternDurabilityData::new, LanternDurabilityData::new,
-                ImmutableDurabilityData.class, LanternImmutableDurabilityData::new, LanternImmutableDurabilityData::new);
-        register(EnchantmentData.class, LanternEnchantmentData::new, LanternEnchantmentData::new, LanternEnchantmentData::new,
-                ImmutableEnchantmentData.class, LanternImmutableEnchantmentData::new, LanternImmutableEnchantmentData::new);
         register(FishData.class, LanternFishData::new, LanternFishData::new, LanternFishData::new,
                 ImmutableFishData.class, LanternImmutableFishData::new, LanternImmutableFishData::new);
-        register(GenerationData.class, LanternGenerationData::new, LanternGenerationData::new, LanternGenerationData::new,
-                ImmutableGenerationData.class, LanternImmutableGenerationData::new, LanternImmutableGenerationData::new);
         register(GoldenAppleData.class, LanternGoldenAppleData::new, LanternGoldenAppleData::new, LanternGoldenAppleData::new,
                 ImmutableGoldenAppleData.class, LanternImmutableGoldenAppleData::new, LanternImmutableGoldenAppleData::new);
-        register(HideData.class, LanternHideData::new, LanternHideData::new, LanternHideData::new,
-                ImmutableHideData.class, LanternImmutableHideData::new, LanternImmutableHideData::new);
-        register(InventoryItemData.class, LanternInventoryItemData::new, LanternInventoryItemData::new, LanternInventoryItemData::new,
-                ImmutableInventoryItemData.class, LanternImmutableInventoryItemData::new, LanternImmutableInventoryItemData::new);
-        register(LoreData.class, LanternLoreData::new, LanternLoreData::new, LanternLoreData::new,
-                ImmutableLoreData.class, LanternImmutableLoreData::new, LanternImmutableLoreData::new);
-        register(MapItemData.class, LanternMapItemData::new, LanternMapItemData::new, LanternMapItemData::new,
-                ImmutableMapItemData.class, LanternImmutableMapItemData::new, LanternImmutableMapItemData::new);
-        register(PagedData.class, LanternPagedData::new, LanternPagedData::new, LanternPagedData::new,
-                ImmutablePagedData.class, LanternImmutablePagedData::new, LanternImmutablePagedData::new);
-        register(PlaceableData.class, LanternPlaceableData::new, LanternPlaceableData::new, LanternPlaceableData::new,
-                ImmutablePlaceableData.class, LanternImmutablePlaceableData::new, LanternImmutablePlaceableData::new);
         register(SpawnableData.class, LanternSpawnableData::new, LanternSpawnableData::new, LanternSpawnableData::new,
                 ImmutableSpawnableData.class, LanternImmutableSpawnableData::new, LanternImmutableSpawnableData::new);
-        register(StoredEnchantmentData.class, LanternStoredEnchantmentData::new, LanternStoredEnchantmentData::new, LanternStoredEnchantmentData::new,
-                ImmutableStoredEnchantmentData.class, LanternImmutableStoredEnchantmentData::new, LanternImmutableStoredEnchantmentData::new);
+
+        /// list containers
+        registerList(EnchantmentData.class, ImmutableEnchantmentData.class, Keys.ITEM_ENCHANTMENTS);
+        registerList(LoreData.class, ImmutableLoreData.class, Keys.ITEM_LORE);
+        registerList(PagedData.class, ImmutablePagedData.class, Keys.BOOK_PAGES);
+        registerList(StoredEnchantmentData.class, ImmutableStoredEnchantmentData.class, Keys.STORED_ENCHANTMENTS);
+
+        /// containers with special behavior
+        register(InventoryItemData.class, LanternInventoryItemData::new, LanternInventoryItemData::new, LanternInventoryItemData::new,
+                ImmutableInventoryItemData.class, LanternImmutableInventoryItemData::new, LanternImmutableInventoryItemData::new);
     }
 
     private static final class RegistrationInfo {
@@ -342,6 +353,36 @@ public class DataManipulatorRegistry {
         final DataManipulatorRegistration<M, I> registration = new SimpleDataManipulatorRegistration<>(pluginContainer, id, name,
                 manipulatorType, manipulatorSupplier, manipulatorCopyFunction, immutableToMutableFunction,
                 immutableManipulatorType, immutableManipulatorSupplier, mutableToImmutableFunction, manipulatorSupplier.get().getKeys());
+        return register(registration);
+    }
+
+    public <M extends ListData<E, M, I>, I extends ImmutableListData<E, I, M>, E> DataManipulatorRegistration<M, I> registerList(
+            Class<M> manipulatorType, Class<I> immutableManipulatorType, Key<ListValue<E>> key) {
+        return registerList(manipulatorType, immutableManipulatorType, key, ArrayList::new);
+    }
+
+    public <M extends ListData<E, M, I>, I extends ImmutableListData<E, I, M>, E> DataManipulatorRegistration<M, I> registerList(
+            Class<M> manipulatorType, Class<I> immutableManipulatorType,
+            Key<ListValue<E>> key, Supplier<List<E>> listSupplier) {
+        checkNotNull(manipulatorType, "manipulatorType");
+        checkNotNull(immutableManipulatorType, "immutableManipulatorType");
+        final RegistrationInfo registrationInfo = RegistrationInfo.build(manipulatorType);
+        return registerList(registrationInfo.pluginContainer, registrationInfo.id, registrationInfo.name,
+                manipulatorType, immutableManipulatorType, key, listSupplier);
+    }
+
+    public <M extends ListData<E, M, I>, I extends ImmutableListData<E, I, M>, E> DataManipulatorRegistration<M, I> registerList(
+            PluginContainer pluginContainer, String id, String name, Class<M> manipulatorType, Class<I> immutableManipulatorType, Key<ListValue<E>> key) {
+        return registerList(pluginContainer, id, name, manipulatorType, immutableManipulatorType, key, ArrayList::new);
+    }
+
+    public <M extends ListData<E, M, I>, I extends ImmutableListData<E, I, M>, E> DataManipulatorRegistration<M, I> registerList(
+            PluginContainer pluginContainer, String id, String name, Class<M> manipulatorType, Class<I> immutableManipulatorType,
+            Key<ListValue<E>> key, Supplier<List<E>> listSupplier) {
+        checkNotNull(manipulatorType, "manipulatorType");
+        checkNotNull(immutableManipulatorType, "immutableManipulatorType");
+        final DataManipulatorRegistration<M, I> registration = this.dataManipulatorGenerator.newListRegistrationFor(
+                pluginContainer, id, name, manipulatorType, immutableManipulatorType, key, listSupplier);
         return register(registration);
     }
 

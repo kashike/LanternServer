@@ -25,17 +25,8 @@
  */
 package org.lanternpowered.server.data.manipulator.immutable.item;
 
-import org.lanternpowered.server.data.manipulator.immutable.AbstractImmutableData;
 import org.spongepowered.api.data.manipulator.immutable.item.ImmutableMapItemData;
-import org.spongepowered.api.data.manipulator.mutable.item.MapItemData;
 
-public class LanternImmutableMapItemData extends AbstractImmutableData<ImmutableMapItemData, MapItemData> implements ImmutableMapItemData {
+public interface LanternImmutableMapItemData extends ImmutableMapItemData {
 
-    public LanternImmutableMapItemData() {
-        super(ImmutableMapItemData.class, MapItemData.class);
-    }
-
-    public LanternImmutableMapItemData(MapItemData manipulator) {
-        super(manipulator);
-    }
 }

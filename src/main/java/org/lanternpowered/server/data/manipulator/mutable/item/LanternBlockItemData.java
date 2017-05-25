@@ -25,35 +25,15 @@
  */
 package org.lanternpowered.server.data.manipulator.mutable.item;
 
-import org.lanternpowered.server.data.manipulator.mutable.AbstractData;
 import org.spongepowered.api.block.BlockState;
-import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.data.key.Keys;
-import org.spongepowered.api.data.manipulator.immutable.item.ImmutableBlockItemData;
 import org.spongepowered.api.data.manipulator.mutable.item.BlockItemData;
 import org.spongepowered.api.data.value.mutable.Value;
 
-public class LanternBlockItemData extends AbstractData<BlockItemData, ImmutableBlockItemData> implements BlockItemData {
-
-    public LanternBlockItemData() {
-        super(BlockItemData.class, ImmutableBlockItemData.class);
-    }
-
-    public LanternBlockItemData(ImmutableBlockItemData manipulator) {
-        super(manipulator);
-    }
-
-    public LanternBlockItemData(BlockItemData manipulator) {
-        super(manipulator);
-    }
+public interface LanternBlockItemData extends BlockItemData {
 
     @Override
-    public void registerKeys() {
-        registerKey(Keys.ITEM_BLOCKSTATE, BlockTypes.AIR.getDefaultState());
-    }
-
-    @Override
-    public Value<BlockState> state() {
+    default Value<BlockState> state() {
         return getValue(Keys.ITEM_BLOCKSTATE).get();
     }
 }

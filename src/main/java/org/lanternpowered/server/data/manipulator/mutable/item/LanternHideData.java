@@ -25,63 +25,39 @@
  */
 package org.lanternpowered.server.data.manipulator.mutable.item;
 
-import org.lanternpowered.server.data.manipulator.mutable.AbstractData;
 import org.spongepowered.api.data.key.Keys;
-import org.spongepowered.api.data.manipulator.immutable.item.ImmutableHideData;
 import org.spongepowered.api.data.manipulator.mutable.item.HideData;
 import org.spongepowered.api.data.value.mutable.Value;
 
-public class LanternHideData extends AbstractData<HideData, ImmutableHideData> implements HideData {
-
-    public LanternHideData() {
-        super(HideData.class, ImmutableHideData.class);
-    }
-
-    public LanternHideData(ImmutableHideData manipulator) {
-        super(manipulator);
-    }
-
-    public LanternHideData(HideData manipulator) {
-        super(manipulator);
-    }
+public interface LanternHideData extends HideData {
 
     @Override
-    public void registerKeys() {
-        registerKey(Keys.HIDE_ENCHANTMENTS, false);
-        registerKey(Keys.HIDE_ATTRIBUTES, false);
-        registerKey(Keys.HIDE_UNBREAKABLE, false);
-        registerKey(Keys.HIDE_CAN_DESTROY, false);
-        registerKey(Keys.HIDE_CAN_PLACE, false);
-        registerKey(Keys.HIDE_MISCELLANEOUS, false);
-    }
-
-    @Override
-    public Value<Boolean> hideEnchantments() {
+    default Value<Boolean> hideEnchantments() {
         return getValue(Keys.HIDE_ENCHANTMENTS).get();
     }
 
     @Override
-    public Value<Boolean> hideAttributes() {
+    default Value<Boolean> hideAttributes() {
         return getValue(Keys.HIDE_ATTRIBUTES).get();
     }
 
     @Override
-    public Value<Boolean> hideUnbreakable() {
+    default Value<Boolean> hideUnbreakable() {
         return getValue(Keys.HIDE_UNBREAKABLE).get();
     }
 
     @Override
-    public Value<Boolean> hideCanDestroy() {
+    default Value<Boolean> hideCanDestroy() {
         return getValue(Keys.HIDE_CAN_DESTROY).get();
     }
 
     @Override
-    public Value<Boolean> hideCanPlace() {
+    default Value<Boolean> hideCanPlace() {
         return getValue(Keys.HIDE_CAN_PLACE).get();
     }
 
     @Override
-    public Value<Boolean> hideMiscellaneous() {
+    default Value<Boolean> hideMiscellaneous() {
         return getValue(Keys.HIDE_MISCELLANEOUS).get();
     }
 }

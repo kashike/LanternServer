@@ -25,33 +25,14 @@
  */
 package org.lanternpowered.server.data.manipulator.mutable.item;
 
-import org.lanternpowered.server.data.manipulator.mutable.AbstractData;
 import org.spongepowered.api.data.key.Keys;
-import org.spongepowered.api.data.manipulator.immutable.item.ImmutableGenerationData;
 import org.spongepowered.api.data.manipulator.mutable.item.GenerationData;
 import org.spongepowered.api.data.value.mutable.MutableBoundedValue;
 
-public class LanternGenerationData extends AbstractData<GenerationData, ImmutableGenerationData> implements GenerationData {
-
-    public LanternGenerationData() {
-        super(GenerationData.class, ImmutableGenerationData.class);
-    }
-
-    public LanternGenerationData(ImmutableGenerationData manipulator) {
-        super(manipulator);
-    }
-
-    public LanternGenerationData(GenerationData manipulator) {
-        super(manipulator);
-    }
+public interface LanternGenerationData extends GenerationData {
 
     @Override
-    public void registerKeys() {
-        registerKey(Keys.GENERATION, 0, 0, Integer.MAX_VALUE);
-    }
-
-    @Override
-    public MutableBoundedValue<Integer> generation() {
+    default MutableBoundedValue<Integer> generation() {
         return getValue(Keys.GENERATION).get();
     }
 }
