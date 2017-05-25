@@ -23,25 +23,36 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lanternpowered.server.data.manipulator.mutable;
+package org.lanternpowered.server.data.manipulator.gen.dummy;
 
+import org.lanternpowered.server.data.manipulator.mutable.AbstractVariantData;
+import org.spongepowered.api.data.key.Key;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.manipulator.immutable.ImmutableDyeableData;
 import org.spongepowered.api.data.manipulator.mutable.DyeableData;
 import org.spongepowered.api.data.type.DyeColor;
 import org.spongepowered.api.data.type.DyeColors;
+import org.spongepowered.api.data.value.mutable.ListValue;
+import org.spongepowered.api.data.value.mutable.Value;
+import org.spongepowered.api.text.Text;
 
-public class LanternDyeableData extends AbstractVariantData<DyeColor, DyeableData, ImmutableDyeableData> implements DyeableData {
+import java.util.List;
+import java.util.function.Supplier;
 
-    public LanternDyeableData() {
-        super(DyeableData.class, ImmutableDyeableData.class, Keys.DYE_COLOR, DyeColors.WHITE);
+public class LanternDyeableDataImpl extends AbstractVariantData<DyeColor, DyeableData, ImmutableDyeableData> implements DyeableData {
+
+    public static Key<Value<DyeColor>> key;
+    public static DyeColor value;
+
+    public LanternDyeableDataImpl() {
+        super(DyeableData.class, ImmutableDyeableData.class, key, value);
     }
 
-    public LanternDyeableData(ImmutableDyeableData manipulator) {
+    public LanternDyeableDataImpl(ImmutableDyeableData manipulator) {
         super(manipulator);
     }
 
-    public LanternDyeableData(DyeableData manipulator) {
+    public LanternDyeableDataImpl(DyeableData manipulator) {
         super(manipulator);
     }
 }

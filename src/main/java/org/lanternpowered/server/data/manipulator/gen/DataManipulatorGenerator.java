@@ -41,6 +41,7 @@ import org.spongepowered.api.data.manipulator.immutable.ImmutableVariantData;
 import org.spongepowered.api.data.manipulator.mutable.ListData;
 import org.spongepowered.api.data.manipulator.mutable.VariantData;
 import org.spongepowered.api.data.value.mutable.ListValue;
+import org.spongepowered.api.data.value.mutable.Value;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.util.Tuple;
 
@@ -67,10 +68,28 @@ public final class DataManipulatorGenerator {
     {
         addTypeGenerator(new AbstractDataTypeGenerator(), type -> true);
         addTypeGenerator(new AbstractListDataTypeGenerator(), ListData.class::isAssignableFrom);
+        addTypeGenerator(new AbstractVariantDataTypeGenerator(), VariantData.class::isAssignableFrom);
     }
 
-    public void addTypeGenerator(TypeGenerator typeGenerator, Predicate<Class<?>> predicate) {
+    private void addTypeGenerator(TypeGenerator typeGenerator, Predicate<Class<?>> predicate) {
         this.typeGenerators.add(0, new Tuple<>(typeGenerator, predicate));
+    }
+
+    @SuppressWarnings("unchecked")
+    public <M extends VariantData<E, M, I>, I extends ImmutableVariantData<E, I, M>, E> DataManipulatorRegistration<M, I> newVariantRegistrationFor(
+            PluginContainer pluginContainer, String id, String name, Class<M> manipulatorType, Class<I> immutableManipulatorType,
+            Key<Value<E>> key, E defaultValue) {
+        final Base<M, I> base = generateBase(pluginContainer, id, name,
+                manipulatorType, immutableManipulatorType, null, null);
+        try {
+            base.mutableManipulatorTypeImpl.getField("key").set(null, key);
+            base.mutableManipulatorTypeImpl.getField("value").set(null, defaultValue);
+            base.immutableManipulatorTypeImpl.getField("key").set(null, key);
+            base.immutableManipulatorTypeImpl.getField("value").set(null, defaultValue);
+        } catch (IllegalAccessException | NoSuchFieldException e) {
+            throw new RuntimeException(e);
+        }
+        return base.supplier.get();
     }
 
     @SuppressWarnings("unchecked")

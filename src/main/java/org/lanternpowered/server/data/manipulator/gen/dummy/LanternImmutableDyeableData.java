@@ -23,25 +23,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lanternpowered.server.data.manipulator.mutable;
+package org.lanternpowered.server.data.manipulator.gen.dummy;
 
+import org.lanternpowered.server.data.manipulator.immutable.AbstractImmutableVariantData;
+import org.spongepowered.api.data.key.Key;
 import org.spongepowered.api.data.key.Keys;
-import org.spongepowered.api.data.manipulator.immutable.ImmutableRotationalData;
-import org.spongepowered.api.data.manipulator.mutable.RotationalData;
-import org.spongepowered.api.util.rotation.Rotation;
-import org.spongepowered.api.util.rotation.Rotations;
+import org.spongepowered.api.data.manipulator.immutable.ImmutableDyeableData;
+import org.spongepowered.api.data.manipulator.mutable.DyeableData;
+import org.spongepowered.api.data.type.DyeColor;
+import org.spongepowered.api.data.type.DyeColors;
+import org.spongepowered.api.data.value.mutable.Value;
 
-public class LanternRotationalData extends AbstractVariantData<Rotation, RotationalData, ImmutableRotationalData> implements RotationalData {
+public class LanternImmutableDyeableData extends AbstractImmutableVariantData<DyeColor, ImmutableDyeableData, DyeableData>
+        implements ImmutableDyeableData {
 
-    public LanternRotationalData() {
-        super(RotationalData.class, ImmutableRotationalData.class, Keys.ROTATION, Rotations.LEFT);
+    public static Key<Value<DyeColor>> key;
+    public static DyeColor value;
+
+    public LanternImmutableDyeableData() {
+        super(ImmutableDyeableData.class, DyeableData.class, key, value);
     }
 
-    public LanternRotationalData(ImmutableRotationalData manipulator) {
-        super(manipulator);
-    }
-
-    public LanternRotationalData(RotationalData manipulator) {
+    public LanternImmutableDyeableData(DyeableData manipulator) {
         super(manipulator);
     }
 }

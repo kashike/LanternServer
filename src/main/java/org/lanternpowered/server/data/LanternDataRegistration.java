@@ -61,9 +61,9 @@ public class LanternDataRegistration<M extends DataManipulator<M, I>, I extends 
     protected LanternDataRegistration(PluginContainer plugin, String id, String name, Class<M> manipulatorClass, Class<I> immutableClass,
             @Nullable DataManipulatorBuilder<M, I> manipulatorBuilder) {
         super(plugin.getId(), fixId(plugin, id), name);
-        this.plugin = plugin;
-        this.manipulatorClass = manipulatorClass;
-        this.immutableClass = immutableClass;
+        this.plugin = checkNotNull(plugin, "plugin");
+        this.manipulatorClass = checkNotNull(manipulatorClass, "manipulatorClass");
+        this.immutableClass = checkNotNull(immutableClass, "immutableClass");
         this.manipulatorBuilder = manipulatorBuilder == null ? createDataManipulatorBuilder() : manipulatorBuilder;
     }
 
