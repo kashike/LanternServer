@@ -580,6 +580,11 @@ public class DataManipulatorRegistry {
         return Collections.unmodifiableCollection(this.registrationByClass.values());
     }
 
+    @SuppressWarnings("unchecked")
+    public Optional<DataManipulatorRegistration> getBy(Class manipulatorType) {
+        return Optional.ofNullable(this.registrationByClass.get(checkNotNull(manipulatorType, "manipulatorType")));
+    }
+
     public <M extends DataManipulator<M, I>, I extends ImmutableDataManipulator<I, M>> Optional<DataManipulatorRegistration<M, I>> getByMutable(
             Class<M> manipulatorType) {
         //noinspection unchecked
