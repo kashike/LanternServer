@@ -34,6 +34,6 @@ public interface LanternImmutableWetData extends ImmutableWetData, IImmutableVal
 
     @Override
     default ImmutableValue<Boolean> wet() {
-        return getImmutableValue(Keys.IS_WET).get();
+        return tryGetImmutableValue(Keys.IS_WET);
     }
 }

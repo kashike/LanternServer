@@ -26,32 +26,40 @@
 package org.lanternpowered.server.data.manipulator.gen;
 
 import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.Type;
 import org.spongepowered.api.data.manipulator.DataManipulator;
 import org.spongepowered.api.data.manipulator.ImmutableDataManipulator;
 
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.annotation.Nullable;
 
 public abstract class TypeGenerator {
 
-    private static final AtomicInteger counter = new AtomicInteger();
+    private static final class Counter {
+        private int value;
+    }
+
+    private static final Map<String, Counter> counters = new HashMap<>();
+
+    static String newName(String name) {
+        final Counter counter = counters.computeIfAbsent(name, aClass -> new Counter());
+        final int index = name.lastIndexOf('.');
+        final int index1 = name.substring(0, index).lastIndexOf('.');
+        final int value = counter.value++;
+        return name.substring(index1 + 1, index) + ".implementation." + name.substring(index + 1) + "Impl" + (value == 0 ? "" : value);
+    }
 
     static String newName(Class<?> manipulatorType) {
         return newName(manipulatorType.getName());
     }
 
-    static String newName(String name) {
-        return name + "ImplXYZ" + counter.getAndIncrement();
+    static String newInternalName(String name) {
+        return newName(name.replace('/', '.')).replace('.', '/');
     }
 
     static String newInternalName(Class<?> manipulatorType) {
-        return newName(Type.getInternalName(manipulatorType));
-    }
-
-    static String newInternalName(String name) {
-        return newName(name);
+        return newName(manipulatorType).replace('.', '/');
     }
 
     abstract <M extends DataManipulator<M, I>, I extends ImmutableDataManipulator<I, M>> void generateClasses(

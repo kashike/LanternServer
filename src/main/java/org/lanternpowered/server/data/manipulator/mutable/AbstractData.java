@@ -27,6 +27,7 @@ package org.lanternpowered.server.data.manipulator.mutable;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import com.google.common.base.MoreObjects;
 import org.lanternpowered.server.data.manipulator.DataManipulatorRegistration;
 import org.lanternpowered.server.data.manipulator.DataManipulatorRegistry;
 import org.lanternpowered.server.data.manipulator.IDataManipulatorBase;
@@ -38,6 +39,8 @@ import org.lanternpowered.server.data.value.ElementHolderKeyRegistration;
 import org.lanternpowered.server.data.value.KeyRegistration;
 import org.lanternpowered.server.data.value.LanternValueFactory;
 import org.lanternpowered.server.data.value.processor.ValueProcessor;
+import org.lanternpowered.server.util.collect.Collections3;
+import org.lanternpowered.server.util.collect.Lists2;
 import org.lanternpowered.server.util.functions.TriFunction;
 import org.spongepowered.api.data.DataContainer;
 import org.spongepowered.api.data.DataHolder;
@@ -102,7 +105,9 @@ public abstract class AbstractData<M extends DataManipulator<M, I>, I extends Im
     public <V extends BaseValue<E>, E> ElementHolderKeyRegistration<V, E> registerKey(Key<? extends V> key, @Nullable E defaultValue) {
         // Data container keys are non removable by default
         final ElementHolderKeyRegistration<V, E> registration = AbstractValueContainer.super.registerKey(key, defaultValue);
-        registration.notRemovable();
+        if (defaultValue != null) {
+            registration.notRemovable();
+        }
         return registration;
     }
 
@@ -248,6 +253,14 @@ public abstract class AbstractData<M extends DataManipulator<M, I>, I extends Im
     @Override
     public Class<M> getMutableType() {
         return this.manipulatorType;
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("type", getMutableType().getName())
+                .add("values", Collections3.toString(getValues()))
+                .toString();
     }
 
     public static abstract class AbstractManipulatorDataBuilder<M extends DataManipulator<M, I>, I extends ImmutableDataManipulator<I, M>>

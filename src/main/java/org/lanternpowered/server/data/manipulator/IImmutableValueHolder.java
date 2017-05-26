@@ -34,4 +34,9 @@ import java.util.Optional;
 public interface IImmutableValueHolder {
 
     <E, R extends ImmutableValue<E>> Optional<R> getImmutableValue(Key<? extends BaseValue<E>> key);
+
+    @SuppressWarnings("unchecked")
+    default <E, R extends ImmutableValue<E>> R tryGetImmutableValue(Key<? extends BaseValue<E>> key) {
+        return (R) getImmutableValue(key).orElseThrow(() -> new IllegalArgumentException("The key " + key + " isn't present!"));
+    }
 }

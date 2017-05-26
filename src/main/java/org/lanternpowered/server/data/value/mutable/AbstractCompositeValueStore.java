@@ -209,7 +209,6 @@ public interface AbstractCompositeValueStore<S extends CompositeValueStore<S, H>
     @Override
     default DataTransactionResult remove(Class<? extends H> containerClass) {
         checkNotNull(containerClass, "containerClass");
-
         if (IDataManipulatorBase.class.isAssignableFrom(containerClass)) {
             // You cannot remove default data manipulators?
             final Optional optRegistration = DataManipulatorRegistry.get().getBy((Class) containerClass);

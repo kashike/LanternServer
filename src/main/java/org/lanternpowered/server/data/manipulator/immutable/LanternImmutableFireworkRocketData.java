@@ -34,6 +34,6 @@ public interface LanternImmutableFireworkRocketData extends ImmutableFireworkRoc
 
     @Override
     default ImmutableBoundedValue<Integer> flightModifier() {
-        return (ImmutableBoundedValue<Integer>) getImmutableValue(Keys.FIREWORK_FLIGHT_MODIFIER).get();
+        return tryGetImmutableValue(Keys.FIREWORK_FLIGHT_MODIFIER);
     }
 }

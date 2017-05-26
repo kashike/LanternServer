@@ -35,6 +35,6 @@ public interface LanternImmutableDisplayNameData extends ImmutableDisplayNameDat
 
     @Override
     default ImmutableValue<Text> displayName() {
-        return getImmutableValue(Keys.DISPLAY_NAME).get();
+        return tryGetImmutableValue(Keys.DISPLAY_NAME);
     }
 }

@@ -228,11 +228,11 @@ public final class LanternDataManager extends SimpleDataTypeSerializerCollection
 
     @Override
     public DataContainer createContainer() {
-        return DataContainer.createNew();
+        return new MemoryDataContainer();
     }
 
     @Override
     public DataContainer createContainer(DataView.SafetyMode safety) {
-        return DataContainer.createNew(safety);
+        return new MemoryDataContainer(safety);
     }
 }

@@ -23,18 +23,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lanternpowered.server.data.manipulator.immutable;
+package org.lanternpowered.server.data.manipulator;
 
-import org.lanternpowered.server.data.manipulator.IImmutableValueHolder;
-import org.spongepowered.api.data.key.Keys;
-import org.spongepowered.api.data.manipulator.immutable.ImmutableRepresentedPlayerData;
-import org.spongepowered.api.data.value.immutable.ImmutableValue;
-import org.spongepowered.api.profile.GameProfile;
+import org.spongepowered.api.data.key.Key;
+import org.spongepowered.api.data.value.BaseValue;
+import org.spongepowered.api.data.value.ValueContainer;
 
-public interface LanternImmutableRepresentedPlayerData extends ImmutableRepresentedPlayerData, IImmutableValueHolder {
+public interface IValueHolder {
 
-    @Override
-    default ImmutableValue<GameProfile> owner() {
-        return tryGetImmutableValue(Keys.REPRESENTED_PLAYER);
+    @SuppressWarnings("unchecked")
+    default <E, V extends BaseValue<E>> V tryGetValue(Key<V> key) {
+        return ((ValueContainer<?>) this).getValue(key).orElseThrow(() -> new IllegalArgumentException("The key " + key + " isn't present!"));
     }
 }

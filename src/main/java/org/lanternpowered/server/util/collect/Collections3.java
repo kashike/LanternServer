@@ -23,18 +23,23 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lanternpowered.server.data.manipulator.immutable;
+package org.lanternpowered.server.util.collect;
 
-import org.lanternpowered.server.data.manipulator.IImmutableValueHolder;
-import org.spongepowered.api.data.key.Keys;
-import org.spongepowered.api.data.manipulator.immutable.ImmutableRepresentedPlayerData;
-import org.spongepowered.api.data.value.immutable.ImmutableValue;
-import org.spongepowered.api.profile.GameProfile;
+import com.google.common.collect.Iterables;
 
-public interface LanternImmutableRepresentedPlayerData extends ImmutableRepresentedPlayerData, IImmutableValueHolder {
+import java.util.Arrays;
+import java.util.Collection;
 
-    @Override
-    default ImmutableValue<GameProfile> owner() {
-        return tryGetImmutableValue(Keys.REPRESENTED_PLAYER);
+public class Collections3 {
+
+    public static String toString(Collection<?> collection) {
+        return Arrays.toString(collection.toArray(new Object[collection.size()]));
+    }
+
+    public static String toString(Iterable<?> iterable) {
+        if (iterable instanceof Collection) {
+            return toString((Collection<?>) iterable);
+        }
+        return Arrays.toString(Iterables.toArray(iterable, Object.class));
     }
 }

@@ -35,6 +35,6 @@ public interface LanternImmutableTargetedLocationData extends ImmutableTargetedL
 
     @Override
     default ImmutableValue<Vector3d> target() {
-        return getImmutableValue(Keys.TARGETED_LOCATION).get();
+        return tryGetImmutableValue(Keys.TARGETED_LOCATION);
     }
 }

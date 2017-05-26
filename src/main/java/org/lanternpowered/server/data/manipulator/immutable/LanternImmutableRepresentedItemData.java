@@ -35,6 +35,6 @@ public interface LanternImmutableRepresentedItemData extends ImmutableRepresente
 
     @Override
     default ImmutableValue<ItemStackSnapshot> item() {
-        return getImmutableValue(Keys.REPRESENTED_ITEM).get();
+        return tryGetImmutableValue(Keys.REPRESENTED_ITEM);
     }
 }

@@ -36,21 +36,21 @@ public interface LanternImmutableCommandData extends ImmutableCommandData, IImmu
 
     @Override
     default ImmutableValue<String> storedCommand() {
-        return getImmutableValue(Keys.COMMAND).get();
+        return tryGetImmutableValue(Keys.COMMAND);
     }
 
     @Override
     default ImmutableValue<Integer> successCount() {
-        return getImmutableValue(Keys.SUCCESS_COUNT).get();
+        return tryGetImmutableValue(Keys.SUCCESS_COUNT);
     }
 
     @Override
     default ImmutableValue<Boolean> doesTrackOutput() {
-        return getImmutableValue(Keys.TRACKS_OUTPUT).get();
+        return tryGetImmutableValue(Keys.TRACKS_OUTPUT);
     }
 
     @Override
     default ImmutableOptionalValue<Text> lastOutput() {
-        return (ImmutableOptionalValue<Text>) getImmutableValue(Keys.LAST_COMMAND_OUTPUT).get();
+        return tryGetImmutableValue(Keys.LAST_COMMAND_OUTPUT);
     }
 }

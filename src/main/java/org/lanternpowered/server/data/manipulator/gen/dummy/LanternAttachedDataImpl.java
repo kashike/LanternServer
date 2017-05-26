@@ -25,7 +25,6 @@
  */
 package org.lanternpowered.server.data.manipulator.gen.dummy;
 
-import org.lanternpowered.server.data.manipulator.IDataManipulatorBase;
 import org.lanternpowered.server.data.manipulator.mutable.AbstractData;
 import org.lanternpowered.server.data.manipulator.mutable.block.LanternAttachedData;
 import org.lanternpowered.server.data.value.IValueContainer;
@@ -47,11 +46,6 @@ public class LanternAttachedDataImpl extends AbstractData<AttachedData, Immutabl
     }
 
     protected LanternAttachedDataImpl(AttachedData manipulator) {
-        super(manipulator);
-    }
-
-    protected LanternAttachedDataImpl(
-            IDataManipulatorBase<AttachedData, ImmutableAttachedData> manipulator) {
         super(manipulator);
     }
 

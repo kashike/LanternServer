@@ -23,18 +23,39 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lanternpowered.server.data.manipulator.immutable;
+package org.lanternpowered.server.data.manipulator.mutable.block;
 
-import org.lanternpowered.server.data.manipulator.IImmutableValueHolder;
+import org.lanternpowered.server.data.manipulator.IValueHolder;
 import org.spongepowered.api.data.key.Keys;
-import org.spongepowered.api.data.manipulator.immutable.ImmutableRepresentedPlayerData;
-import org.spongepowered.api.data.value.immutable.ImmutableValue;
-import org.spongepowered.api.profile.GameProfile;
+import org.spongepowered.api.data.manipulator.mutable.block.ConnectedDirectionData;
+import org.spongepowered.api.data.value.mutable.SetValue;
+import org.spongepowered.api.data.value.mutable.Value;
+import org.spongepowered.api.util.Direction;
 
-public interface LanternImmutableRepresentedPlayerData extends ImmutableRepresentedPlayerData, IImmutableValueHolder {
+public interface LanternConnectedDirectionData extends ConnectedDirectionData, IValueHolder {
 
     @Override
-    default ImmutableValue<GameProfile> owner() {
-        return tryGetImmutableValue(Keys.REPRESENTED_PLAYER);
+    default SetValue<Direction> connectedDirections() {
+        return tryGetValue(Keys.CONNECTED_DIRECTIONS);
+    }
+
+    @Override
+    default Value<Boolean> connectedNorth() {
+        return tryGetValue(Keys.CONNECTED_NORTH);
+    }
+
+    @Override
+    default Value<Boolean> connectedSouth() {
+        return tryGetValue(Keys.CONNECTED_SOUTH);
+    }
+
+    @Override
+    default Value<Boolean> connectedEast() {
+        return tryGetValue(Keys.CONNECTED_EAST);
+    }
+
+    @Override
+    default Value<Boolean> connectedWest() {
+        return tryGetValue(Keys.CONNECTED_WEST);
     }
 }

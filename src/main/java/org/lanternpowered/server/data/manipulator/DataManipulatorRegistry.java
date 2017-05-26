@@ -38,6 +38,9 @@ import org.lanternpowered.server.data.manipulator.immutable.LanternImmutableRepr
 import org.lanternpowered.server.data.manipulator.immutable.LanternImmutableTargetedLocationData;
 import org.lanternpowered.server.data.manipulator.immutable.LanternImmutableWetData;
 import org.lanternpowered.server.data.manipulator.immutable.block.LanternImmutableAttachedData;
+import org.lanternpowered.server.data.manipulator.immutable.block.LanternImmutableConnectedDirectionData;
+import org.lanternpowered.server.data.manipulator.immutable.block.LanternImmutableDecayableData;
+import org.lanternpowered.server.data.manipulator.immutable.block.LanternImmutableDelayableData;
 import org.lanternpowered.server.data.manipulator.immutable.item.LanternImmutableAuthorData;
 import org.lanternpowered.server.data.manipulator.immutable.item.LanternImmutableBlockItemData;
 import org.lanternpowered.server.data.manipulator.immutable.item.LanternImmutableBreakableData;
@@ -56,6 +59,9 @@ import org.lanternpowered.server.data.manipulator.mutable.LanternRepresentedPlay
 import org.lanternpowered.server.data.manipulator.mutable.LanternTargetedLocationData;
 import org.lanternpowered.server.data.manipulator.mutable.LanternWetData;
 import org.lanternpowered.server.data.manipulator.mutable.block.LanternAttachedData;
+import org.lanternpowered.server.data.manipulator.mutable.block.LanternConnectedDirectionData;
+import org.lanternpowered.server.data.manipulator.mutable.block.LanternDecayableData;
+import org.lanternpowered.server.data.manipulator.mutable.block.LanternDelayableData;
 import org.lanternpowered.server.data.manipulator.mutable.item.LanternAuthorData;
 import org.lanternpowered.server.data.manipulator.mutable.item.LanternBlockItemData;
 import org.lanternpowered.server.data.manipulator.mutable.item.LanternBreakableData;
@@ -95,6 +101,9 @@ import org.spongepowered.api.data.manipulator.immutable.block.ImmutableAxisData;
 import org.spongepowered.api.data.manipulator.immutable.block.ImmutableBigMushroomData;
 import org.spongepowered.api.data.manipulator.immutable.block.ImmutableBrickData;
 import org.spongepowered.api.data.manipulator.immutable.block.ImmutableComparatorData;
+import org.spongepowered.api.data.manipulator.immutable.block.ImmutableConnectedDirectionData;
+import org.spongepowered.api.data.manipulator.immutable.block.ImmutableDecayableData;
+import org.spongepowered.api.data.manipulator.immutable.block.ImmutableDelayableData;
 import org.spongepowered.api.data.manipulator.immutable.block.ImmutableDirtData;
 import org.spongepowered.api.data.manipulator.immutable.block.ImmutableDisguisedBlockData;
 import org.spongepowered.api.data.manipulator.immutable.block.ImmutableDoublePlantData;
@@ -160,6 +169,9 @@ import org.spongepowered.api.data.manipulator.mutable.block.AxisData;
 import org.spongepowered.api.data.manipulator.mutable.block.BigMushroomData;
 import org.spongepowered.api.data.manipulator.mutable.block.BrickData;
 import org.spongepowered.api.data.manipulator.mutable.block.ComparatorData;
+import org.spongepowered.api.data.manipulator.mutable.block.ConnectedDirectionData;
+import org.spongepowered.api.data.manipulator.mutable.block.DecayableData;
+import org.spongepowered.api.data.manipulator.mutable.block.DelayableData;
 import org.spongepowered.api.data.manipulator.mutable.block.DirtData;
 import org.spongepowered.api.data.manipulator.mutable.block.DisguisedBlockData;
 import org.spongepowered.api.data.manipulator.mutable.block.DoublePlantData;
@@ -318,7 +330,18 @@ public class DataManipulatorRegistry {
 
         /// normal containers
         register(AttachedData.class, ImmutableAttachedData.class, LanternAttachedData.class, LanternImmutableAttachedData.class,
-                valueContainer -> valueContainer.registerKey(Keys.ATTACHED, false));
+                c -> c.registerKey(Keys.ATTACHED, false));
+        register(ConnectedDirectionData.class, ImmutableConnectedDirectionData.class, LanternConnectedDirectionData.class, LanternImmutableConnectedDirectionData.class,
+                c -> {
+                    c.registerKey(Keys.CONNECTED_WEST, false);
+                    c.registerKey(Keys.CONNECTED_EAST, false);
+                    c.registerKey(Keys.CONNECTED_SOUTH, false);
+                    c.registerKey(Keys.CONNECTED_NORTH, false);
+                });
+        register(DecayableData.class, ImmutableDecayableData.class, LanternDecayableData.class, LanternImmutableDecayableData.class,
+                c -> c.registerKey(Keys.DECAYABLE, true));
+        register(DelayableData.class, ImmutableDelayableData.class, LanternDelayableData.class, LanternImmutableDelayableData.class,
+                c -> c.registerKey(Keys.DELAY, 1, 0, Integer.MAX_VALUE));
 
         /// variant containers
         registerVariant(AxisData.class, ImmutableAxisData.class, Keys.AXIS, Axis.X);
@@ -361,7 +384,6 @@ public class DataManipulatorRegistry {
         registerVariant(OcelotData.class, ImmutableOcelotData.class, Keys.OCELOT_TYPE, OcelotTypes.WILD_OCELOT);
         registerVariant(ParrotData.class, ImmutableParrotData.class, Keys.PARROT_VARIANT, ParrotVariants.RED);
         registerVariant(RabbitData.class, ImmutableRabbitData.class, Keys.RABBIT_TYPE, RabbitTypes.WHITE);
-        registerVariant(OcelotData.class, ImmutableOcelotData.class, Keys.OCELOT_TYPE, OcelotTypes.WILD_OCELOT);
 
         /// list containers
 
@@ -585,15 +607,15 @@ public class DataManipulatorRegistry {
         return Optional.ofNullable(this.registrationByClass.get(checkNotNull(manipulatorType, "manipulatorType")));
     }
 
+    @SuppressWarnings("unchecked")
     public <M extends DataManipulator<M, I>, I extends ImmutableDataManipulator<I, M>> Optional<DataManipulatorRegistration<M, I>> getByMutable(
             Class<M> manipulatorType) {
-        //noinspection unchecked
         return Optional.ofNullable(this.registrationByClass.get(checkNotNull(manipulatorType, "manipulatorType")));
     }
 
+    @SuppressWarnings("unchecked")
     public <M extends DataManipulator<M, I>, I extends ImmutableDataManipulator<I, M>> Optional<DataManipulatorRegistration<M, I>> getByImmutable(
             Class<I> immutableManipulatorType) {
-        //noinspection unchecked
         return Optional.ofNullable(this.registrationByClass.get(checkNotNull(immutableManipulatorType, "immutableManipulatorType")));
     }
 }

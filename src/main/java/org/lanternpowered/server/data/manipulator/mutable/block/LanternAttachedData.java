@@ -25,14 +25,15 @@
  */
 package org.lanternpowered.server.data.manipulator.mutable.block;
 
+import org.lanternpowered.server.data.manipulator.IValueHolder;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.manipulator.mutable.block.AttachedData;
 import org.spongepowered.api.data.value.mutable.Value;
 
-public interface LanternAttachedData extends AttachedData {
+public interface LanternAttachedData extends AttachedData, IValueHolder {
 
     @Override
     default Value<Boolean> attached() {
-        return getValue(Keys.ATTACHED).get();
+        return tryGetValue(Keys.ATTACHED);
     }
 }

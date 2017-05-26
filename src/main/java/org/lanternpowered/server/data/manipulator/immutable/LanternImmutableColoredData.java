@@ -25,15 +25,16 @@
  */
 package org.lanternpowered.server.data.manipulator.immutable;
 
+import org.lanternpowered.server.data.manipulator.IImmutableValueHolder;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.manipulator.immutable.ImmutableColoredData;
 import org.spongepowered.api.data.value.immutable.ImmutableValue;
 import org.spongepowered.api.util.Color;
 
-public interface LanternImmutableColoredData extends ImmutableColoredData {
+public interface LanternImmutableColoredData extends ImmutableColoredData, IImmutableValueHolder {
 
     @Override
     default ImmutableValue<Color> color() {
-        return getValue(Keys.COLOR).get().asImmutable();
+        return tryGetImmutableValue(Keys.COLOR);
     }
 }

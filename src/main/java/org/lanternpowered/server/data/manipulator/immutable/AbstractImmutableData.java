@@ -86,7 +86,9 @@ public abstract class AbstractImmutableData<I extends ImmutableDataManipulator<I
     @Override
     public <V extends BaseValue<E>, E> ElementHolderKeyRegistration<V, E> registerKey(Key<? extends V> key, @Nullable E defaultValue) {
         final ElementHolderKeyRegistration<V, E> registration = AbstractValueContainer.super.registerKey(key, defaultValue);
-        registration.notRemovable();
+        if (defaultValue != null) {
+            registration.notRemovable();
+        }
         return registration;
     }
 

@@ -23,18 +23,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lanternpowered.server.data.manipulator.immutable;
+package org.lanternpowered.server.data.manipulator.immutable.block;
 
 import org.lanternpowered.server.data.manipulator.IImmutableValueHolder;
 import org.spongepowered.api.data.key.Keys;
-import org.spongepowered.api.data.manipulator.immutable.ImmutableRepresentedPlayerData;
+import org.spongepowered.api.data.manipulator.immutable.block.ImmutableDecayableData;
+import org.spongepowered.api.data.manipulator.immutable.block.ImmutableDelayableData;
+import org.spongepowered.api.data.value.immutable.ImmutableBoundedValue;
 import org.spongepowered.api.data.value.immutable.ImmutableValue;
-import org.spongepowered.api.profile.GameProfile;
 
-public interface LanternImmutableRepresentedPlayerData extends ImmutableRepresentedPlayerData, IImmutableValueHolder {
+public interface LanternImmutableDelayableData extends ImmutableDelayableData, IImmutableValueHolder {
 
     @Override
-    default ImmutableValue<GameProfile> owner() {
-        return tryGetImmutableValue(Keys.REPRESENTED_PLAYER);
+    default ImmutableBoundedValue<Integer> delay() {
+        return tryGetImmutableValue(Keys.DELAY);
     }
 }

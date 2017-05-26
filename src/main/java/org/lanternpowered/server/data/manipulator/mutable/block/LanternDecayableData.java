@@ -23,18 +23,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lanternpowered.server.data.manipulator.immutable;
+package org.lanternpowered.server.data.manipulator.mutable.block;
 
-import org.lanternpowered.server.data.manipulator.IImmutableValueHolder;
+import org.lanternpowered.server.data.manipulator.IValueHolder;
 import org.spongepowered.api.data.key.Keys;
-import org.spongepowered.api.data.manipulator.immutable.ImmutableRepresentedPlayerData;
-import org.spongepowered.api.data.value.immutable.ImmutableValue;
-import org.spongepowered.api.profile.GameProfile;
+import org.spongepowered.api.data.manipulator.mutable.block.DecayableData;
+import org.spongepowered.api.data.value.mutable.Value;
 
-public interface LanternImmutableRepresentedPlayerData extends ImmutableRepresentedPlayerData, IImmutableValueHolder {
+public interface LanternDecayableData extends DecayableData, IValueHolder {
 
     @Override
-    default ImmutableValue<GameProfile> owner() {
-        return tryGetImmutableValue(Keys.REPRESENTED_PLAYER);
+    default Value<Boolean> decayable() {
+        return tryGetValue(Keys.DECAYABLE);
     }
 }
