@@ -234,8 +234,8 @@ final class AbstractDataTypeGenerator extends TypeGenerator {
             }
         }
 
-        visitMethods(mutableClassName, cwM, mutableMethods);
-        visitMethods(immutableClassName, cwI, immutableMethods);
+        visitMethods(mutableClassName, cwM, "getValue", mutableMethods);
+        visitMethods(immutableClassName, cwI, "getImmutableValue", immutableMethods);
     }
 
 }

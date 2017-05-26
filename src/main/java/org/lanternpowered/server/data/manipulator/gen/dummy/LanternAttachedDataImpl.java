@@ -27,6 +27,7 @@ package org.lanternpowered.server.data.manipulator.gen.dummy;
 
 import org.lanternpowered.server.data.manipulator.mutable.AbstractData;
 import org.lanternpowered.server.data.value.IValueContainer;
+import org.spongepowered.api.data.key.Key;
 import org.spongepowered.api.data.manipulator.immutable.block.ImmutableAttachedData;
 import org.spongepowered.api.data.manipulator.mutable.block.AttachedData;
 import org.spongepowered.api.data.value.mutable.Value;
@@ -35,6 +36,7 @@ import java.util.function.Consumer;
 
 public class LanternAttachedDataImpl extends AbstractData<AttachedData, ImmutableAttachedData> implements AttachedData {
 
+    public static Key[] keys;
     public static Consumer<IValueContainer<?>> registrationConsumer;
 
     protected LanternAttachedDataImpl() {
@@ -55,7 +57,8 @@ public class LanternAttachedDataImpl extends AbstractData<AttachedData, Immutabl
         registrationConsumer.accept(this);
     }
 
-    @Override public Value<Boolean> attached() {
-        return null;
+    @Override
+    public Value<Boolean> attached() {
+        return (Value<Boolean>) getValue(keys[0]).get();
     }
 }

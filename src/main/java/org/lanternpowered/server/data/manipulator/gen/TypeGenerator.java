@@ -105,7 +105,7 @@ public abstract class TypeGenerator {
             @Nullable List<Method> immutableMethods);
 
 
-    static void visitMethods(String className, ClassWriter cw, @Nullable List<Method> methods) {
+    static void visitMethods(String className, ClassWriter cw, String methodName, @Nullable List<Method> methods) {
         if (methods != null) {
             final FieldVisitor fv = cw.visitField(ACC_PUBLIC + ACC_STATIC, KEYS, format("[%s", dKey), null, null);
             fv.visitEnd();
@@ -120,7 +120,7 @@ public abstract class TypeGenerator {
                 mv.visitFieldInsn(GETSTATIC, className, KEYS, format("[%s", dKey));
                 visitIntInsn(mv, i);
                 mv.visitInsn(AALOAD);
-                mv.visitMethodInsn(INVOKEVIRTUAL, className, "getValue",
+                mv.visitMethodInsn(INVOKEVIRTUAL, className, methodName,
                         format("(%s)Ljava/util/Optional;", dKey), false);
                 mv.visitMethodInsn(INVOKEVIRTUAL, "java/util/Optional", "get", "()Ljava/lang/Object;", false);
                 mv.visitTypeInsn(CHECKCAST, Type.getInternalName(method.getReturnType()));
