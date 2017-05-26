@@ -29,48 +29,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.flowpowered.math.vector.Vector3d;
 import org.lanternpowered.server.data.manipulator.gen.DataManipulatorGenerator;
-import org.lanternpowered.server.data.manipulator.immutable.LanternImmutableColoredData;
-import org.lanternpowered.server.data.manipulator.immutable.LanternImmutableCommandData;
-import org.lanternpowered.server.data.manipulator.immutable.LanternImmutableDisplayNameData;
-import org.lanternpowered.server.data.manipulator.immutable.LanternImmutableFireworkRocketData;
-import org.lanternpowered.server.data.manipulator.immutable.LanternImmutableRepresentedItemData;
-import org.lanternpowered.server.data.manipulator.immutable.LanternImmutableRepresentedPlayerData;
-import org.lanternpowered.server.data.manipulator.immutable.LanternImmutableTargetedLocationData;
-import org.lanternpowered.server.data.manipulator.immutable.LanternImmutableWetData;
-import org.lanternpowered.server.data.manipulator.immutable.block.LanternImmutableAttachedData;
 import org.lanternpowered.server.data.manipulator.immutable.block.LanternImmutableConnectedDirectionData;
-import org.lanternpowered.server.data.manipulator.immutable.block.LanternImmutableDecayableData;
-import org.lanternpowered.server.data.manipulator.immutable.block.LanternImmutableDelayableData;
-import org.lanternpowered.server.data.manipulator.immutable.item.LanternImmutableAuthorData;
-import org.lanternpowered.server.data.manipulator.immutable.item.LanternImmutableBlockItemData;
-import org.lanternpowered.server.data.manipulator.immutable.item.LanternImmutableBreakableData;
-import org.lanternpowered.server.data.manipulator.immutable.item.LanternImmutableDurabilityData;
-import org.lanternpowered.server.data.manipulator.immutable.item.LanternImmutableGenerationData;
-import org.lanternpowered.server.data.manipulator.immutable.item.LanternImmutableHideData;
 import org.lanternpowered.server.data.manipulator.immutable.item.LanternImmutableInventoryItemData;
-import org.lanternpowered.server.data.manipulator.immutable.item.LanternImmutableMapItemData;
-import org.lanternpowered.server.data.manipulator.immutable.item.LanternImmutablePlaceableData;
-import org.lanternpowered.server.data.manipulator.mutable.LanternColoredData;
-import org.lanternpowered.server.data.manipulator.mutable.LanternCommandData;
-import org.lanternpowered.server.data.manipulator.mutable.LanternDisplayNameData;
-import org.lanternpowered.server.data.manipulator.mutable.LanternFireworkRocketData;
-import org.lanternpowered.server.data.manipulator.mutable.LanternRepresentedItemData;
-import org.lanternpowered.server.data.manipulator.mutable.LanternRepresentedPlayerData;
-import org.lanternpowered.server.data.manipulator.mutable.LanternTargetedLocationData;
-import org.lanternpowered.server.data.manipulator.mutable.LanternWetData;
-import org.lanternpowered.server.data.manipulator.mutable.block.LanternAttachedData;
 import org.lanternpowered.server.data.manipulator.mutable.block.LanternConnectedDirectionData;
-import org.lanternpowered.server.data.manipulator.mutable.block.LanternDecayableData;
-import org.lanternpowered.server.data.manipulator.mutable.block.LanternDelayableData;
-import org.lanternpowered.server.data.manipulator.mutable.item.LanternAuthorData;
-import org.lanternpowered.server.data.manipulator.mutable.item.LanternBlockItemData;
-import org.lanternpowered.server.data.manipulator.mutable.item.LanternBreakableData;
-import org.lanternpowered.server.data.manipulator.mutable.item.LanternDurabilityData;
-import org.lanternpowered.server.data.manipulator.mutable.item.LanternGenerationData;
-import org.lanternpowered.server.data.manipulator.mutable.item.LanternHideData;
 import org.lanternpowered.server.data.manipulator.mutable.item.LanternInventoryItemData;
-import org.lanternpowered.server.data.manipulator.mutable.item.LanternMapItemData;
-import org.lanternpowered.server.data.manipulator.mutable.item.LanternPlaceableData;
 import org.lanternpowered.server.data.value.IValueContainer;
 import org.lanternpowered.server.game.Lantern;
 import org.lanternpowered.server.plugin.InternalPluginsInfo;
@@ -293,26 +255,26 @@ public class DataManipulatorRegistry {
         /////////////////////
 
         /// normal containers
-        register(ColoredData.class, ImmutableColoredData.class, LanternColoredData.class, LanternImmutableColoredData.class,
+        register(ColoredData.class, ImmutableColoredData.class,
                 c -> c.registerKey(Keys.COLOR, Color.WHITE));
-        register(CommandData.class, ImmutableCommandData.class, LanternCommandData.class, LanternImmutableCommandData.class,
+        register(CommandData.class, ImmutableCommandData.class,
                 c -> {
                     c.registerKey(Keys.COMMAND, "");
                     c.registerKey(Keys.SUCCESS_COUNT, 0);
                     c.registerKey(Keys.TRACKS_OUTPUT, true);
                     c.registerKey(Keys.LAST_COMMAND_OUTPUT, Optional.empty());
                 });
-        register(DisplayNameData.class, ImmutableDisplayNameData.class, LanternDisplayNameData.class, LanternImmutableDisplayNameData.class,
+        register(DisplayNameData.class, ImmutableDisplayNameData.class,
                 c -> c.registerKey(Keys.DISPLAY_NAME, Text.EMPTY));
-        register(FireworkRocketData.class, ImmutableFireworkRocketData.class, LanternFireworkRocketData.class, LanternImmutableFireworkRocketData.class,
+        register(FireworkRocketData.class, ImmutableFireworkRocketData.class,
                 c -> c.registerKey(Keys.FIREWORK_FLIGHT_MODIFIER, 0));
-        register(RepresentedItemData.class, ImmutableRepresentedItemData.class, LanternRepresentedItemData.class, LanternImmutableRepresentedItemData.class,
+        register(RepresentedItemData.class, ImmutableRepresentedItemData.class,
                 c -> c.registerKey(Keys.REPRESENTED_ITEM, ItemStackSnapshot.NONE));
-        register(RepresentedPlayerData.class, ImmutableRepresentedPlayerData.class, LanternRepresentedPlayerData.class, LanternImmutableRepresentedPlayerData.class,
+        register(RepresentedPlayerData.class, ImmutableRepresentedPlayerData.class,
                 c -> c.registerKey(Keys.REPRESENTED_PLAYER, LanternGameProfile.UNKNOWN));
-        register(TargetedLocationData.class, ImmutableTargetedLocationData.class, LanternTargetedLocationData.class, LanternImmutableTargetedLocationData.class,
+        register(TargetedLocationData.class, ImmutableTargetedLocationData.class,
                 c -> c.registerKey(Keys.TARGETED_LOCATION, Vector3d.ZERO));
-        register(WetData.class, ImmutableWetData.class, LanternWetData.class, LanternImmutableWetData.class,
+        register(WetData.class, ImmutableWetData.class,
                 c -> c.registerKey(Keys.IS_WET, false));
 
         /// variant containers
@@ -329,7 +291,7 @@ public class DataManipulatorRegistry {
         ///////////////////
 
         /// normal containers
-        register(AttachedData.class, ImmutableAttachedData.class, LanternAttachedData.class, LanternImmutableAttachedData.class,
+        register(AttachedData.class, ImmutableAttachedData.class,
                 c -> c.registerKey(Keys.ATTACHED, false));
         register(ConnectedDirectionData.class, ImmutableConnectedDirectionData.class, LanternConnectedDirectionData.class, LanternImmutableConnectedDirectionData.class,
                 c -> {
@@ -338,9 +300,10 @@ public class DataManipulatorRegistry {
                     c.registerKey(Keys.CONNECTED_SOUTH, false);
                     c.registerKey(Keys.CONNECTED_NORTH, false);
                 });
-        register(DecayableData.class, ImmutableDecayableData.class, LanternDecayableData.class, LanternImmutableDecayableData.class,
+
+        register(DecayableData.class, ImmutableDecayableData.class,
                 c -> c.registerKey(Keys.DECAYABLE, true));
-        register(DelayableData.class, ImmutableDelayableData.class, LanternDelayableData.class, LanternImmutableDelayableData.class,
+        register(DelayableData.class, ImmutableDelayableData.class,
                 c -> c.registerKey(Keys.DELAY, 1, 0, Integer.MAX_VALUE));
 
         /// variant containers
@@ -392,20 +355,20 @@ public class DataManipulatorRegistry {
         //////////////////
 
         /// normal containers
-        register(AuthorData.class, ImmutableAuthorData.class, LanternAuthorData.class, LanternImmutableAuthorData.class,
+        register(AuthorData.class, ImmutableAuthorData.class,
                 c -> c.registerKey(Keys.BOOK_AUTHOR, Text.EMPTY));
-        register(BlockItemData.class, ImmutableBlockItemData.class, LanternBlockItemData.class, LanternImmutableBlockItemData.class,
+        register(BlockItemData.class, ImmutableBlockItemData.class,
                 c -> c.registerKey(Keys.ITEM_BLOCKSTATE, BlockTypes.AIR.getDefaultState()));
-        register(BreakableData.class, ImmutableBreakableData.class, LanternBreakableData.class, LanternImmutableBreakableData.class,
+        register(BreakableData.class, ImmutableBreakableData.class,
                 c -> c.registerKey(Keys.BREAKABLE_BLOCK_TYPES, new HashSet<>()));
-        register(DurabilityData.class, ImmutableDurabilityData.class, LanternDurabilityData.class, LanternImmutableDurabilityData.class,
+        register(DurabilityData.class, ImmutableDurabilityData.class,
                 c -> {
                     c.registerKey(Keys.ITEM_DURABILITY, 100);
                     c.registerKey(Keys.UNBREAKABLE, false);
                 });
-        register(GenerationData.class, ImmutableGenerationData.class, LanternGenerationData.class, LanternImmutableGenerationData.class,
+        register(GenerationData.class, ImmutableGenerationData.class,
                 c -> c.registerKey(Keys.GENERATION, 0, 0, Integer.MAX_VALUE));
-        register(HideData.class, ImmutableHideData.class, LanternHideData.class, LanternImmutableHideData.class,
+        register(HideData.class, ImmutableHideData.class,
                 c -> {
                     c.registerKey(Keys.HIDE_ENCHANTMENTS, false);
                     c.registerKey(Keys.HIDE_ATTRIBUTES, false);
@@ -414,9 +377,9 @@ public class DataManipulatorRegistry {
                     c.registerKey(Keys.HIDE_CAN_PLACE, false);
                     c.registerKey(Keys.HIDE_MISCELLANEOUS, false);
                 });
-        register(MapItemData.class, ImmutableMapItemData.class, LanternMapItemData.class, LanternImmutableMapItemData.class,
+        register(MapItemData.class, ImmutableMapItemData.class,
                 c -> {});
-        register(PlaceableData.class, ImmutablePlaceableData.class, LanternPlaceableData.class, LanternImmutablePlaceableData.class,
+        register(PlaceableData.class, ImmutablePlaceableData.class,
                 c -> c.registerKey(Keys.PLACEABLE_BLOCKS, new HashSet<>()));
 
         /// variant containers
@@ -452,19 +415,6 @@ public class DataManipulatorRegistry {
 
         public static RegistrationInfo build(Class<?> manipulatorType) {
             checkNotNull(manipulatorType, "manipulatorType");
-            final char[] name = manipulatorType.getCanonicalName().toCharArray();
-            final StringBuilder builder = new StringBuilder();
-
-            for (int i = 0; i < name.length; i++) {
-                if (Character.isUpperCase(name[i]) || name[i] == '.') {
-                    if (i != 0) {
-                        builder.append('_');
-                    }
-                    builder.append(Character.toLowerCase(name[i]));
-                } else {
-                    builder.append(name[i]);
-                }
-            }
 
             final String fullName = manipulatorType.getName();
             final String plugin;
@@ -485,7 +435,8 @@ public class DataManipulatorRegistry {
 
             final PluginContainer pluginContainer = Lantern.getGame().getPluginManager().getPlugin(plugin)
                     .orElseThrow(() -> new IllegalStateException("The plugin " + plugin + " does not exist!"));
-            return new RegistrationInfo(pluginContainer, builder.toString(), manipulatorType.getCanonicalName());
+            return new RegistrationInfo(pluginContainer, ManipulatorHelper.camelToSnake(manipulatorType.getCanonicalName()),
+                    manipulatorType.getCanonicalName());
         }
 
         private final PluginContainer pluginContainer;
@@ -559,6 +510,11 @@ public class DataManipulatorRegistry {
         final DataManipulatorRegistration<M, I> registration = this.dataManipulatorGenerator.newListRegistrationFor(
                 pluginContainer, id, name, manipulatorType, immutableManipulatorType, key, listSupplier);
         return register(registration);
+    }
+
+    public <M extends DataManipulator<M, I>, I extends ImmutableDataManipulator<I, M>> DataManipulatorRegistration<M, I> register(
+            Class<M> manipulatorType, Class<I> immutableManipulatorType, @Nullable Consumer<IValueContainer<?>> registrationConsumer) {
+        return register(manipulatorType, immutableManipulatorType, null, null, registrationConsumer);
     }
 
     public <M extends DataManipulator<M, I>, I extends ImmutableDataManipulator<I, M>> DataManipulatorRegistration<M, I> register(

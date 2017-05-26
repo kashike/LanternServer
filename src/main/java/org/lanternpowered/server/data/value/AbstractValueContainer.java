@@ -230,6 +230,7 @@ public interface AbstractValueContainer<C extends ValueContainer<C>, H extends V
             }
         }
 
+        System.out.println(key);
         // Check the global key registrations
         final KeyRegistration<BaseValue<E>, E> keyRegistration = LanternValueFactory.getInstance().getKeyRegistration(key);
         if (keyRegistration != null) {
@@ -282,9 +283,11 @@ public interface AbstractValueContainer<C extends ValueContainer<C>, H extends V
             }
         }
 
+        System.out.println("DEBUG: " + key);
         // Check the global key registrations
         final KeyRegistration<BaseValue<E>, E> keyRegistration = LanternValueFactory.getInstance().getKeyRegistration(key);
         if (keyRegistration != null) {
+            System.out.println("DEBUG B");
             for (ValueProcessor<BaseValue<E>, E> valueProcessor : keyRegistration.getValueProcessors()) {
                 if (valueProcessor.getApplicableTester().test((Key) key, this)) {
                     return getValueWith(key, valueProcessor);

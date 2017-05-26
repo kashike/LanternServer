@@ -23,18 +23,43 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lanternpowered.server.data.manipulator.immutable.item;
+package org.lanternpowered.server.data.manipulator.gen.dummy;
 
-import org.lanternpowered.server.data.manipulator.IImmutableValueHolder;
-import org.spongepowered.api.block.BlockType;
-import org.spongepowered.api.data.key.Keys;
-import org.spongepowered.api.data.manipulator.immutable.item.ImmutableBreakableData;
-import org.spongepowered.api.data.value.immutable.ImmutableSetValue;
+import org.lanternpowered.server.data.manipulator.mutable.AbstractData;
+import org.lanternpowered.server.data.value.IValueContainer;
+import org.spongepowered.api.data.key.Key;
+import org.spongepowered.api.data.manipulator.immutable.block.ImmutableAttachedData;
+import org.spongepowered.api.data.manipulator.mutable.block.AttachedData;
+import org.spongepowered.api.data.value.mutable.Value;
 
-public interface LanternImmutableBreakableData extends ImmutableBreakableData, IImmutableValueHolder {
+import java.util.function.Consumer;
+
+public class LanternAttachedData2Impl extends AbstractData<AttachedData, ImmutableAttachedData> implements AttachedData {
+
+    public static Key[] keys;
+    public static Consumer<IValueContainer<?>> registrationConsumer;
+
+    protected LanternAttachedData2Impl() {
+        super(AttachedData.class, ImmutableAttachedData.class);
+    }
+
+    protected LanternAttachedData2Impl(ImmutableAttachedData manipulator) {
+        super(manipulator);
+    }
+
+    protected LanternAttachedData2Impl(AttachedData manipulator) {
+        super(manipulator);
+    }
 
     @Override
-    default ImmutableSetValue<BlockType> breakable() {
-        return (ImmutableSetValue<BlockType>) getImmutableValue(Keys.BREAKABLE_BLOCK_TYPES).get();
+    public void registerKeys() {
+        // Cannot be null
+        registrationConsumer.accept(this);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public Value<Boolean> attached() {
+        return (Value<Boolean>) getValue(keys[127]).get();
     }
 }

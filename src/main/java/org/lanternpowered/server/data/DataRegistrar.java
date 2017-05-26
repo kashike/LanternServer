@@ -79,7 +79,7 @@ public class DataRegistrar {
         valueFactory.registerKey(Keys.CONNECTED_DIRECTIONS).applyValueProcessor(builder -> builder
                 .applicableTester((key, valueContainer) ->
                         valueContainer.supports(Keys.CONNECTED_WEST) || valueContainer.supports(Keys.CONNECTED_EAST) ||
-                                valueContainer.supports(Keys.CONNECTED_NORTH) || valueContainer.supports(Keys.CONNECTED_SOUTH))
+                        valueContainer.supports(Keys.CONNECTED_NORTH) || valueContainer.supports(Keys.CONNECTED_SOUTH))
                 .retrieveHandler(((key, valueContainer) -> {
                     final Set<Direction> directions = new HashSet<>();
                     if (valueContainer.get(Keys.CONNECTED_WEST).orElse(false)) {

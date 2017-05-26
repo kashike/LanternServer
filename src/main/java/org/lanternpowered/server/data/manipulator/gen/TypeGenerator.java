@@ -25,16 +25,49 @@
  */
 package org.lanternpowered.server.data.manipulator.gen;
 
+import static java.lang.String.format;
+import static org.objectweb.asm.Opcodes.AALOAD;
+import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
+import static org.objectweb.asm.Opcodes.ACC_STATIC;
+import static org.objectweb.asm.Opcodes.ALOAD;
+import static org.objectweb.asm.Opcodes.ARETURN;
+import static org.objectweb.asm.Opcodes.BIPUSH;
+import static org.objectweb.asm.Opcodes.CHECKCAST;
+import static org.objectweb.asm.Opcodes.GETSTATIC;
+import static org.objectweb.asm.Opcodes.ICONST_0;
+import static org.objectweb.asm.Opcodes.ICONST_1;
+import static org.objectweb.asm.Opcodes.ICONST_2;
+import static org.objectweb.asm.Opcodes.ICONST_3;
+import static org.objectweb.asm.Opcodes.ICONST_4;
+import static org.objectweb.asm.Opcodes.ICONST_5;
+import static org.objectweb.asm.Opcodes.INVOKEVIRTUAL;
+import static org.objectweb.asm.Opcodes.SIPUSH;
+
+import com.google.common.reflect.TypeToken;
 import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.FieldVisitor;
+import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Type;
+import org.spongepowered.api.data.key.Key;
 import org.spongepowered.api.data.manipulator.DataManipulator;
 import org.spongepowered.api.data.manipulator.ImmutableDataManipulator;
+import org.spongepowered.api.data.value.mutable.Value;
 
+import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nullable;
 
 public abstract class TypeGenerator {
+
+    static final String KEYS = "keys";
+
+    static final String nKey = Type.getInternalName(Key.class);
+    static final String dKey = Type.getDescriptor(Key.class);
+
+    static final String nValue = Type.getInternalName(Value.class);
 
     private static final class Counter {
         private int value;
@@ -67,5 +100,61 @@ public abstract class TypeGenerator {
             String mutableClassName, String immutableClassName,
             Class<M> manipulatorType, Class<I> immutableManipulatorType,
             @Nullable Class<? extends M> mutableExpansion,
-            @Nullable Class<? extends I> immutableExpansion);
+            @Nullable Class<? extends I> immutableExpansion,
+            @Nullable List<Method> mutableMethods,
+            @Nullable List<Method> immutableMethods);
+
+
+    static void visitMethods(String className, ClassWriter cw, @Nullable List<Method> methods) {
+        if (methods != null) {
+            final FieldVisitor fv = cw.visitField(ACC_PUBLIC + ACC_STATIC, KEYS, format("[%s", dKey), null, null);
+            fv.visitEnd();
+            for (int i = 0; i < methods.size(); i++) {
+                final Method method = methods.get(i);
+                final TypeToken<?> typeToken = TypeToken.of(method.getGenericReturnType());
+
+                final MethodVisitor mv = cw.visitMethod(ACC_PUBLIC, method.getName(), Type.getMethodDescriptor(method),
+                        format("()%s", getDescriptor(typeToken)), null);
+                mv.visitCode();
+                mv.visitVarInsn(ALOAD, 0);
+                mv.visitFieldInsn(GETSTATIC, className, KEYS, format("[%s", dKey));
+                visitIntInsn(mv, i);
+                mv.visitInsn(AALOAD);
+                mv.visitMethodInsn(INVOKEVIRTUAL, className, "getValue",
+                        format("(%s)Ljava/util/Optional;", dKey), false);
+                mv.visitMethodInsn(INVOKEVIRTUAL, "java/util/Optional", "get", "()Ljava/lang/Object;", false);
+                mv.visitTypeInsn(CHECKCAST, Type.getInternalName(method.getReturnType()));
+                mv.visitInsn(ARETURN);
+                mv.visitMaxs(3, 1);
+                mv.visitEnd();
+            }
+        }
+    }
+
+    private static void visitIntInsn(MethodVisitor mv, int value) {
+        if (value == 0) {
+            mv.visitInsn(ICONST_0);
+        } else if (value == 1) {
+            mv.visitInsn(ICONST_1);
+        } else if (value == 2) {
+            mv.visitInsn(ICONST_2);
+        } else if (value == 3) {
+            mv.visitInsn(ICONST_3);
+        } else if (value == 4) {
+            mv.visitInsn(ICONST_4);
+        } else if (value == 5) {
+            mv.visitInsn(ICONST_5);
+        } else if (value <= Byte.MAX_VALUE) {
+            mv.visitIntInsn(BIPUSH, value);
+        } else if (value <= Short.MAX_VALUE) {
+            mv.visitIntInsn(SIPUSH, value);
+        } else {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private static String getDescriptor(TypeToken<?> typeToken) {
+        final String value = typeToken.toString();
+        return 'L' + value.replace('.', '/').replaceAll("<", "<L").replaceAll(">", ">;");
+    }
 }

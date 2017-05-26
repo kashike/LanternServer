@@ -26,17 +26,30 @@
 package org.lanternpowered.server.data.manipulator.gen;
 
 import static java.lang.String.format;
+import static org.objectweb.asm.Opcodes.AALOAD;
 import static org.objectweb.asm.Opcodes.ACC_PROTECTED;
 import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
 import static org.objectweb.asm.Opcodes.ACC_STATIC;
 import static org.objectweb.asm.Opcodes.ACC_SUPER;
 import static org.objectweb.asm.Opcodes.ALOAD;
+import static org.objectweb.asm.Opcodes.ARETURN;
+import static org.objectweb.asm.Opcodes.BIPUSH;
+import static org.objectweb.asm.Opcodes.CHECKCAST;
 import static org.objectweb.asm.Opcodes.GETSTATIC;
+import static org.objectweb.asm.Opcodes.ICONST_0;
+import static org.objectweb.asm.Opcodes.ICONST_1;
+import static org.objectweb.asm.Opcodes.ICONST_2;
+import static org.objectweb.asm.Opcodes.ICONST_3;
+import static org.objectweb.asm.Opcodes.ICONST_4;
+import static org.objectweb.asm.Opcodes.ICONST_5;
 import static org.objectweb.asm.Opcodes.INVOKEINTERFACE;
 import static org.objectweb.asm.Opcodes.INVOKESPECIAL;
+import static org.objectweb.asm.Opcodes.INVOKEVIRTUAL;
 import static org.objectweb.asm.Opcodes.RETURN;
+import static org.objectweb.asm.Opcodes.SIPUSH;
 import static org.objectweb.asm.Opcodes.V1_8;
 
+import com.google.common.reflect.TypeToken;
 import org.lanternpowered.server.data.manipulator.IDataManipulatorBase;
 import org.lanternpowered.server.data.manipulator.immutable.AbstractImmutableData;
 import org.lanternpowered.server.data.manipulator.mutable.AbstractData;
@@ -47,6 +60,9 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 import org.spongepowered.api.data.manipulator.DataManipulator;
 import org.spongepowered.api.data.manipulator.ImmutableDataManipulator;
+
+import java.lang.reflect.Method;
+import java.util.List;
 
 import javax.annotation.Nullable;
 
@@ -67,7 +83,9 @@ final class AbstractDataTypeGenerator extends TypeGenerator {
             String mutableClassName, String immutableClassName,
             Class<M> manipulatorType, Class<I> immutableManipulatorType,
             @Nullable Class<? extends M> mutableExpansion,
-            @Nullable Class<? extends I> immutableExpansion) {
+            @Nullable Class<? extends I> immutableExpansion,
+            @Nullable List<Method> mutableMethods,
+            @Nullable List<Method> immutableMethods) {
         FieldVisitor fv;
         MethodVisitor mv;
 
@@ -159,7 +177,6 @@ final class AbstractDataTypeGenerator extends TypeGenerator {
                 mv.visitMaxs(2, 1);
                 mv.visitEnd();
             }
-            cwM.visitEnd();
         }
         // Immutable class
         {
@@ -215,7 +232,10 @@ final class AbstractDataTypeGenerator extends TypeGenerator {
                 mv.visitMaxs(2, 1);
                 mv.visitEnd();
             }
-            cwI.visitEnd();
         }
+
+        visitMethods(mutableClassName, cwM, mutableMethods);
+        visitMethods(immutableClassName, cwI, immutableMethods);
     }
+
 }

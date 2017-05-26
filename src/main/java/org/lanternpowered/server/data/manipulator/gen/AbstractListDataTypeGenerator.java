@@ -51,6 +51,9 @@ import org.spongepowered.api.data.manipulator.immutable.ImmutableListData;
 import org.spongepowered.api.data.manipulator.mutable.ListData;
 import org.spongepowered.api.data.value.mutable.ListValue;
 
+import java.lang.reflect.Method;
+import java.util.List;
+
 import javax.annotation.Nullable;
 
 final class AbstractListDataTypeGenerator extends TypeGenerator {
@@ -75,7 +78,9 @@ final class AbstractListDataTypeGenerator extends TypeGenerator {
             ClassWriter cwM, ClassWriter cwI,
             String mutableClassName, String immutableClassName,
             Class<M> manipulatorType, Class<I> immutableManipulatorType,
-            @Nullable Class<? extends M> mutableExpansion, @Nullable Class<? extends I> immutableExpansion) {
+            @Nullable Class<? extends M> mutableExpansion, @Nullable Class<? extends I> immutableExpansion,
+            @Nullable List<Method> mutableMethods,
+            @Nullable List<Method> immutableMethods) {
         FieldVisitor fv;
         MethodVisitor mv;
 
@@ -104,7 +109,7 @@ final class AbstractListDataTypeGenerator extends TypeGenerator {
             }
 
             cwM.visit(V1_8, ACC_PUBLIC + ACC_SUPER, mutableClassName,
-                    format("L%s<%s;%s%s>;",
+                    format("L%s<%s%s%s>;",
                             nAbstractListData, dElementType, dManipulatorType, dImmutableManipulatorType) + signBuilder.toString(),
                     nAbstractListData, interfaces);
 

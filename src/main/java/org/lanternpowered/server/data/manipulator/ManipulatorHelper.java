@@ -92,4 +92,22 @@ public final class ManipulatorHelper {
         }
         return Optional.of(manipulator);
     }
+
+    public static String camelToSnake(String value) {
+        final char[] name = value.toCharArray();
+        final StringBuilder builder = new StringBuilder();
+
+        for (int i = 0; i < name.length; i++) {
+            if (Character.isUpperCase(name[i]) || name[i] == '.') {
+                if (i != 0) {
+                    builder.append('_');
+                }
+                builder.append(Character.toLowerCase(name[i]));
+            } else {
+                builder.append(name[i]);
+            }
+        }
+
+        return builder.toString();
+    }
 }

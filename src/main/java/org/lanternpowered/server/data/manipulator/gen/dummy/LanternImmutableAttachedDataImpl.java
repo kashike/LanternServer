@@ -26,12 +26,11 @@
 package org.lanternpowered.server.data.manipulator.gen.dummy;
 
 import org.lanternpowered.server.data.manipulator.immutable.AbstractImmutableData;
-import org.lanternpowered.server.data.manipulator.immutable.block.LanternImmutableAttachedData;
 import org.spongepowered.api.data.manipulator.immutable.block.ImmutableAttachedData;
 import org.spongepowered.api.data.manipulator.mutable.block.AttachedData;
+import org.spongepowered.api.data.value.immutable.ImmutableValue;
 
-public class LanternImmutableAttachedDataImpl extends AbstractImmutableData<ImmutableAttachedData, AttachedData> implements ImmutableAttachedData,
-        LanternImmutableAttachedData {
+public class LanternImmutableAttachedDataImpl extends AbstractImmutableData<ImmutableAttachedData, AttachedData> implements ImmutableAttachedData {
 
     public LanternImmutableAttachedDataImpl() {
         super(ImmutableAttachedData.class, AttachedData.class);
@@ -45,5 +44,9 @@ public class LanternImmutableAttachedDataImpl extends AbstractImmutableData<Immu
     public void registerKeys() {
         // Cannot be null
         LanternAttachedDataImpl.registrationConsumer.accept(this);
+    }
+
+    @Override public ImmutableValue<Boolean> attached() {
+        return null;
     }
 }

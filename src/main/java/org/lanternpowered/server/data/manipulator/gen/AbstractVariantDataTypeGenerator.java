@@ -42,12 +42,13 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.FieldVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
-import org.spongepowered.api.data.key.Key;
 import org.spongepowered.api.data.manipulator.DataManipulator;
 import org.spongepowered.api.data.manipulator.ImmutableDataManipulator;
 import org.spongepowered.api.data.manipulator.immutable.ImmutableVariantData;
 import org.spongepowered.api.data.manipulator.mutable.VariantData;
-import org.spongepowered.api.data.value.mutable.Value;
+
+import java.lang.reflect.Method;
+import java.util.List;
 
 import javax.annotation.Nullable;
 
@@ -55,11 +56,6 @@ final class AbstractVariantDataTypeGenerator extends TypeGenerator {
 
     static final String KEY = "key";
     static final String VALUE = "value";
-
-    private static final String nKey = Type.getInternalName(Key.class);
-    private static final String dKey = Type.getDescriptor(Key.class);
-
-    private static final String nValue = Type.getInternalName(Value.class);
 
     private static final String nAbstractVariantData = Type.getInternalName(AbstractVariantData.class);
     private static final String nAbstractImmutableVariantData = Type.getInternalName(AbstractImmutableVariantData.class);
@@ -72,7 +68,9 @@ final class AbstractVariantDataTypeGenerator extends TypeGenerator {
             ClassWriter cwM, ClassWriter cwI,
             String mutableClassName, String immutableClassName,
             Class<M> manipulatorType, Class<I> immutableManipulatorType,
-            @Nullable Class<? extends M> mutableExpansion, @Nullable Class<? extends I> immutableExpansion) {
+            @Nullable Class<? extends M> mutableExpansion, @Nullable Class<? extends I> immutableExpansion,
+            @Nullable List<Method> mutableMethods,
+            @Nullable List<Method> immutableMethods) {
         FieldVisitor fv;
         MethodVisitor mv;
 
@@ -101,7 +99,7 @@ final class AbstractVariantDataTypeGenerator extends TypeGenerator {
             }
 
             cwM.visit(V1_8, ACC_PUBLIC + ACC_SUPER, mutableClassName,
-                    format("L%s<%s;%s%s>;",
+                    format("L%s<%s%s%s>;",
                             nAbstractVariantData, dElementType, dManipulatorType, dImmutableManipulatorType) + signBuilder.toString(),
                     nAbstractVariantData, interfaces);
 

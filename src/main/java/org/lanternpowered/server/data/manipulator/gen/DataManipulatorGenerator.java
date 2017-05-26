@@ -28,9 +28,15 @@ package org.lanternpowered.server.data.manipulator.gen;
 import static org.lanternpowered.server.data.manipulator.gen.TypeGenerator.newInternalName;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.reflect.TypeToken;
+import org.apache.commons.lang3.StringUtils;
 import org.lanternpowered.server.data.manipulator.DataManipulatorRegistration;
+import org.lanternpowered.server.data.manipulator.ManipulatorHelper;
+import org.lanternpowered.server.data.manipulator.immutable.AbstractImmutableData;
+import org.lanternpowered.server.data.manipulator.mutable.AbstractData;
 import org.lanternpowered.server.data.value.IValueContainer;
 import org.lanternpowered.server.util.DefineableClassLoader;
+import org.lanternpowered.server.util.collect.Collections3;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.api.data.key.Key;
@@ -40,12 +46,19 @@ import org.spongepowered.api.data.manipulator.immutable.ImmutableListData;
 import org.spongepowered.api.data.manipulator.immutable.ImmutableVariantData;
 import org.spongepowered.api.data.manipulator.mutable.ListData;
 import org.spongepowered.api.data.manipulator.mutable.VariantData;
+import org.spongepowered.api.data.manipulator.mutable.block.ConnectedDirectionData;
+import org.spongepowered.api.data.value.BaseValue;
 import org.spongepowered.api.data.value.mutable.ListValue;
 import org.spongepowered.api.data.value.mutable.Value;
 import org.spongepowered.api.plugin.PluginContainer;
 
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -70,7 +83,7 @@ public final class DataManipulatorGenerator {
             PluginContainer pluginContainer, String id, String name, Class<M> manipulatorType, Class<I> immutableManipulatorType,
             Key<Value<E>> key, E defaultValue) {
         final Base<M, I> base = generateBase(this.abstractVariantDataTypeGenerator, pluginContainer, id, name,
-                manipulatorType, immutableManipulatorType, null, null);
+                manipulatorType, immutableManipulatorType, null, null, null, null);
         try {
             base.mutableManipulatorTypeImpl.getField(AbstractVariantDataTypeGenerator.KEY).set(null, key);
             base.mutableManipulatorTypeImpl.getField(AbstractVariantDataTypeGenerator.VALUE).set(null, defaultValue);
@@ -87,7 +100,7 @@ public final class DataManipulatorGenerator {
             PluginContainer pluginContainer, String id, String name, Class<M> manipulatorType, Class<I> immutableManipulatorType,
             Key<ListValue<E>> key, Supplier<List<E>> listSupplier) {
         final Base<M, I> base = generateBase(this.abstractListDataTypeGenerator, pluginContainer, id, name,
-                manipulatorType, immutableManipulatorType, null, null);
+                manipulatorType, immutableManipulatorType, null, null, null, null);
         try {
             base.mutableManipulatorTypeImpl.getField(AbstractListDataTypeGenerator.KEY).set(null, key);
             base.mutableManipulatorTypeImpl.getField(AbstractListDataTypeGenerator.LIST_SUPPLIER).set(null, listSupplier);
@@ -106,15 +119,97 @@ public final class DataManipulatorGenerator {
             Class<M> manipulatorType, Class<I> immutableManipulatorType,
             @Nullable Class<? extends M> mutableExpansion, @Nullable Class<? extends I> immutableExpansion,
             @Nullable Consumer<IValueContainer<?>> registrationConsumer) {
+        Class<?>[] classes = mutableExpansion == null ?
+                new Class[] { AbstractData.class, manipulatorType } :
+                new Class[] { AbstractData.class, manipulatorType, mutableExpansion };
+        final List<Method> mutableMethods = findValueMethods(classes);
+        classes = mutableExpansion == null ?
+                new Class[] { AbstractImmutableData.class, immutableManipulatorType } :
+                new Class[] { AbstractImmutableData.class, immutableManipulatorType, immutableExpansion };
+        final List<Method> immutableMethods = findValueMethods(classes);
+
         final Base<M, I> base = generateBase(this.abstractDataTypeGenerator, pluginContainer, id, name,
-                manipulatorType, immutableManipulatorType, mutableExpansion, immutableExpansion);
+                manipulatorType, immutableManipulatorType, mutableExpansion, immutableExpansion, mutableMethods, immutableMethods);
         try {
             base.mutableManipulatorTypeImpl.getField(AbstractDataTypeGenerator.REGISTRATION_CONSUMER).set(null, registrationConsumer);
             base.immutableManipulatorTypeImpl.getField(AbstractDataTypeGenerator.REGISTRATION_CONSUMER).set(null, registrationConsumer);
+
+            final DataManipulatorRegistration<M, I> registration = base.supplier.get();
+            final Set<Key<?>> requiredKeys = registration.getRequiredKeys();
+
+            base.mutableManipulatorTypeImpl.getField(TypeGenerator.KEYS).set(null, findKeyMatches(mutableMethods, requiredKeys));
+            base.immutableManipulatorTypeImpl.getField(TypeGenerator.KEYS).set(null, findKeyMatches(immutableMethods, requiredKeys));
+
+            return registration;
         } catch (IllegalAccessException | NoSuchFieldException e) {
             throw new RuntimeException(e);
         }
-        return base.supplier.get();
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Key[] findKeyMatches(List<Method> methods, Set<Key<?>> requiredKeys) {
+        Key[] keys = new Key[methods.size()];
+        for (int i = 0; i < methods.size(); i++) {
+            final Method method = methods.get(i);
+            final TypeToken<?> valueType = TypeToken.of(method.getGenericReturnType());
+            final String methodName = ManipulatorHelper.camelToSnake(method.getName());
+
+            int closestDistance = Integer.MAX_VALUE;
+            Key closestKey = null;
+
+            for (Key key : requiredKeys) {
+                if (!key.getElementToken().equals(valueType.resolveType(BaseValue.class.getTypeParameters()[0]))) {
+                    continue;
+                }
+                String keyId = key.getId();
+                final int index = keyId.indexOf(':');
+                if (index != -1) {
+                    keyId = keyId.substring(index + 1);
+                }
+                final int distance = StringUtils.getLevenshteinDistance(methodName, keyId);
+                if (distance < closestDistance) {
+                    closestDistance = distance;
+                    closestKey = key;
+                }
+            }
+            if (closestKey == null) {
+                throw new IllegalStateException("No key match could be found for the method: " + method);
+            }
+
+            keys[i] = closestKey;
+        }
+        return keys;
+    }
+
+    private static List<Method> findValueMethods(Class<?>... targetClasses) {
+        final Set<Method> methods = new HashSet<>();
+        for (Class<?> targetClass : targetClasses) {
+            for (Method method : targetClass.getMethods()) {
+                if (!Modifier.isAbstract(method.getModifiers())) {
+                    continue;
+                }
+                if (BaseValue.class.isAssignableFrom(method.getReturnType()) &&
+                        method.getParameterTypes().length == 0) {
+                    boolean add = true;
+                    for (Class<?> clazz : targetClasses) {
+                        if (clazz != targetClass) {
+                            try {
+                                final Method method1 = clazz.getMethod(method.getName(), method.getParameterTypes());
+                                if (!Modifier.isAbstract(method1.getModifiers())) {
+                                    add = false;
+                                    break;
+                                }
+                            } catch (NoSuchMethodException ignored) {
+                            }
+                        }
+                    }
+                    if (add) {
+                        methods.add(method);
+                    }
+                }
+            }
+        }
+        return new ArrayList<>(methods);
     }
 
     private static final class Base<M extends DataManipulator<M, I>, I extends ImmutableDataManipulator<I, M>> {
@@ -136,7 +231,9 @@ public final class DataManipulatorGenerator {
             TypeGenerator typeGenerator,
             PluginContainer pluginContainer, String id, String name,
             Class<M> manipulatorType, Class<I> immutableManipulatorType,
-            @Nullable Class<? extends M> mutableExpansion, @Nullable Class<? extends I> immutableExpansion) {
+            @Nullable Class<? extends M> mutableExpansion, @Nullable Class<? extends I> immutableExpansion,
+            @Nullable List<Method> methods,
+            @Nullable List<Method> immutableMethods) {
         final ClassWriter cwM = new ClassWriter(Opcodes.V1_8);
         final ClassWriter cwI = new ClassWriter(Opcodes.V1_8);
 
@@ -147,7 +244,10 @@ public final class DataManipulatorGenerator {
         final String immutableImplClassName = immutableImplTypeName.replace('/', '.');
 
         typeGenerator.generateClasses(cwM, cwI, mutableImplTypeName, immutableImplTypeName,
-                manipulatorType, immutableManipulatorType, mutableExpansion, immutableExpansion);
+                manipulatorType, immutableManipulatorType, mutableExpansion, immutableExpansion, methods, immutableMethods);
+
+        cwM.visitEnd();
+        cwI.visitEnd();
 
         byte[] bytes = cwM.toByteArray();
         final Class<?> manipulatorTypeImpl = this.classLoader.defineClass(mutableImplClassName, bytes);
