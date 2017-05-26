@@ -33,10 +33,12 @@ import org.lanternpowered.server.data.key.LanternKeys;
 import org.lanternpowered.server.data.manipulator.gen.DataManipulatorGenerator;
 import org.lanternpowered.server.data.manipulator.immutable.block.LanternImmutableConnectedDirectionData;
 import org.lanternpowered.server.data.manipulator.immutable.block.LanternImmutableWireAttachmentData;
+import org.lanternpowered.server.data.manipulator.immutable.entity.LanternImmutableBodyPartRotationalData;
 import org.lanternpowered.server.data.manipulator.immutable.item.LanternImmutableInventoryItemData;
 import org.lanternpowered.server.data.manipulator.immutable.tileentity.LanternImmutableBeaconData;
 import org.lanternpowered.server.data.manipulator.mutable.block.LanternConnectedDirectionData;
 import org.lanternpowered.server.data.manipulator.mutable.block.LanternWireAttachmentData;
+import org.lanternpowered.server.data.manipulator.mutable.entity.LanternBodyPartRotationalData;
 import org.lanternpowered.server.data.manipulator.mutable.item.LanternInventoryItemData;
 import org.lanternpowered.server.data.manipulator.mutable.tileentity.LanternBeaconData;
 import org.lanternpowered.server.data.value.IValueContainer;
@@ -116,6 +118,7 @@ import org.spongepowered.api.data.manipulator.immutable.entity.ImmutableAngerabl
 import org.spongepowered.api.data.manipulator.immutable.entity.ImmutableAreaEffectCloudData;
 import org.spongepowered.api.data.manipulator.immutable.entity.ImmutableArmorStandData;
 import org.spongepowered.api.data.manipulator.immutable.entity.ImmutableArtData;
+import org.spongepowered.api.data.manipulator.immutable.entity.ImmutableBodyPartRotationalData;
 import org.spongepowered.api.data.manipulator.immutable.entity.ImmutableBreathingData;
 import org.spongepowered.api.data.manipulator.immutable.entity.ImmutableBreedableData;
 import org.spongepowered.api.data.manipulator.immutable.entity.ImmutableCareerData;
@@ -271,6 +274,7 @@ import org.spongepowered.api.data.manipulator.mutable.entity.AngerableData;
 import org.spongepowered.api.data.manipulator.mutable.entity.AreaEffectCloudData;
 import org.spongepowered.api.data.manipulator.mutable.entity.ArmorStandData;
 import org.spongepowered.api.data.manipulator.mutable.entity.ArtData;
+import org.spongepowered.api.data.manipulator.mutable.entity.BodyPartRotationalData;
 import org.spongepowered.api.data.manipulator.mutable.entity.BreathingData;
 import org.spongepowered.api.data.manipulator.mutable.entity.BreedableData;
 import org.spongepowered.api.data.manipulator.mutable.entity.CareerData;
@@ -600,7 +604,15 @@ public class DataManipulatorRegistry {
                     c.registerKey(Keys.ARMOR_STAND_HAS_ARMS, false);
                     c.registerKey(Keys.ARMOR_STAND_HAS_BASE_PLATE, true);
                 });
-        // TODO: BodyPartRotationalData
+        register(BodyPartRotationalData.class, ImmutableBodyPartRotationalData.class, LanternBodyPartRotationalData.class, LanternImmutableBodyPartRotationalData.class,
+                c -> {
+                    c.registerKey(Keys.HEAD_ROTATION, Vector3d.ZERO);
+                    c.registerKey(Keys.CHEST_ROTATION, Vector3d.ZERO);
+                    c.registerKey(Keys.LEFT_ARM_ROTATION, Vector3d.ZERO);
+                    c.registerKey(Keys.LEFT_LEG_ROTATION, Vector3d.ZERO);
+                    c.registerKey(Keys.RIGHT_ARM_ROTATION, Vector3d.ZERO);
+                    c.registerKey(Keys.RIGHT_LEG_ROTATION, Vector3d.ZERO);
+                });
         register(BreathingData.class, ImmutableBreathingData.class,
                 c -> {
                     c.registerKey(Keys.REMAINING_AIR, 400);

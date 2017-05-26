@@ -23,19 +23,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package org.lanternpowered.server.data.manipulator.mutable.tileentity;
+package org.lanternpowered.server.data.manipulator.immutable.entity;
 
+import com.flowpowered.math.vector.Vector3d;
+import org.lanternpowered.server.data.manipulator.IImmutableValueHolder;
 import org.spongepowered.api.data.key.Keys;
-import org.spongepowered.api.data.manipulator.mutable.tileentity.BeaconData;
+import org.spongepowered.api.data.manipulator.immutable.entity.ImmutableBodyPartRotationalData;
+import org.spongepowered.api.data.type.BodyPart;
+import org.spongepowered.api.data.value.immutable.ImmutableMapValue;
 
-import java.util.Optional;
-
-public interface LanternBeaconData extends BeaconData {
+public interface LanternImmutableBodyPartRotationalData extends ImmutableBodyPartRotationalData, IImmutableValueHolder {
 
     @Override
-    default BeaconData clearEffects() {
-        set(Keys.BEACON_PRIMARY_EFFECT, Optional.empty());
-        set(Keys.BEACON_SECONDARY_EFFECT, Optional.empty());
-        return this;
+    default ImmutableMapValue<BodyPart, Vector3d> partRotation() {
+        return tryGetImmutableValue(Keys.BODY_ROTATIONS);
     }
 }

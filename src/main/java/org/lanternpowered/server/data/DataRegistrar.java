@@ -25,6 +25,7 @@
  */
 package org.lanternpowered.server.data;
 
+import com.flowpowered.math.vector.Vector3d;
 import org.lanternpowered.server.data.manipulator.DataManipulatorRegistry;
 import org.lanternpowered.server.data.persistence.DataTranslators;
 import org.lanternpowered.server.data.persistence.DataTypeSerializers;
@@ -40,6 +41,8 @@ import org.spongepowered.api.data.meta.ItemEnchantment;
 import org.spongepowered.api.data.property.PropertyRegistry;
 import org.spongepowered.api.data.property.block.GroundLuminanceProperty;
 import org.spongepowered.api.data.property.block.SkyLuminanceProperty;
+import org.spongepowered.api.data.type.BodyPart;
+import org.spongepowered.api.data.type.BodyParts;
 import org.spongepowered.api.data.type.WireAttachmentType;
 import org.spongepowered.api.data.type.WireAttachmentTypes;
 import org.spongepowered.api.data.value.mutable.CompositeValueStore;
@@ -139,6 +142,49 @@ public class DataRegistrar {
                         type = attachments.get(Direction.NORTH);
                         resultBuilder.absorbResult(store.offer(Keys.CONNECTED_NORTH,
                                 type == null ? WireAttachmentTypes.NONE : type));
+                        return resultBuilder.result(DataTransactionResult.Type.SUCCESS).build();
+                    }
+                    return DataTransactionResult.successNoData();
+                })
+                .failAlwaysRemoveHandler());
+        valueFactory.registerKey(Keys.BODY_ROTATIONS).applyValueProcessor(builder -> builder
+                .applicableTester((key, valueContainer) ->
+                        valueContainer.supports(Keys.RIGHT_ARM_ROTATION) || valueContainer.supports(Keys.LEFT_ARM_ROTATION) ||
+                                valueContainer.supports(Keys.RIGHT_LEG_ROTATION) || valueContainer.supports(Keys.LEFT_LEG_ROTATION) ||
+                                valueContainer.supports(Keys.HEAD_ROTATION) || valueContainer.supports(Keys.CHEST_ROTATION))
+                .retrieveHandler(((key, valueContainer) -> {
+                    final Map<BodyPart, Vector3d> rotations = new HashMap<>();
+                    valueContainer.get(Keys.RIGHT_ARM_ROTATION).ifPresent(type -> rotations.put(BodyParts.RIGHT_ARM, type));
+                    valueContainer.get(Keys.RIGHT_LEG_ROTATION).ifPresent(type -> rotations.put(BodyParts.RIGHT_LEG, type));
+                    valueContainer.get(Keys.LEFT_ARM_ROTATION).ifPresent(type -> rotations.put(BodyParts.LEFT_ARM, type));
+                    valueContainer.get(Keys.LEFT_LEG_ROTATION).ifPresent(type -> rotations.put(BodyParts.LEFT_LEG, type));
+                    valueContainer.get(Keys.HEAD_ROTATION).ifPresent(type -> rotations.put(BodyParts.HEAD, type));
+                    valueContainer.get(Keys.CHEST_ROTATION).ifPresent(type -> rotations.put(BodyParts.CHEST, type));
+                    return Optional.of(rotations);
+                }))
+                .offerHandler((key, valueContainer, rotations) -> {
+                    if (valueContainer instanceof CompositeValueStore) {
+                        final CompositeValueStore store = (CompositeValueStore) valueContainer;
+                        final DataTransactionResult.Builder resultBuilder = DataTransactionResult.builder();
+                        Vector3d rot;
+                        if ((rot = rotations.get(BodyParts.RIGHT_ARM)) != null) {
+                            resultBuilder.absorbResult(store.offer(Keys.RIGHT_ARM_ROTATION, rot));
+                        }
+                        if ((rot = rotations.get(BodyParts.RIGHT_LEG)) != null) {
+                            resultBuilder.absorbResult(store.offer(Keys.RIGHT_LEG_ROTATION, rot));
+                        }
+                        if ((rot = rotations.get(BodyParts.LEFT_ARM)) != null) {
+                            resultBuilder.absorbResult(store.offer(Keys.LEFT_ARM_ROTATION, rot));
+                        }
+                        if ((rot = rotations.get(BodyParts.LEFT_LEG)) != null) {
+                            resultBuilder.absorbResult(store.offer(Keys.LEFT_LEG_ROTATION, rot));
+                        }
+                        if ((rot = rotations.get(BodyParts.HEAD)) != null) {
+                            resultBuilder.absorbResult(store.offer(Keys.HEAD_ROTATION, rot));
+                        }
+                        if ((rot = rotations.get(BodyParts.CHEST)) != null) {
+                            resultBuilder.absorbResult(store.offer(Keys.CHEST_ROTATION, rot));
+                        }
                         return resultBuilder.result(DataTransactionResult.Type.SUCCESS).build();
                     }
                     return DataTransactionResult.successNoData();
