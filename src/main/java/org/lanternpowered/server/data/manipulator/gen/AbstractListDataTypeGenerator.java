@@ -55,6 +55,9 @@ import javax.annotation.Nullable;
 
 final class AbstractListDataTypeGenerator extends TypeGenerator {
 
+    static final String KEY = "key";
+    static final String LIST_SUPPLIER = "listSupplier";
+
     private static final String nKey = Type.getInternalName(Key.class);
     private static final String dKey = Type.getDescriptor(Key.class);
 
@@ -106,12 +109,12 @@ final class AbstractListDataTypeGenerator extends TypeGenerator {
                     nAbstractListData, interfaces);
 
             {
-                fv = cwM.visitField(ACC_PUBLIC + ACC_STATIC, "key", dKey,
+                fv = cwM.visitField(ACC_PUBLIC + ACC_STATIC, KEY, dKey,
                         format("L%s<L%s<%s>;>;", nKey, nListValue, dElementType), null);
                 fv.visitEnd();
             }
             {
-                fv = cwM.visitField(ACC_PUBLIC + ACC_STATIC, "listSupplier", "Ljava/util/function/Supplier;",
+                fv = cwM.visitField(ACC_PUBLIC + ACC_STATIC, LIST_SUPPLIER, "Ljava/util/function/Supplier;",
                         format("Ljava/util/function/Supplier<Ljava/util/List<%s>;>;", dElementType), null);
                 fv.visitEnd();
             }
@@ -121,8 +124,8 @@ final class AbstractListDataTypeGenerator extends TypeGenerator {
                 mv.visitVarInsn(ALOAD, 0);
                 mv.visitLdcInsn(Type.getType(manipulatorType));
                 mv.visitLdcInsn(Type.getType(immutableManipulatorType));
-                mv.visitFieldInsn(GETSTATIC, mutableClassName, "key", dKey);
-                mv.visitFieldInsn(GETSTATIC, mutableClassName, "listSupplier", "Ljava/util/function/Supplier;");
+                mv.visitFieldInsn(GETSTATIC, mutableClassName, KEY, dKey);
+                mv.visitFieldInsn(GETSTATIC, mutableClassName, LIST_SUPPLIER, "Ljava/util/function/Supplier;");
                 mv.visitMethodInsn(INVOKEINTERFACE, "java/util/function/Supplier", "get", "()Ljava/lang/Object;", true);
                 mv.visitTypeInsn(CHECKCAST, "java/util/List");
                 mv.visitMethodInsn(INVOKESPECIAL, nAbstractListData, "<init>",
@@ -171,12 +174,12 @@ final class AbstractListDataTypeGenerator extends TypeGenerator {
                     nAbstractImmutableListData, interfaces);
 
             {
-                fv = cwI.visitField(ACC_PUBLIC + ACC_STATIC, "key", dKey,
+                fv = cwI.visitField(ACC_PUBLIC + ACC_STATIC, KEY, dKey,
                         format("L%s<L%s<%s>;>;", nKey, nListValue, dElementType), null);
                 fv.visitEnd();
             }
             {
-                fv = cwI.visitField(ACC_PUBLIC + ACC_STATIC, "listSupplier", "Ljava/util/function/Supplier;",
+                fv = cwI.visitField(ACC_PUBLIC + ACC_STATIC, LIST_SUPPLIER, "Ljava/util/function/Supplier;",
                         format("Ljava/util/function/Supplier<Ljava/util/List<%s>;>;", dElementType), null);
                 fv.visitEnd();
             }
@@ -187,7 +190,7 @@ final class AbstractListDataTypeGenerator extends TypeGenerator {
                 mv.visitLdcInsn(Type.getType(immutableManipulatorType));
                 mv.visitLdcInsn(Type.getType(manipulatorType));
                 mv.visitFieldInsn(GETSTATIC, immutableClassName, "key", dKey);
-                mv.visitFieldInsn(GETSTATIC, immutableClassName, "listSupplier", "Ljava/util/function/Supplier;");
+                mv.visitFieldInsn(GETSTATIC, immutableClassName, LIST_SUPPLIER, "Ljava/util/function/Supplier;");
                 mv.visitMethodInsn(INVOKEINTERFACE, "java/util/function/Supplier", "get", "()Ljava/lang/Object;", true);
                 mv.visitTypeInsn(CHECKCAST, "java/util/List");
                 mv.visitMethodInsn(INVOKESPECIAL, nAbstractImmutableListData, "<init>",

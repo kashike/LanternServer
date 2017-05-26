@@ -47,10 +47,14 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 import org.spongepowered.api.data.manipulator.DataManipulator;
 import org.spongepowered.api.data.manipulator.ImmutableDataManipulator;
+import org.spongepowered.api.plugin.PluginContainer;
 
 final class DataManipulatorRegistrationGenerator {
 
     private static final String nAbstractDataManipulatorRegistration = Type.getInternalName(AbstractDataManipulatorRegistration.class);
+    private static final String dPluginContainer = Type.getDescriptor(PluginContainer.class);
+    private static final String dDataManipulator = Type.getDescriptor(DataManipulator.class);
+    private static final String dImmutableDataManipulator = Type.getDescriptor(ImmutableDataManipulator.class);
 
     public <M extends DataManipulator<M, I>, I extends ImmutableDataManipulator<I, M>> String generate(ClassWriter cw,
             Class<M> manipulatorType, Class<? extends M> manipulatorImplType,
@@ -70,12 +74,13 @@ final class DataManipulatorRegistrationGenerator {
         MethodVisitor mv;
 
         cw.visit(V1_8, ACC_PUBLIC + ACC_SUPER, className,
-                format("L%s<%s%s>;", nAbstractDataManipulatorRegistration, dManipulatorType, dImmutableManipulatorType),
+                format("L%s<%s%s>;",
+                        nAbstractDataManipulatorRegistration, dManipulatorType, dImmutableManipulatorType),
                 nAbstractDataManipulatorRegistration, null);
 
         {
             mv = cw.visitMethod(ACC_PUBLIC, "<init>",
-                    "(Lorg/spongepowered/api/plugin/PluginContainer;Ljava/lang/String;Ljava/lang/String;)V", null, null);
+                    format("(%sLjava/lang/String;Ljava/lang/String;)V", dPluginContainer), null, null);
             mv.visitCode();
             mv.visitVarInsn(ALOAD, 0);
             mv.visitVarInsn(ALOAD, 1);
@@ -83,8 +88,8 @@ final class DataManipulatorRegistrationGenerator {
             mv.visitVarInsn(ALOAD, 3);
             mv.visitLdcInsn(Type.getType(manipulatorType));
             mv.visitLdcInsn(Type.getType(immutableManipulatorType));
-            mv.visitMethodInsn(INVOKESPECIAL, "org/lanternpowered/server/data/manipulator/AbstractDataManipulatorRegistration", "<init>",
-                    "(Lorg/spongepowered/api/plugin/PluginContainer;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Class;Ljava/lang/Class;)V", false);
+            mv.visitMethodInsn(INVOKESPECIAL, nAbstractDataManipulatorRegistration, "<init>",
+                    format("(%sLjava/lang/String;Ljava/lang/String;Ljava/lang/Class;Ljava/lang/Class;)V", dPluginContainer), false);
             mv.visitInsn(RETURN);
             mv.visitMaxs(6, 4);
             mv.visitEnd();
@@ -146,7 +151,7 @@ final class DataManipulatorRegistrationGenerator {
         }
         {
             mv = cw.visitMethod(ACC_PUBLIC + ACC_BRIDGE + ACC_SYNTHETIC, "toImmutable",
-                    "(Lorg/spongepowered/api/data/manipulator/DataManipulator;)Lorg/spongepowered/api/data/manipulator/ImmutableDataManipulator;", null, null);
+                    format("(%s)%s", dDataManipulator, dImmutableDataManipulator), null, null);
             mv.visitCode();
             mv.visitVarInsn(ALOAD, 0);
             mv.visitVarInsn(ALOAD, 1);
@@ -159,7 +164,7 @@ final class DataManipulatorRegistrationGenerator {
         }
         {
             mv = cw.visitMethod(ACC_PUBLIC + ACC_BRIDGE + ACC_SYNTHETIC, "toMutable",
-                    "(Lorg/spongepowered/api/data/manipulator/ImmutableDataManipulator;)Lorg/spongepowered/api/data/manipulator/DataManipulator;", null, null);
+                    format("(%s)%s", dImmutableDataManipulator, dDataManipulator), null, null);
             mv.visitCode();
             mv.visitVarInsn(ALOAD, 0);
             mv.visitVarInsn(ALOAD, 1);
@@ -172,7 +177,7 @@ final class DataManipulatorRegistrationGenerator {
         }
         {
             mv = cw.visitMethod(ACC_PUBLIC + ACC_BRIDGE + ACC_SYNTHETIC, "copyMutable",
-                    "(Lorg/spongepowered/api/data/manipulator/DataManipulator;)Lorg/spongepowered/api/data/manipulator/DataManipulator;", null, null);
+                    format("(%s)%s", dDataManipulator, dDataManipulator), null, null);
             mv.visitCode();
             mv.visitVarInsn(ALOAD, 0);
             mv.visitVarInsn(ALOAD, 1);
@@ -185,7 +190,7 @@ final class DataManipulatorRegistrationGenerator {
         }
         {
             mv = cw.visitMethod(ACC_PUBLIC + ACC_BRIDGE + ACC_SYNTHETIC, "createImmutable",
-                    "()Lorg/spongepowered/api/data/manipulator/ImmutableDataManipulator;", null, null);
+                    format("()%s", dImmutableDataManipulator), null, null);
             mv.visitCode();
             mv.visitVarInsn(ALOAD, 0);
             mv.visitMethodInsn(INVOKEVIRTUAL, className,
@@ -196,7 +201,7 @@ final class DataManipulatorRegistrationGenerator {
         }
         {
             mv = cw.visitMethod(ACC_PUBLIC + ACC_BRIDGE + ACC_SYNTHETIC, "createMutable",
-                    "()Lorg/spongepowered/api/data/manipulator/DataManipulator;", null, null);
+                    format("()%s", dDataManipulator), null, null);
             mv.visitCode();
             mv.visitVarInsn(ALOAD, 0);
             mv.visitMethodInsn(INVOKEVIRTUAL, className,

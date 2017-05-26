@@ -27,6 +27,7 @@ package org.lanternpowered.server.data.manipulator.immutable;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import com.google.common.base.MoreObjects;
 import org.lanternpowered.server.data.manipulator.DataManipulatorRegistration;
 import org.lanternpowered.server.data.manipulator.DataManipulatorRegistry;
 import org.lanternpowered.server.data.manipulator.ManipulatorHelper;
@@ -34,6 +35,7 @@ import org.lanternpowered.server.data.manipulator.mutable.IDataManipulator;
 import org.lanternpowered.server.data.value.AbstractValueContainer;
 import org.lanternpowered.server.data.value.ElementHolderKeyRegistration;
 import org.lanternpowered.server.data.value.KeyRegistration;
+import org.lanternpowered.server.util.collect.Collections3;
 import org.spongepowered.api.data.DataContainer;
 import org.spongepowered.api.data.DataView;
 import org.spongepowered.api.data.key.Key;
@@ -147,6 +149,14 @@ public abstract class AbstractImmutableData<I extends ImmutableDataManipulator<I
     @Override
     public Class<M> getMutableType() {
         return this.manipulatorType;
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("type", getMutableType().getName())
+                .add("values", Collections3.toString(getValues()))
+                .toString();
     }
 
     public static abstract class AbstractImmutableManipulatorDataBuilder<I extends ImmutableDataManipulator<I, M>, M extends DataManipulator<M, I>>

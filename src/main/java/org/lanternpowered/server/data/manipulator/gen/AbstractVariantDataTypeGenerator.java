@@ -53,6 +53,9 @@ import javax.annotation.Nullable;
 
 final class AbstractVariantDataTypeGenerator extends TypeGenerator {
 
+    static final String KEY = "key";
+    static final String VALUE = "value";
+
     private static final String nKey = Type.getInternalName(Key.class);
     private static final String dKey = Type.getDescriptor(Key.class);
 
@@ -103,12 +106,12 @@ final class AbstractVariantDataTypeGenerator extends TypeGenerator {
                     nAbstractVariantData, interfaces);
 
             {
-                fv = cwM.visitField(ACC_PUBLIC + ACC_STATIC, "key", dKey,
+                fv = cwM.visitField(ACC_PUBLIC + ACC_STATIC, KEY, dKey,
                         format("L%s<L%s<%s>;>;", nKey, nValue, dElementType), null);
                 fv.visitEnd();
             }
             {
-                fv = cwM.visitField(ACC_PUBLIC + ACC_STATIC, "value", dElementType, null, null);
+                fv = cwM.visitField(ACC_PUBLIC + ACC_STATIC, VALUE, dElementType, null, null);
                 fv.visitEnd();
             }
             {
@@ -117,8 +120,8 @@ final class AbstractVariantDataTypeGenerator extends TypeGenerator {
                 mv.visitVarInsn(ALOAD, 0);
                 mv.visitLdcInsn(Type.getType(manipulatorType));
                 mv.visitLdcInsn(Type.getType(immutableManipulatorType));
-                mv.visitFieldInsn(GETSTATIC, mutableClassName, "key", dKey);
-                mv.visitFieldInsn(GETSTATIC, mutableClassName, "value", dElementType);
+                mv.visitFieldInsn(GETSTATIC, mutableClassName, KEY, dKey);
+                mv.visitFieldInsn(GETSTATIC, mutableClassName, VALUE, dElementType);
                 mv.visitMethodInsn(INVOKESPECIAL, nAbstractVariantData, "<init>",
                         format("(Ljava/lang/Class;Ljava/lang/Class;%sLjava/lang/Object;)V", dKey), false);
                 mv.visitInsn(RETURN);
@@ -164,12 +167,12 @@ final class AbstractVariantDataTypeGenerator extends TypeGenerator {
                     nAbstractImmutableVariantData, interfaces);
 
             {
-                fv = cwI.visitField(ACC_PUBLIC + ACC_STATIC, "key", dKey,
+                fv = cwI.visitField(ACC_PUBLIC + ACC_STATIC, KEY, dKey,
                         format("L%s<L%s<%s>;>;", nKey, nValue, dElementType), null);
                 fv.visitEnd();
             }
             {
-                fv = cwI.visitField(ACC_PUBLIC + ACC_STATIC, "value", dElementType, null, null);
+                fv = cwI.visitField(ACC_PUBLIC + ACC_STATIC, VALUE, dElementType, null, null);
                 fv.visitEnd();
             }
             {
@@ -178,8 +181,8 @@ final class AbstractVariantDataTypeGenerator extends TypeGenerator {
                 mv.visitVarInsn(ALOAD, 0);
                 mv.visitLdcInsn(Type.getType(immutableManipulatorType));
                 mv.visitLdcInsn(Type.getType(manipulatorType));
-                mv.visitFieldInsn(GETSTATIC, immutableClassName, "key", dKey);
-                mv.visitFieldInsn(GETSTATIC, immutableClassName, "value", dElementType);
+                mv.visitFieldInsn(GETSTATIC, immutableClassName, KEY, dKey);
+                mv.visitFieldInsn(GETSTATIC, immutableClassName, VALUE, dElementType);
                 mv.visitMethodInsn(INVOKESPECIAL, nAbstractImmutableVariantData, "<init>",
                         format("(Ljava/lang/Class;Ljava/lang/Class;%sLjava/lang/Object;)V", dKey), false);
                 mv.visitInsn(RETURN);

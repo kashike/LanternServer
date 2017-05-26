@@ -52,6 +52,8 @@ import javax.annotation.Nullable;
 
 final class AbstractDataTypeGenerator extends TypeGenerator {
 
+    static final String REGISTRATION_CONSUMER = "registrationConsumer";
+
     private static final String nAbstractImmutableData = Type.getInternalName(AbstractImmutableData.class);
     private static final String nAbstractData = Type.getInternalName(AbstractData.class);
     private static final String nIDataManipulatorBase = Type.getInternalName(IDataManipulatorBase.class);
@@ -96,7 +98,7 @@ final class AbstractDataTypeGenerator extends TypeGenerator {
                     nAbstractData, interfaces);
 
             {
-                fv = cwM.visitField(ACC_PUBLIC + ACC_STATIC, "registrationConsumer", "Ljava/util/function/Consumer;",
+                fv = cwM.visitField(ACC_PUBLIC + ACC_STATIC, REGISTRATION_CONSUMER, "Ljava/util/function/Consumer;",
                         format("Ljava/util/function/Consumer<L%s<*>;>;", nIValueContainer), null);
                 fv.visitEnd();
             }
@@ -150,7 +152,7 @@ final class AbstractDataTypeGenerator extends TypeGenerator {
             {
                 mv = cwM.visitMethod(ACC_PUBLIC, "registerKeys", "()V", null, null);
                 mv.visitCode();
-                mv.visitFieldInsn(GETSTATIC, mutableClassName, "registrationConsumer", "Ljava/util/function/Consumer;");
+                mv.visitFieldInsn(GETSTATIC, mutableClassName, REGISTRATION_CONSUMER, "Ljava/util/function/Consumer;");
                 mv.visitVarInsn(ALOAD, 0);
                 mv.visitMethodInsn(INVOKEINTERFACE, "java/util/function/Consumer", "accept", "(Ljava/lang/Object;)V", true);
                 mv.visitInsn(RETURN);
@@ -176,7 +178,7 @@ final class AbstractDataTypeGenerator extends TypeGenerator {
                     nAbstractImmutableData, interfaces);
 
             {
-                fv = cwI.visitField(ACC_PUBLIC + ACC_STATIC, "registrationConsumer", "Ljava/util/function/Consumer;",
+                fv = cwI.visitField(ACC_PUBLIC + ACC_STATIC, REGISTRATION_CONSUMER, "Ljava/util/function/Consumer;",
                         format("Ljava/util/function/Consumer<L%s<*>;>;", nIValueContainer), null);
                 fv.visitEnd();
             }
@@ -206,7 +208,7 @@ final class AbstractDataTypeGenerator extends TypeGenerator {
             {
                 mv = cwI.visitMethod(ACC_PUBLIC, "registerKeys", "()V", null, null);
                 mv.visitCode();
-                mv.visitFieldInsn(GETSTATIC, immutableClassName, "registrationConsumer", "Ljava/util/function/Consumer;");
+                mv.visitFieldInsn(GETSTATIC, immutableClassName, REGISTRATION_CONSUMER, "Ljava/util/function/Consumer;");
                 mv.visitVarInsn(ALOAD, 0);
                 mv.visitMethodInsn(INVOKEINTERFACE, "java/util/function/Consumer", "accept", "(Ljava/lang/Object;)V", true);
                 mv.visitInsn(RETURN);

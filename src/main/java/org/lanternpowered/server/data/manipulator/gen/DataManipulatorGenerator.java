@@ -43,13 +43,10 @@ import org.spongepowered.api.data.manipulator.mutable.VariantData;
 import org.spongepowered.api.data.value.mutable.ListValue;
 import org.spongepowered.api.data.value.mutable.Value;
 import org.spongepowered.api.plugin.PluginContainer;
-import org.spongepowered.api.util.Tuple;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import javax.annotation.Nullable;
@@ -62,30 +59,23 @@ import javax.annotation.Nullable;
 public final class DataManipulatorGenerator {
 
     private final DefineableClassLoader classLoader = new DefineableClassLoader();
-    private final List<Tuple<TypeGenerator, Predicate<Class<?>>>> typeGenerators = new ArrayList<>();
     private final DataManipulatorRegistrationGenerator registrationGenerator = new DataManipulatorRegistrationGenerator();
 
-    {
-        addTypeGenerator(new AbstractDataTypeGenerator(), type -> true);
-        addTypeGenerator(new AbstractListDataTypeGenerator(), ListData.class::isAssignableFrom);
-        addTypeGenerator(new AbstractVariantDataTypeGenerator(), VariantData.class::isAssignableFrom);
-    }
-
-    private void addTypeGenerator(TypeGenerator typeGenerator, Predicate<Class<?>> predicate) {
-        this.typeGenerators.add(0, new Tuple<>(typeGenerator, predicate));
-    }
+    private final AbstractDataTypeGenerator abstractDataTypeGenerator = new AbstractDataTypeGenerator();
+    private final AbstractListDataTypeGenerator abstractListDataTypeGenerator = new AbstractListDataTypeGenerator();
+    private final AbstractVariantDataTypeGenerator abstractVariantDataTypeGenerator = new AbstractVariantDataTypeGenerator();
 
     @SuppressWarnings("unchecked")
     public <M extends VariantData<E, M, I>, I extends ImmutableVariantData<E, I, M>, E> DataManipulatorRegistration<M, I> newVariantRegistrationFor(
             PluginContainer pluginContainer, String id, String name, Class<M> manipulatorType, Class<I> immutableManipulatorType,
             Key<Value<E>> key, E defaultValue) {
-        final Base<M, I> base = generateBase(pluginContainer, id, name,
+        final Base<M, I> base = generateBase(this.abstractVariantDataTypeGenerator, pluginContainer, id, name,
                 manipulatorType, immutableManipulatorType, null, null);
         try {
-            base.mutableManipulatorTypeImpl.getField("key").set(null, key);
-            base.mutableManipulatorTypeImpl.getField("value").set(null, defaultValue);
-            base.immutableManipulatorTypeImpl.getField("key").set(null, key);
-            base.immutableManipulatorTypeImpl.getField("value").set(null, defaultValue);
+            base.mutableManipulatorTypeImpl.getField(AbstractVariantDataTypeGenerator.KEY).set(null, key);
+            base.mutableManipulatorTypeImpl.getField(AbstractVariantDataTypeGenerator.VALUE).set(null, defaultValue);
+            base.immutableManipulatorTypeImpl.getField(AbstractVariantDataTypeGenerator.KEY).set(null, key);
+            base.immutableManipulatorTypeImpl.getField(AbstractVariantDataTypeGenerator.VALUE).set(null, defaultValue);
         } catch (IllegalAccessException | NoSuchFieldException e) {
             throw new RuntimeException(e);
         }
@@ -96,13 +86,14 @@ public final class DataManipulatorGenerator {
     public <M extends ListData<E, M, I>, I extends ImmutableListData<E, I, M>, E> DataManipulatorRegistration<M, I> newListRegistrationFor(
             PluginContainer pluginContainer, String id, String name, Class<M> manipulatorType, Class<I> immutableManipulatorType,
             Key<ListValue<E>> key, Supplier<List<E>> listSupplier) {
-        final Base<M, I> base = generateBase(pluginContainer, id, name,
+        final Base<M, I> base = generateBase(this.abstractListDataTypeGenerator, pluginContainer, id, name,
                 manipulatorType, immutableManipulatorType, null, null);
         try {
-            base.mutableManipulatorTypeImpl.getField("key").set(null, key);
-            base.mutableManipulatorTypeImpl.getField("listSupplier").set(null, listSupplier);
-            base.immutableManipulatorTypeImpl.getField("key").set(null, key);
-            base.immutableManipulatorTypeImpl.getField("listSupplier").set(null, (Supplier<List>) () -> ImmutableList.copyOf(listSupplier.get()));
+            base.mutableManipulatorTypeImpl.getField(AbstractListDataTypeGenerator.KEY).set(null, key);
+            base.mutableManipulatorTypeImpl.getField(AbstractListDataTypeGenerator.LIST_SUPPLIER).set(null, listSupplier);
+            base.immutableManipulatorTypeImpl.getField(AbstractListDataTypeGenerator.KEY).set(null, key);
+            base.immutableManipulatorTypeImpl.getField(AbstractListDataTypeGenerator.LIST_SUPPLIER).set(null,
+                    (Supplier<List>) () -> ImmutableList.copyOf(listSupplier.get()));
         } catch (IllegalAccessException | NoSuchFieldException e) {
             throw new RuntimeException(e);
         }
@@ -115,11 +106,11 @@ public final class DataManipulatorGenerator {
             Class<M> manipulatorType, Class<I> immutableManipulatorType,
             @Nullable Class<? extends M> mutableExpansion, @Nullable Class<? extends I> immutableExpansion,
             @Nullable Consumer<IValueContainer<?>> registrationConsumer) {
-        final Base<M, I> base = generateBase(pluginContainer, id, name,
+        final Base<M, I> base = generateBase(this.abstractDataTypeGenerator, pluginContainer, id, name,
                 manipulatorType, immutableManipulatorType, mutableExpansion, immutableExpansion);
         try {
-            base.mutableManipulatorTypeImpl.getField("registrationConsumer").set(null, registrationConsumer);
-            base.immutableManipulatorTypeImpl.getField("registrationConsumer").set(null, registrationConsumer);
+            base.mutableManipulatorTypeImpl.getField(AbstractDataTypeGenerator.REGISTRATION_CONSUMER).set(null, registrationConsumer);
+            base.immutableManipulatorTypeImpl.getField(AbstractDataTypeGenerator.REGISTRATION_CONSUMER).set(null, registrationConsumer);
         } catch (IllegalAccessException | NoSuchFieldException e) {
             throw new RuntimeException(e);
         }
@@ -142,6 +133,7 @@ public final class DataManipulatorGenerator {
 
     @SuppressWarnings("unchecked")
     private <M extends DataManipulator<M, I>, I extends ImmutableDataManipulator<I, M>> Base<M, I> generateBase(
+            TypeGenerator typeGenerator,
             PluginContainer pluginContainer, String id, String name,
             Class<M> manipulatorType, Class<I> immutableManipulatorType,
             @Nullable Class<? extends M> mutableExpansion, @Nullable Class<? extends I> immutableExpansion) {
@@ -154,13 +146,9 @@ public final class DataManipulatorGenerator {
         final String mutableImplClassName = mutableImplTypeName.replace('/', '.');
         final String immutableImplClassName = immutableImplTypeName.replace('/', '.');
 
-        for (Tuple<TypeGenerator, Predicate<Class<?>>> tuple : this.typeGenerators) {
-            if (tuple.getSecond().test(manipulatorType)) {
-                tuple.getFirst().generateClasses(cwM, cwI, mutableImplTypeName, immutableImplTypeName,
-                        manipulatorType, immutableManipulatorType, mutableExpansion, immutableExpansion);
-                break;
-            }
-        }
+        typeGenerator.generateClasses(cwM, cwI, mutableImplTypeName, immutableImplTypeName,
+                manipulatorType, immutableManipulatorType, mutableExpansion, immutableExpansion);
+
         byte[] bytes = cwM.toByteArray();
         final Class<?> manipulatorTypeImpl = this.classLoader.defineClass(mutableImplClassName, bytes);
         bytes = cwI.toByteArray();
