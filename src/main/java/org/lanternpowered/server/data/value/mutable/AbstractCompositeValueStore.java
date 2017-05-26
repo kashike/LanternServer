@@ -31,7 +31,6 @@ import org.lanternpowered.server.data.manipulator.DataManipulatorRegistration;
 import org.lanternpowered.server.data.manipulator.DataManipulatorRegistry;
 import org.lanternpowered.server.data.manipulator.IDataManipulatorBase;
 import org.lanternpowered.server.data.manipulator.immutable.IImmutableDataManipulator;
-import org.lanternpowered.server.data.manipulator.mutable.IDataManipulator;
 import org.lanternpowered.server.data.value.AbstractValueContainer;
 import org.lanternpowered.server.data.value.ElementHolder;
 import org.lanternpowered.server.data.value.KeyRegistration;
@@ -67,7 +66,7 @@ public interface AbstractCompositeValueStore<S extends CompositeValueStore<S, H>
         for (Key<?> key : registration.getRequiredKeys()) {
             final Optional value = getValue((Key) key);
             if (value.isPresent()) {
-                manipulator.set((Key) key, value.get());
+                manipulator.set((Value) value.get());
             } else if (!supports(key)) {
                 return Optional.empty();
             }
@@ -209,12 +208,10 @@ public interface AbstractCompositeValueStore<S extends CompositeValueStore<S, H>
     @Override
     default DataTransactionResult remove(Class<? extends H> containerClass) {
         checkNotNull(containerClass, "containerClass");
-        if (IDataManipulatorBase.class.isAssignableFrom(containerClass)) {
-            // You cannot remove default data manipulators?
-            final Optional optRegistration = DataManipulatorRegistry.get().getBy((Class) containerClass);
-            if (optRegistration.isPresent()) {
-                return DataTransactionResult.failNoData();
-            }
+        // You cannot remove default data manipulators?
+        final Optional optRegistration = DataManipulatorRegistry.get().getBy((Class) containerClass);
+        if (optRegistration.isPresent()) {
+            return DataTransactionResult.failNoData();
         }
 
         final Map<Class<?>, H> containers = getRawAdditionalContainers();
@@ -233,18 +230,16 @@ public interface AbstractCompositeValueStore<S extends CompositeValueStore<S, H>
     default boolean supports(Class<? extends H> containerClass) {
         checkNotNull(containerClass, "containerClass");
 
-        if (IDataManipulatorBase.class.isAssignableFrom(containerClass)) {
-            // Offer all the default key values as long if they are supported
-            final Optional<DataManipulatorRegistration> optRegistration = DataManipulatorRegistry.get().getBy(containerClass);
-            if (optRegistration.isPresent()) {
-                final DataManipulatorRegistration registration = optRegistration.get();
-                for (Key key : (Set<Key>) registration.getRequiredKeys()) {
-                    if (!supports(key)) {
-                        return false;
-                    }
+        // Offer all the default key values as long if they are supported
+        final Optional<DataManipulatorRegistration> optRegistration = DataManipulatorRegistry.get().getBy(containerClass);
+        if (optRegistration.isPresent()) {
+            final DataManipulatorRegistration registration = optRegistration.get();
+            for (Key key : (Set<Key>) registration.getRequiredKeys()) {
+                if (!supports(key)) {
+                       return false;
                 }
-                return true;
             }
+            return true;
         }
 
         // Support all the additional manipulators
@@ -262,14 +257,12 @@ public interface AbstractCompositeValueStore<S extends CompositeValueStore<S, H>
     default <T extends H> Optional<T> get(Class<T> containerClass) {
         checkNotNull(containerClass, "containerClass");
 
-        if (IDataManipulatorBase.class.isAssignableFrom(containerClass)) {
-            // Check default registrations
-            final Optional<DataManipulatorRegistration> optRegistration = DataManipulatorRegistry.get().getBy(containerClass);
-            if (optRegistration.isPresent()) {
-                final DataManipulator manipulator = (DataManipulator) createManipulator(optRegistration.get()).orElse(null);
-                return manipulator == null ? Optional.empty() : Optional.of(
-                        (T) (IImmutableDataManipulator.class.isAssignableFrom(containerClass) ? manipulator.asImmutable() : manipulator));
-            }
+        // Check default registrations
+        final Optional<DataManipulatorRegistration> optRegistration = DataManipulatorRegistry.get().getBy(containerClass);
+        if (optRegistration.isPresent()) {
+            final DataManipulator manipulator = (DataManipulator) createManipulator(optRegistration.get()).orElse(null);
+            return manipulator == null ? Optional.empty() : Optional.of(
+                    (T) (IImmutableDataManipulator.class.isAssignableFrom(containerClass) ? manipulator.asImmutable() : manipulator));
         }
 
         // Try the additional containers if they are supported
