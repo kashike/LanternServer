@@ -40,6 +40,8 @@ import org.spongepowered.api.data.meta.ItemEnchantment;
 import org.spongepowered.api.data.property.PropertyRegistry;
 import org.spongepowered.api.data.property.block.GroundLuminanceProperty;
 import org.spongepowered.api.data.property.block.SkyLuminanceProperty;
+import org.spongepowered.api.data.type.WireAttachmentType;
+import org.spongepowered.api.data.type.WireAttachmentTypes;
 import org.spongepowered.api.data.value.mutable.CompositeValueStore;
 import org.spongepowered.api.effect.potion.PotionEffect;
 import org.spongepowered.api.text.BookView;
@@ -49,7 +51,9 @@ import org.spongepowered.api.text.serializer.TextConfigSerializer;
 import org.spongepowered.api.util.Direction;
 import org.spongepowered.api.util.RespawnLocation;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -72,8 +76,6 @@ public class DataRegistrar {
         dataManager.registerBuilder(PotionEffect.class, new LanternPotionEffectBuilder());
         dataManager.registerBuilder(RespawnLocation.class, new RespawnLocation.Builder());
         dataManager.registerBuilder(ItemEnchantment.class, new ItemEnchantmentDataBuilder());
-
-        DataManipulatorRegistry.get();
 
         final LanternValueFactory valueFactory = LanternValueFactory.getInstance();
         valueFactory.registerKey(Keys.CONNECTED_DIRECTIONS).applyValueProcessor(builder -> builder
@@ -109,6 +111,41 @@ public class DataRegistrar {
                     return DataTransactionResult.successNoData();
                 })
                 .failAlwaysRemoveHandler());
+        valueFactory.registerKey(Keys.WIRE_ATTACHMENTS).applyValueProcessor(builder -> builder
+                .applicableTester((key, valueContainer) ->
+                        valueContainer.supports(Keys.WIRE_ATTACHMENT_WEST) || valueContainer.supports(Keys.WIRE_ATTACHMENT_EAST) ||
+                                valueContainer.supports(Keys.WIRE_ATTACHMENT_NORTH) || valueContainer.supports(Keys.WIRE_ATTACHMENT_SOUTH))
+                .retrieveHandler(((key, valueContainer) -> {
+                    final Map<Direction, WireAttachmentType> attachments = new HashMap<>();
+                    valueContainer.get(Keys.WIRE_ATTACHMENT_WEST).ifPresent(type -> attachments.put(Direction.WEST, type));
+                    valueContainer.get(Keys.WIRE_ATTACHMENT_EAST).ifPresent(type -> attachments.put(Direction.EAST, type));
+                    valueContainer.get(Keys.WIRE_ATTACHMENT_SOUTH).ifPresent(type -> attachments.put(Direction.SOUTH, type));
+                    valueContainer.get(Keys.WIRE_ATTACHMENT_NORTH).ifPresent(type -> attachments.put(Direction.NORTH, type));
+                    return Optional.of(attachments);
+                }))
+                .offerHandler((key, valueContainer, attachments) -> {
+                    if (valueContainer instanceof CompositeValueStore) {
+                        final CompositeValueStore store = (CompositeValueStore) valueContainer;
+                        final DataTransactionResult.Builder resultBuilder = DataTransactionResult.builder();
+                        WireAttachmentType type = attachments.get(Direction.WEST);
+                        resultBuilder.absorbResult(store.offer(Keys.CONNECTED_WEST,
+                                type == null ? WireAttachmentTypes.NONE : type));
+                        type = attachments.get(Direction.EAST);
+                        resultBuilder.absorbResult(store.offer(Keys.CONNECTED_EAST,
+                                type == null ? WireAttachmentTypes.NONE : type));
+                        type = attachments.get(Direction.SOUTH);
+                        resultBuilder.absorbResult(store.offer(Keys.CONNECTED_SOUTH,
+                                type == null ? WireAttachmentTypes.NONE : type));
+                        type = attachments.get(Direction.NORTH);
+                        resultBuilder.absorbResult(store.offer(Keys.CONNECTED_NORTH,
+                                type == null ? WireAttachmentTypes.NONE : type));
+                        return resultBuilder.result(DataTransactionResult.Type.SUCCESS).build();
+                    }
+                    return DataTransactionResult.successNoData();
+                })
+                .failAlwaysRemoveHandler());
+
+        DataManipulatorRegistry.get();
     }
 
     public static void finalizeRegistrations(LanternGame game) {

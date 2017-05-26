@@ -36,7 +36,6 @@ import org.lanternpowered.server.data.manipulator.immutable.AbstractImmutableDat
 import org.lanternpowered.server.data.manipulator.mutable.AbstractData;
 import org.lanternpowered.server.data.value.IValueContainer;
 import org.lanternpowered.server.util.DefineableClassLoader;
-import org.lanternpowered.server.util.collect.Collections3;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.api.data.key.Key;
@@ -46,7 +45,6 @@ import org.spongepowered.api.data.manipulator.immutable.ImmutableListData;
 import org.spongepowered.api.data.manipulator.immutable.ImmutableVariantData;
 import org.spongepowered.api.data.manipulator.mutable.ListData;
 import org.spongepowered.api.data.manipulator.mutable.VariantData;
-import org.spongepowered.api.data.manipulator.mutable.block.ConnectedDirectionData;
 import org.spongepowered.api.data.value.BaseValue;
 import org.spongepowered.api.data.value.mutable.ListValue;
 import org.spongepowered.api.data.value.mutable.Value;
@@ -151,16 +149,12 @@ public final class DataManipulatorGenerator {
         Key[] keys = new Key[methods.size()];
         for (int i = 0; i < methods.size(); i++) {
             final Method method = methods.get(i);
-            final TypeToken<?> valueType = TypeToken.of(method.getGenericReturnType());
             final String methodName = ManipulatorHelper.camelToSnake(method.getName());
 
             int closestDistance = Integer.MAX_VALUE;
             Key closestKey = null;
 
             for (Key key : requiredKeys) {
-                if (!key.getElementToken().equals(valueType.resolveType(BaseValue.class.getTypeParameters()[0]))) {
-                    continue;
-                }
                 String keyId = key.getId();
                 final int index = keyId.indexOf(':');
                 if (index != -1) {
