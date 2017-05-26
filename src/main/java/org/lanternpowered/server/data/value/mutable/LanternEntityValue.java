@@ -28,6 +28,7 @@ package org.lanternpowered.server.data.value.mutable;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.base.MoreObjects;
+import org.lanternpowered.server.data.value.immutable.ImmutableLanternEntityValue;
 import org.lanternpowered.server.data.value.immutable.ImmutableLanternValue;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.key.Key;
@@ -124,7 +125,7 @@ public class LanternEntityValue<T extends Entity> implements Value<T> {
 
     @Override
     public ImmutableValue<T> asImmutable() {
-        return new ImmutableLanternValue<>(getKey(), get());
+        return new ImmutableLanternEntityValue<>(getKey(), get());
     }
 
     @Override

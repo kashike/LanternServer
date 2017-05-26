@@ -40,7 +40,6 @@ import java.util.Optional;
  * for any use. This is the primary implementation of any {@link DataView} that
  * is used throughout both SpongeAPI and Sponge implementation.
  */
-@SuppressWarnings("deprecation")
 final class MemoryDataContainer extends MemoryDataView implements DataContainer {
 
     /**
