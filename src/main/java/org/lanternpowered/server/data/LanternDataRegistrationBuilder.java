@@ -29,7 +29,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
-import org.lanternpowered.server.game.registry.type.data.DataManipulatorRegistryModule;
 import org.spongepowered.api.data.DataAlreadyRegisteredException;
 import org.spongepowered.api.data.DataRegistration;
 import org.spongepowered.api.data.manipulator.DataManipulator;
@@ -39,7 +38,7 @@ import org.spongepowered.api.plugin.PluginContainer;
 
 import javax.annotation.Nullable;
 
-public final class LanternDataRegistrationBuilder<M extends DataManipulator<M, I>, I extends ImmutableDataManipulator<I, M>>
+final class LanternDataRegistrationBuilder<M extends DataManipulator<M, I>, I extends ImmutableDataManipulator<I, M>>
         implements DataRegistration.Builder<M, I> {
 
     @Nullable Class<M> manipulatorClass;
@@ -69,7 +68,6 @@ public final class LanternDataRegistrationBuilder<M extends DataManipulator<M, I
         checkArgument(!this.id.contains(":"), "Data ID must be formatted correctly!");
         checkArgument(!this.id.isEmpty(), "Data ID cannot be empty!");
         checkArgument(!this.id.contains(" "), "Data ID cannot contain spaces!");
-
         return this;
     }
 

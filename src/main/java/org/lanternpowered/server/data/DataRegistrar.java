@@ -27,6 +27,7 @@ package org.lanternpowered.server.data;
 
 import com.flowpowered.math.vector.Vector3d;
 import org.lanternpowered.server.data.manipulator.DataManipulatorRegistry;
+import org.lanternpowered.server.data.meta.LanternPatternLayer;
 import org.lanternpowered.server.data.persistence.DataTranslators;
 import org.lanternpowered.server.data.persistence.DataTypeSerializers;
 import org.lanternpowered.server.data.property.block.GroundLuminancePropertyStore;
@@ -38,6 +39,7 @@ import org.lanternpowered.server.item.enchantment.ItemEnchantmentDataBuilder;
 import org.spongepowered.api.data.DataTransactionResult;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.meta.ItemEnchantment;
+import org.spongepowered.api.data.meta.PatternLayer;
 import org.spongepowered.api.data.property.PropertyRegistry;
 import org.spongepowered.api.data.property.block.GroundLuminanceProperty;
 import org.spongepowered.api.data.property.block.SkyLuminanceProperty;
@@ -74,6 +76,7 @@ public class DataRegistrar {
         DataTranslators.registerSerializers(dataManager);
 
         // Register the data builders
+        dataManager.registerBuilder(PatternLayer.class, new LanternPatternLayer.Builder(game));
         dataManager.registerBuilder(Text.class, new TextConfigSerializer());
         dataManager.registerBuilder(BookView.class, new BookViewDataBuilder());
         dataManager.registerBuilder(PotionEffect.class, new LanternPotionEffectBuilder());

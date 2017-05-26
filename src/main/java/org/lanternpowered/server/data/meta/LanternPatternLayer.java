@@ -103,5 +103,4 @@ public final class LanternPatternLayer implements PatternLayer {
             return Optional.of(new LanternPatternLayer(shape, color));
         }
     }
-
 }

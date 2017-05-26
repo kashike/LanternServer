@@ -41,7 +41,7 @@ import java.util.Optional;
  * is used throughout both SpongeAPI and Sponge implementation.
  */
 @SuppressWarnings("deprecation")
-public class MemoryDataContainer extends MemoryDataView implements DataContainer {
+final class MemoryDataContainer extends MemoryDataView implements DataContainer {
 
     /**
      * Creates a new {@link MemoryDataContainer} with a default
@@ -49,7 +49,7 @@ public class MemoryDataContainer extends MemoryDataView implements DataContainer
      * {@link org.spongepowered.api.data.DataView.SafetyMode#ALL_DATA_CLONED}.
      *
      */
-    public MemoryDataContainer() {
+    MemoryDataContainer() {
         this(DataView.SafetyMode.ALL_DATA_CLONED);
     }
 
@@ -60,7 +60,7 @@ public class MemoryDataContainer extends MemoryDataView implements DataContainer
      * @param safety The safety mode to use
      * @see org.spongepowered.api.data.DataView.SafetyMode
      */
-    public MemoryDataContainer(DataView.SafetyMode safety) {
+    MemoryDataContainer(DataView.SafetyMode safety) {
         super(safety);
     }
 
