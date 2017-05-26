@@ -29,6 +29,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
+import org.lanternpowered.server.game.registry.type.data.DataManipulatorRegistryModule;
 import org.spongepowered.api.data.DataAlreadyRegisteredException;
 import org.spongepowered.api.data.DataRegistration;
 import org.spongepowered.api.data.manipulator.DataManipulator;
@@ -44,8 +45,8 @@ public final class LanternDataRegistrationBuilder<M extends DataManipulator<M, I
     @Nullable Class<M> manipulatorClass;
     @Nullable Class<I> immutableClass;
     @Nullable DataManipulatorBuilder<M, I> manipulatorBuilder;
-    @Nullable PluginContainer plugin;
     @Nullable String id;
+    @Nullable PluginContainer plugin;
     @Nullable String name;
 
     @SuppressWarnings("unchecked")
@@ -105,17 +106,14 @@ public final class LanternDataRegistrationBuilder<M extends DataManipulator<M, I
     @Override
     public DataRegistration<M, I> buildAndRegister(PluginContainer container)
             throws IllegalStateException, IllegalArgumentException, DataAlreadyRegisteredException {
-        //checkState(!SpongeDataManager.areRegistrationsComplete(), "Registrations cannot take place at this time!");
+        this.plugin = checkNotNull(container, "container");
         checkState(this.manipulatorBuilder != null, "ManipulatorBuilder cannot be null!");
         checkState(this.manipulatorClass != null, "DataManipulator class cannot be null!");
         checkState(this.immutableClass != null, "ImmutableDataManipulator class cannot be null!");
         checkState(this.id != null, "Data ID cannot be null!");
-        this.plugin = container;
-        //SpongeManipulatorRegistry.getInstance().validateRegistration(this);
-        //SpongeDataManager.getInstance().validateRegistration(this);
         final LanternDataRegistration<M, I> registration = new LanternDataRegistration<>(this);
-        //SpongeDataManager.getInstance().registerInternally(registration);
-        //SpongeManipulatorRegistry.getInstance().register(registration);
+        registration.validate();
+        registration.register();
         return registration;
     }
 }

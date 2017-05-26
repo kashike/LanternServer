@@ -46,7 +46,6 @@ import org.lanternpowered.server.game.Lantern;
 import org.lanternpowered.server.plugin.InternalPluginsInfo;
 import org.lanternpowered.server.profile.LanternGameProfile;
 import org.spongepowered.api.block.BlockTypes;
-import org.spongepowered.api.data.DataManager;
 import org.spongepowered.api.data.key.Key;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.manipulator.DataManipulator;
@@ -919,7 +918,7 @@ public class DataManipulatorRegistry {
 
             final PluginContainer pluginContainer = Lantern.getGame().getPluginManager().getPlugin(plugin)
                     .orElseThrow(() -> new IllegalStateException("The plugin " + plugin + " does not exist!"));
-            return new RegistrationInfo(pluginContainer, ManipulatorHelper.camelToSnake(manipulatorType.getCanonicalName()),
+            return new RegistrationInfo(pluginContainer, ManipulatorHelper.camelToSnake(fullName.substring(fullName.lastIndexOf('.') + 1)),
                     manipulatorType.getCanonicalName());
         }
 
@@ -1032,9 +1031,7 @@ public class DataManipulatorRegistry {
         this.registrationByClass.put(registration.getImmutableManipulatorClass(), registration);
         this.registrationByClass.put(registration.createMutable().getClass(), registration);
         this.registrationByClass.put(registration.createImmutable().getClass(), registration);
-        final DataManager dataManager = Lantern.getGame().getDataManager();
-        dataManager.registerBuilder(registration.getImmutableManipulatorClass(), registration.getImmutableDataBuilder());
-        dataManager.registerBuilder(registration.getManipulatorClass(), registration.getDataManipulatorBuilder());
+        ((AbstractDataManipulatorRegistration) registration).register();
         return registration;
     }
 

@@ -31,6 +31,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import org.lanternpowered.server.catalog.PluginCatalogType;
+import org.lanternpowered.server.game.Lantern;
 import org.spongepowered.api.data.DataRegistration;
 import org.spongepowered.api.data.manipulator.DataManipulator;
 import org.spongepowered.api.data.manipulator.DataManipulatorBuilder;
@@ -75,6 +76,14 @@ public class LanternDataRegistration<M extends DataManipulator<M, I>, I extends 
         this.immutableClass = checkNotNull(builder.immutableClass, "ImmutableDataManipulator class is null!");
         this.manipulatorBuilder = checkNotNull(builder.manipulatorBuilder, "DataManipulatorBuilder is null!");
         this.plugin = builder.plugin;
+    }
+
+    protected void validate() {
+        Lantern.getGame().getDataManager().validateRegistration(this);
+    }
+
+    protected void register() {
+        Lantern.getGame().getDataManager().register(this);
     }
 
     protected DataManipulatorBuilder<M, I> createDataManipulatorBuilder() {

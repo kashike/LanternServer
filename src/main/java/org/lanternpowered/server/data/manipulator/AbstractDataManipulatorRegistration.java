@@ -61,7 +61,13 @@ public abstract class AbstractDataManipulatorRegistration<M extends DataManipula
         this.immutableDataBuilder = new RegistrationImmutableManipulatorDataBuilder(immutableClass, 1);
     }
 
-    void validate() {
+    @Override
+    protected void register() {
+        super.register();
+    }
+
+    @Override
+    protected void validate() {
         final M manipulator = createMutable();
         checkArgument(manipulator instanceof IDataManipulator,
                 "The mutable manipulator implementation must implement IDataManipulator.");
@@ -78,6 +84,7 @@ public abstract class AbstractDataManipulatorRegistration<M extends DataManipula
         checkArgument(immutableManipulatorType1 == getImmutableManipulatorClass(),
                 "The immutable data manipulator returns a different manipulator type, expected %s, but got %s",
                 getImmutableManipulatorClass().getName(), immutableManipulatorType1.getName());
+        super.validate();
     }
 
     @Override
