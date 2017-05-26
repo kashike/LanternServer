@@ -34,11 +34,17 @@ import org.lanternpowered.server.data.manipulator.gen.DataManipulatorGenerator;
 import org.lanternpowered.server.data.manipulator.immutable.block.LanternImmutableConnectedDirectionData;
 import org.lanternpowered.server.data.manipulator.immutable.block.LanternImmutableWireAttachmentData;
 import org.lanternpowered.server.data.manipulator.immutable.entity.LanternImmutableBodyPartRotationalData;
+import org.lanternpowered.server.data.manipulator.immutable.entity.LanternImmutableRespawnLocationData;
+import org.lanternpowered.server.data.manipulator.immutable.entity.LanternImmutableStatisticData;
+import org.lanternpowered.server.data.manipulator.immutable.fluid.LanternImmutableFluidTankData;
 import org.lanternpowered.server.data.manipulator.immutable.item.LanternImmutableInventoryItemData;
 import org.lanternpowered.server.data.manipulator.immutable.tileentity.LanternImmutableBeaconData;
 import org.lanternpowered.server.data.manipulator.mutable.block.LanternConnectedDirectionData;
 import org.lanternpowered.server.data.manipulator.mutable.block.LanternWireAttachmentData;
 import org.lanternpowered.server.data.manipulator.mutable.entity.LanternBodyPartRotationalData;
+import org.lanternpowered.server.data.manipulator.mutable.entity.LanternRespawnLocationData;
+import org.lanternpowered.server.data.manipulator.mutable.entity.LanternStatisticData;
+import org.lanternpowered.server.data.manipulator.mutable.fluid.LanternFluidTankData;
 import org.lanternpowered.server.data.manipulator.mutable.item.LanternInventoryItemData;
 import org.lanternpowered.server.data.manipulator.mutable.tileentity.LanternBeaconData;
 import org.lanternpowered.server.data.value.IValueContainer;
@@ -161,6 +167,7 @@ import org.spongepowered.api.data.manipulator.immutable.entity.ImmutablePigSaddl
 import org.spongepowered.api.data.manipulator.immutable.entity.ImmutablePlayerCreatedData;
 import org.spongepowered.api.data.manipulator.immutable.entity.ImmutablePlayingData;
 import org.spongepowered.api.data.manipulator.immutable.entity.ImmutableRabbitData;
+import org.spongepowered.api.data.manipulator.immutable.entity.ImmutableRespawnLocation;
 import org.spongepowered.api.data.manipulator.immutable.entity.ImmutableScreamingData;
 import org.spongepowered.api.data.manipulator.immutable.entity.ImmutableShatteringData;
 import org.spongepowered.api.data.manipulator.immutable.entity.ImmutableShearedData;
@@ -172,6 +179,7 @@ import org.spongepowered.api.data.manipulator.immutable.entity.ImmutableSleeping
 import org.spongepowered.api.data.manipulator.immutable.entity.ImmutableSlimeData;
 import org.spongepowered.api.data.manipulator.immutable.entity.ImmutableSneakingData;
 import org.spongepowered.api.data.manipulator.immutable.entity.ImmutableSprintData;
+import org.spongepowered.api.data.manipulator.immutable.entity.ImmutableStatisticData;
 import org.spongepowered.api.data.manipulator.immutable.entity.ImmutableStuckArrowsData;
 import org.spongepowered.api.data.manipulator.immutable.entity.ImmutableTameableData;
 import org.spongepowered.api.data.manipulator.immutable.entity.ImmutableTradeOfferData;
@@ -237,6 +245,7 @@ import org.spongepowered.api.data.manipulator.mutable.block.DoublePlantData;
 import org.spongepowered.api.data.manipulator.mutable.block.DropData;
 import org.spongepowered.api.data.manipulator.mutable.block.ExtendedData;
 import org.spongepowered.api.data.manipulator.mutable.block.FilledData;
+import org.spongepowered.api.data.manipulator.mutable.block.FluidLevelData;
 import org.spongepowered.api.data.manipulator.mutable.block.GrowthData;
 import org.spongepowered.api.data.manipulator.mutable.block.HingeData;
 import org.spongepowered.api.data.manipulator.mutable.block.InWallData;
@@ -317,6 +326,7 @@ import org.spongepowered.api.data.manipulator.mutable.entity.PigSaddleData;
 import org.spongepowered.api.data.manipulator.mutable.entity.PlayerCreatedData;
 import org.spongepowered.api.data.manipulator.mutable.entity.PlayingData;
 import org.spongepowered.api.data.manipulator.mutable.entity.RabbitData;
+import org.spongepowered.api.data.manipulator.mutable.entity.RespawnLocationData;
 import org.spongepowered.api.data.manipulator.mutable.entity.ScreamingData;
 import org.spongepowered.api.data.manipulator.mutable.entity.ShatteringData;
 import org.spongepowered.api.data.manipulator.mutable.entity.ShearedData;
@@ -328,6 +338,7 @@ import org.spongepowered.api.data.manipulator.mutable.entity.SleepingData;
 import org.spongepowered.api.data.manipulator.mutable.entity.SlimeData;
 import org.spongepowered.api.data.manipulator.mutable.entity.SneakingData;
 import org.spongepowered.api.data.manipulator.mutable.entity.SprintData;
+import org.spongepowered.api.data.manipulator.mutable.entity.StatisticData;
 import org.spongepowered.api.data.manipulator.mutable.entity.StuckArrowsData;
 import org.spongepowered.api.data.manipulator.mutable.entity.TameableData;
 import org.spongepowered.api.data.manipulator.mutable.entity.TradeOfferData;
@@ -408,6 +419,10 @@ import org.spongepowered.api.effect.particle.ParticleTypes;
 import org.spongepowered.api.entity.EntitySnapshot;
 import org.spongepowered.api.entity.EntityTypes;
 import org.spongepowered.api.entity.living.player.gamemode.GameModes;
+import org.spongepowered.api.extra.fluid.data.manipulator.immutable.ImmutableFluidItemData;
+import org.spongepowered.api.extra.fluid.data.manipulator.immutable.ImmutableFluidTankData;
+import org.spongepowered.api.extra.fluid.data.manipulator.mutable.FluidItemData;
+import org.spongepowered.api.extra.fluid.data.manipulator.mutable.FluidTankData;
 import org.spongepowered.api.item.inventory.ItemStackSnapshot;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.text.Text;
@@ -770,9 +785,6 @@ public class DataManipulatorRegistry {
         register(VelocityData.class, ImmutableVelocityData.class,
                 c -> c.registerKey(Keys.VELOCITY, Vector3d.ZERO));
 
-        // TODO: StatisticData
-        // TODO: RespawnLocationData
-
         /// variant containers
         registerVariant(ArtData.class, ImmutableArtData.class, Keys.ART, Arts.AZTEC);
         registerVariant(CareerData.class, ImmutableCareerData.class, Keys.CAREER, Careers.FARMER);
@@ -785,6 +797,28 @@ public class DataManipulatorRegistry {
         /// list containers
         registerList(PassengerData.class, ImmutablePassengerData.class, Keys.PASSENGERS);
         registerList(TradeOfferData.class, ImmutableTradeOfferData.class, Keys.TRADE_OFFERS);
+
+        /// map containers
+        register(StatisticData.class, LanternStatisticData::new, LanternStatisticData::new, LanternStatisticData::new,
+                ImmutableStatisticData.class, LanternImmutableStatisticData::new, LanternImmutableStatisticData::new);
+        register(RespawnLocationData.class, LanternRespawnLocationData::new, LanternRespawnLocationData::new, LanternRespawnLocationData::new,
+                ImmutableRespawnLocation.class, LanternImmutableRespawnLocationData::new, LanternImmutableRespawnLocationData::new);
+
+        ///////////////////
+        // Fluid Package //
+        ///////////////////
+
+        /// normal containers
+        register(FluidItemData.class, ImmutableFluidItemData.class,
+                c -> c.registerKey(Keys.FLUID_ITEM_STACK, null)); // TODO
+
+        /// variant containers
+
+        /// list containers
+
+        /// map containers
+        register(FluidTankData.class, LanternFluidTankData::new, LanternFluidTankData::new, LanternFluidTankData::new,
+                ImmutableFluidTankData.class, LanternImmutableFluidTankData::new, LanternImmutableFluidTankData::new);
 
         //////////////////
         // Item Package //

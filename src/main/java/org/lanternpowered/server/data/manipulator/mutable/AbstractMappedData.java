@@ -26,6 +26,8 @@
 package org.lanternpowered.server.data.manipulator.mutable;
 
 import com.google.common.collect.ImmutableMap;
+import org.lanternpowered.server.data.manipulator.IDataManipulatorBase;
+import org.lanternpowered.server.data.manipulator.immutable.IImmutableMappedData;
 import org.spongepowered.api.data.key.Key;
 import org.spongepowered.api.data.manipulator.immutable.ImmutableMappedData;
 import org.spongepowered.api.data.manipulator.mutable.MappedData;
@@ -47,6 +49,26 @@ public abstract class AbstractMappedData<K, V, M extends MappedData<K, V, M, I>,
         this.mapKey = mapKey;
     }
 
+    public AbstractMappedData(I manipulator) {
+        //noinspection unchecked
+        this((IDataManipulatorBase<M, I>) manipulator);
+    }
+
+    public AbstractMappedData(M manipulator) {
+        //noinspection unchecked
+        this((IDataManipulatorBase<M, I>) manipulator);
+    }
+
+    protected AbstractMappedData(IDataManipulatorBase<M, I> manipulator) {
+        super(manipulator);
+        if (manipulator instanceof IMappedData) {
+            //noinspection unchecked
+            this.mapKey = ((IMappedData) manipulator).getMapKey();
+        } else {
+            //noinspection unchecked
+            this.mapKey = ((IImmutableMappedData) manipulator).getMapKey();
+        }
+    }
     @Override
     public Optional<V> get(K key) {
         return Optional.ofNullable(get(this.mapKey).get().get(key));
